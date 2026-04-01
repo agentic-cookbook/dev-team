@@ -3,7 +3,7 @@ name: interview
 version: 0.1.0
 description: Product discovery interview — guides users through structured and exploratory questioning to fully scope a product they want to build
 allowed-tools: Read, Glob, Grep, Agent, Write, Edit, AskUserQuestion, Bash(git *), Bash(mkdir *), Bash(ls *), Bash(date *), Bash(cat *)
-argument-hint: [--version] [--resume] [--summary]
+argument-hint: [--version] [--resume] [--summary] [--config <path>] [--test-mode --persona <path> --max-exchanges <n>]
 ---
 
 # Product Discovery Interview v0.1.0
@@ -30,7 +30,9 @@ Your persona: a seasoned engineering project lead who has shipped many products.
 
 ## Configuration
 
-On first run, check for `~/.agentic-interviewer/config.json`. If it doesn't exist:
+**Config path**: If `$ARGUMENTS` contains `--config <path>`, use that path instead of the default. Otherwise use `~/.agentic-interviewer/config.json`.
+
+On first run, check for the config file. If it doesn't exist:
 
 1. Ask the user: "Where is your interview repo? This is where transcripts, analyses, and your profile will be stored."
 2. Ask: "Where is your local clone of the agentic-cookbook? I use it to inform my specialists' questions."
@@ -288,6 +290,27 @@ If the interview repo config has `authorized_repos`, the skill can read those re
 - Reference actual code when asking questions
 
 If a new project cwd isn't in `authorized_repos`, ask: "I'd like to read your project code to ask better questions. Can I add <path> to my authorized repos?"
+
+## Test Mode
+
+When `$ARGUMENTS` contains `--test-mode`, the skill runs in automated testing mode:
+
+### Arguments
+- `--persona <path>` — path to a persona file for the simulated user (required in test mode)
+- `--max-exchanges <n>` — stop after N question-answer exchanges (required in test mode)
+- `--config <path>` — path to test config (should point interview_repo at a test output directory)
+
+### Behavior Changes
+1. **No real user interaction.** Instead of asking the user questions via AskUserQuestion, spawn the `agents/simulated-user.md` agent with the persona file and the question. Use the simulated user's response as the answer.
+2. **Flow logging.** Write a structured log to `<interview_repo>/projects/<project>/test-log.jsonl`. Each line is a JSON object:
+   - `{"event": "specialist_invoked", "specialist": "<domain>", "mode": "structured|exploratory", "timestamp": "..."}`
+   - `{"event": "question_asked", "specialist": "<domain>", "question": "<text>", "timestamp": "..."}`
+   - `{"event": "answer_received", "transcript_file": "<filename>", "timestamp": "..."}`
+   - `{"event": "analysis_written", "analysis_file": "<filename>", "transcript_id": "<id>", "timestamp": "..."}`
+   - `{"event": "checklist_updated", "topic": "<topic>", "action": "covered|discovered", "timestamp": "..."}`
+3. **Bounded execution.** Stop after `--max-exchanges` question-answer pairs. Write a final summary to the log: `{"event": "test_complete", "exchanges": N, "specialists_invoked": [...], "files_written": N, "timestamp": "..."}`.
+4. **No profile updates.** Don't modify the simulated user's profile — it's a test fixture.
+5. **Skip config setup.** Config must already exist at the `--config` path. If it doesn't, fail immediately with a clear error.
 
 ## Key Behaviors
 
