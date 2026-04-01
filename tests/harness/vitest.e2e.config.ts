@@ -6,8 +6,8 @@ export default defineConfig({
     globals: true,
     include: ["specs/*.test.ts"],
     exclude: ["specs/unit/**"],
-    testTimeout: 600_000, // 10 minutes — interviews are long
-    hookTimeout: 660_000, // 11 minutes — beforeAll runs the interview
+    testTimeout: 960_000, // 16 minutes — interviews with agent spawns are slow
+    hookTimeout: 960_000, // 16 minutes — beforeAll runs the interview
     reporters: ["verbose"],
     pool: "threads",
     poolOptions: {
