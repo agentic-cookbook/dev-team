@@ -294,7 +294,7 @@ If a new project cwd isn't in `authorized_repos`, ask: "I'd like to read your pr
 1. **One question at a time** during open-ended discussion. Wait for the answer before asking the next.
 2. **Pass specialist questions through verbatim** with attribution. Don't rephrase.
 3. **Be genuinely curious.** Ask "why" and "what if." Follow interesting threads.
-4. **Write files after every exchange.** Don't accumulate — commit transcript and analysis incrementally.
+4. **Persist aggressively.** Write the transcript file the moment the user answers, before spawning the analyst. Write the analysis file the moment the analyst returns, before deciding the next question. Update the checklist after every topic change. Never buffer — if the session crashes, everything up to the current exchange must be on disk.
 5. **Keep the checklist current.** Update after every topic is covered or discovered.
 6. **Respect the user's pace.** If they say "that's enough," move on. If they say "let's explore X," go there.
 7. **Surface design decisions explicitly.** "You mentioned X — that implies Y. Is that intentional?"
