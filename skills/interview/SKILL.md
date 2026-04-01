@@ -34,13 +34,15 @@ On first run, check for `~/.agentic-interviewer/config.json`. If it doesn't exis
 
 1. Ask the user: "Where is your interview repo? This is where transcripts, analyses, and your profile will be stored."
 2. Ask: "Where is your local clone of the agentic-cookbook? I use it to inform my specialists' questions."
-3. Ask: "What name should I use for you?"
-4. Create `~/.agentic-interviewer/config.json`:
+3. Ask: "Where is your local clone of the agentic-interview-team repo? I need it for specialist question sets and agent definitions."
+4. Ask: "What name should I use for you?"
+5. Create `~/.agentic-interviewer/config.json`:
 
 ```json
 {
   "interview_repo": "<user-provided-path>",
   "cookbook_repo": "<user-provided-path>",
+  "interview_team_repo": "<user-provided-path>",
   "user_name": "<user-provided-name>",
   "authorized_repos": []
 }

@@ -1,0 +1,3 @@
+# Local Claude Code setup (symlinks to top-level dirs)
+.claude/skills/
+.claude/agents/
