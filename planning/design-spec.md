@@ -1,7 +1,7 @@
 # Agentic Interview Team — Design Spec
 
 **Date:** 2026-04-01
-**Status:** Brainstorming complete, ready for implementation planning
+**Status:** Initial buildout complete. Ready for first test run.
 
 ## Overview
 
@@ -210,20 +210,59 @@ my-agentic-interviews/
   knowledge/
 ```
 
-## Interview Team Repo Structure
+## Four-Repo Architecture (Updated)
+
+| Repo | Path | Purpose |
+|------|------|---------|
+| agentic-cookbook | `~/projects/agentic-tools/agentic-cookbook` | Upstream knowledge |
+| agentic-interview-team | `~/projects/agentic-tools/agentic-interview-team` | The system, test harness, personas |
+| my-agentic-interviews | `~/projects/personal/my-agentic-interviews` | User's real interview data |
+| agentic-interview-team-tests | `~/projects/agentic-tools/agentic-interview-team-tests` | Test output destination |
+
+## Interview Team Repo Structure (Current)
 
 ```
 agentic-interview-team/
+  .claude/
+    CLAUDE.md                          # Project instructions
+    rules/always-commit-and-push.md
+    skills/interview -> ../../skills/interview  (symlink, gitignored)
+    agents/ -> ../../agents/*          (symlinks, gitignored)
   agents/
-    meeting-leader.md
-    transcript-analyzer.md
-    specialist-interviewer-*.md
-    specialist-analyst-*.md
+    transcript-analyzer.md             # Recommends specialists, identifies gaps
+    specialist-interviewer.md          # Generates domain-specific questions (parameterized)
+    specialist-analyst.md              # Deep analysis of answers (parameterized)
+    simulated-user.md                  # Test-only: plays the role of a user
   skills/
-    interview.md
+    interview/
+      SKILL.md                         # The meeting leader — main entry point
+      templates/
+        checklist.md                   # Template for new project checklists
+        new-project-setup.md           # Project directory setup guide
   rules/
   research/
+    specialists/                       # 18 specialist question sets (12 domain + 6 platform)
+    cookbook-specialist-mapping.md
+    agent-patterns.md
+    conversational-patterns.md
   planning/
+    design-spec.md                     # This file
+    build-history.md                   # Session-by-session build log
+  tests/
+    personas/                          # 3 test personas (Sarah, Marcus, Priya)
+    test-design.md                     # What we test and why
+    harness/
+      lib/runner.ts                    # Invokes interview via claude -p
+      lib/assertions.ts                # Filesystem + interview assertions
+      lib/fixtures.ts                  # Fake project creation, test output cleanup
+      specs/smoke.test.ts
+      specs/persistence.test.ts
+      specs/specialist-coverage.test.ts
+      specs/resume.test.ts
+      vitest.config.ts
+      package.json
+      tsconfig.json
+    fixtures/fake-project/
 ```
 
 Top-level directories (not `.claude/`) so content is surfaceable for global install.
@@ -241,13 +280,13 @@ Top-level directories (not `.claude/`) so content is surfaceable for global inst
 {
   "interview_repo": "~/projects/personal/my-agentic-interviews",
   "cookbook_repo": "~/projects/agentic-tools/agentic-cookbook",
+  "interview_team_repo": "~/projects/agentic-tools/agentic-interview-team",
   "user_name": "mike",
-  "authorized_repos": [
-    "~/projects/my-ios-app",
-    "~/projects/my-web-service"
-  ]
+  "authorized_repos": []
 }
 ```
+
+Skill supports `--config <path>` to override the default config location (used by tests).
 
 ## Runtime
 
@@ -264,12 +303,28 @@ Top-level directories (not `.claude/`) so content is surfaceable for global inst
 - Each team member has one job
 - Start coarse, let things split naturally as they grow
 
+## Key Design Principles
+
+1. **Aggressive persistence** — write transcript immediately on answer, analysis immediately on return, checklist on every topic change. Never buffer.
+2. **Each team member has one job** — meeting leader orchestrates, transcript analyzer analyzes coverage, specialist interviewers ask, specialist analysts analyze.
+3. **Cookbook access for all agents** — every agent gets cookbook_repo, interview_team_repo, and interview_repo paths. Can read actual guidelines, not just static question sets.
+4. **Test flow, not content** — automated tests verify mechanics (files written, specialists invoked, checklist updated), not question quality (which evolves).
+5. **Start coarse, split naturally** — specialists begin as broad domains, split as knowledge accumulates.
+
+## Test Mode
+
+Skill supports `--test-mode --persona <path> --max-exchanges <n>`:
+- Uses simulated-user agent instead of real user interaction
+- Writes flow log (`test-log.jsonl`) for verification
+- Bounded execution, no profile updates, config must pre-exist
+
 ## Future / Deferred
 
 - Named specialist personas (Biff, etc.)
 - Cloud database for persistent layers
 - Social media platform integration (cross-pollination with social media management bot team)
-- Separate planning skill that reads transcripts
+- Separate planning skill that reads transcripts and forms a plan
 - Global specialist maturation (migration from per-user, criteria TBD)
 - Token/cost optimization
 - Global install skill
+- Interruption recovery test (kill mid-interview, verify persistence)
