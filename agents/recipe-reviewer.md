@@ -1,6 +1,6 @@
 ---
 name: recipe-reviewer
-description: Reviews a generated recipe from a specialist perspective, suggesting improvements based on cookbook standards. Use during the generate-project phase to improve recipes.
+description: Reviews a generated recipe from a specialist perspective, suggesting improvements based on cookbook standards. Use during the generate phase to improve recipes.
 tools:
   - Read
   - Glob

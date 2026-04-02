@@ -1,5 +1,5 @@
 /**
- * Smoke test — build-project on an existing cookbook project.
+ * Smoke test — build on an existing cookbook project.
  *
  * Verifies:
  * - Skill runs without errors
@@ -25,7 +25,7 @@ import { parseLog, filterByEvent, testSummary } from "../lib/log-parser.js";
 import { existsSync, readFileSync } from "fs";
 import { join } from "path";
 
-describe("build-project smoke test", () => {
+describe("build smoke test", () => {
   let result: RunResult;
   let projectDir: string;
   let outputDir: string;
@@ -35,17 +35,17 @@ describe("build-project smoke test", () => {
     projectDir = getTargetProject();
     configPath = createTestConfig();
 
-    // Derive output dir — build-project creates <project>/../<name>-build/
+    // Derive output dir — build creates <project>/../<name>-build/
     const projectName = projectDir.split("/").pop()!;
     const parentDir = join(projectDir, "..");
     outputDir = join(parentDir, `${projectName}-build`);
 
-    console.log("[build-smoke] Starting build-project run...");
+    console.log("[build-smoke] Starting build run...");
     console.log(`[build-smoke] project: ${projectDir}`);
     console.log(`[build-smoke] expected output: ${outputDir}`);
 
     result = await runSkill({
-      skillName: "build-project",
+      skillName: "build",
       cwd: projectDir,
       configPath,
       targetPath: projectDir,

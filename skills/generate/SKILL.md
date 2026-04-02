@@ -1,5 +1,5 @@
 ---
-name: dev-team-generate-project
+name: dev-team-generate
 version: 0.1.0
 description: Reviews and improves a cookbook project using specialist expertise — specialists review each recipe, suggest improvements, user approves/rejects, recipes updated
 allowed-tools: Read, Glob, Grep, Agent, Write, Edit, AskUserQuestion, Bash(git *), Bash(mkdir *), Bash(ls *), Bash(date *), Bash(cat *)
@@ -10,9 +10,9 @@ argument-hint: <project-path> [--specialist <domain>] [--recipe <scope>] [--conf
 
 ## Startup
 
-**First action**: If `$ARGUMENTS` is `--version`, print `generate-project v0.1.0` and stop.
+**First action**: If `$ARGUMENTS` is `--version`, print `generate v0.1.0` and stop.
 
-Otherwise, print `generate-project v0.1.0` as the first line of output, then proceed.
+Otherwise, print `generate v0.1.0` as the first line of output, then proceed.
 
 **Version check**: Read `${CLAUDE_SKILL_DIR}/SKILL.md` from disk and extract the `version:` field from frontmatter. If it differs from this skill's version (0.1.0), print:
 
@@ -191,7 +191,7 @@ title: "Review Summary — <project-name>"
 type: research
 created: <ISO 8601 datetime>
 modified: <ISO 8601 datetime>
-author: generate-project
+author: generate
 summary: "Specialist review of <N> recipes by <M> specialists"
 ---
 
@@ -287,4 +287,4 @@ Follow the interview system's persistence pattern:
 - **Recipe file missing** (referenced in manifest but not on disk): Skip that recipe, note in summary.
 - **Reviewer fails**: Note the failure, continue with remaining specialists/recipes. Report in summary.
 - **No specialists match a recipe**: Skip review for that recipe, note in summary.
-- **User wants to stop mid-review**: Save progress. All reviews and changes completed so far are already on disk. The user can resume by running `/dev-team-generate-project` again with `--recipe <scope>` to pick up where they left off.
+- **User wants to stop mid-review**: Save progress. All reviews and changes completed so far are already on disk. The user can resume by running `/dev-team-generate` again with `--recipe <scope>` to pick up where they left off.

@@ -1,5 +1,5 @@
 ---
-name: dev-team-analyze-project
+name: dev-team-analyze
 version: 0.1.0
 description: Reverse-engineers an existing codebase into a cookbook project — discovers architecture, matches recipe scopes, generates recipes, and scaffolds the project directory
 allowed-tools: Read, Glob, Grep, Agent, Write, Edit, AskUserQuestion, Bash(git *), Bash(mkdir *), Bash(ls *), Bash(date *), Bash(cat *), Bash(wc *)
@@ -10,9 +10,9 @@ argument-hint: <repo-path> [--output <path>] [--config <path>] [--test-mode] [--
 
 ## Startup
 
-**First action**: If `$ARGUMENTS` is `--version`, print `analyze-project v0.1.0` and stop.
+**First action**: If `$ARGUMENTS` is `--version`, print `analyze v0.1.0` and stop.
 
-Otherwise, print `analyze-project v0.1.0` as the first line of output, then proceed.
+Otherwise, print `analyze v0.1.0` as the first line of output, then proceed.
 
 **Version check**: Read `${CLAUDE_SKILL_DIR}/SKILL.md` from disk and extract the `version:` field from frontmatter. If it differs from this skill's version (0.1.0), print:
 
@@ -170,7 +170,7 @@ title: "Generation Summary — <project-name>"
 type: research
 created: <ISO 8601 datetime>
 modified: <ISO 8601 datetime>
-author: analyze-project
+author: analyze
 summary: "Automated analysis of <repo-name> into a cookbook project"
 ---
 
@@ -194,14 +194,14 @@ summary: "Automated analysis of <repo-name> into a cookbook project"
 <list recipes with <!-- NEEDS REVIEW --> markers and which sections>
 
 ## Next Steps
-Run `/dev-team-generate-project <output-path>` to have specialists review and improve each recipe.
+Run `/dev-team-generate <output-path>` to have specialists review and improve each recipe.
 ```
 
 Present the summary to the user:
 - Component tree visualization
 - Count of recipes generated vs. needing review
 - The output path
-- "Your cookbook project is at `<output>`. Run `/dev-team-generate-project <output>` to have specialists review and improve each recipe."
+- "Your cookbook project is at `<output>`. Run `/dev-team-generate <output>` to have specialists review and improve each recipe."
 
 ## Aggressive Persistence
 

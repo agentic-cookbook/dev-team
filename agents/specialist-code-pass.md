@@ -1,6 +1,6 @@
 ---
 name: specialist-code-pass
-description: A specialist augments generated code with their domain concerns (security adds validation, a11y adds labels, logging adds log statements, etc.). Use during build-project sequential augmentation.
+description: A specialist augments generated code with their domain concerns (security adds validation, a11y adds labels, logging adds log statements, etc.). Use during build sequential augmentation.
 tools:
   - Read
   - Glob

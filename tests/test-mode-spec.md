@@ -60,7 +60,7 @@ Plus event-specific fields documented below.
 | `analysis_written` | `analysis_file`, `transcript_id` |
 | `checklist_updated` | `topic`, `action` |
 
-### analyze-project Events
+### analyze Events
 
 | Event | Additional Fields |
 |-------|------------------|
@@ -69,7 +69,7 @@ Plus event-specific fields documented below.
 | `recipe_generated` | `scope`, `output_path`, `needs_review_count` |
 | `project_assembled` | `component_count`, `manifest_path` |
 
-### generate-project Events
+### generate Events
 
 | Event | Additional Fields |
 |-------|------------------|
@@ -79,7 +79,7 @@ Plus event-specific fields documented below.
 | `suggestion_rejected` | `recipe_scope`, `specialist`, `title` |
 | `recipe_updated` | `recipe_scope`, `changes_applied`, `new_version` |
 
-### build-project Events
+### build Events
 
 | Event | Additional Fields |
 |-------|------------------|
@@ -96,15 +96,15 @@ Plus event-specific fields documented below.
 Skills write test log events by appending a JSON line to `test-log.jsonl` in the project output directory using the Write tool. Example:
 
 At each phase boundary:
-- Before starting Phase 1: write `{"skill": "analyze-project", "phase": "architecture-scan", "event": "phase_started", "timestamp": "<now>"}`
-- After completing Phase 1: write `{"skill": "analyze-project", "phase": "architecture-scan", "event": "phase_completed", "duration_ms": <elapsed>, "timestamp": "<now>"}`
+- Before starting Phase 1: write `{"skill": "analyze", "phase": "architecture-scan", "event": "phase_started", "timestamp": "<now>"}`
+- After completing Phase 1: write `{"skill": "analyze", "phase": "architecture-scan", "event": "phase_completed", "duration_ms": <elapsed>, "timestamp": "<now>"}`
 
 At each agent interaction:
-- Before spawning: write `{"skill": "analyze-project", "phase": "architecture-scan", "event": "agent_spawned", "agent": "codebase-scanner", "timestamp": "<now>"}`
-- After return: write `{"skill": "analyze-project", "phase": "architecture-scan", "event": "agent_completed", "agent": "codebase-scanner", "status": "success", "timestamp": "<now>"}`
+- Before spawning: write `{"skill": "analyze", "phase": "architecture-scan", "event": "agent_spawned", "agent": "codebase-scanner", "timestamp": "<now>"}`
+- After return: write `{"skill": "analyze", "phase": "architecture-scan", "event": "agent_completed", "agent": "codebase-scanner", "status": "success", "timestamp": "<now>"}`
 
 At each file write:
-- After persisting: write `{"skill": "analyze-project", "phase": "recipe-generation", "event": "file_written", "path": "app/ui/file-tree-browser.md", "file_type": "recipe", "timestamp": "<now>"}`
+- After persisting: write `{"skill": "analyze", "phase": "recipe-generation", "event": "file_written", "path": "app/ui/file-tree-browser.md", "file_type": "recipe", "timestamp": "<now>"}`
 
 At the end:
-- Write `{"skill": "analyze-project", "phase": "summary", "event": "test_complete", "phases_completed": 5, "agents_spawned": 8, "files_written": 12, "errors": 0, "timestamp": "<now>"}`
+- Write `{"skill": "analyze", "phase": "summary", "event": "test_complete", "phases_completed": 5, "agents_spawned": 8, "files_written": 12, "errors": 0, "timestamp": "<now>"}`

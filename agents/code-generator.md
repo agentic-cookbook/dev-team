@@ -1,6 +1,6 @@
 ---
 name: code-generator
-description: Generates base implementation code from a cookbook recipe. Use during build-project to create initial code for each component.
+description: Generates base implementation code from a cookbook recipe. Use during build to create initial code for each component.
 tools:
   - Read
   - Glob

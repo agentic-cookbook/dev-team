@@ -6,7 +6,7 @@ The canonical reference for what a specialist is, how specialist question sets a
 
 A specialist is a domain-expert lens applied across three workflows: interview, recipe review, and code augmentation. Each specialist owns a slice of the cookbook — specific guidelines, principles, compliance checks, and research — and uses that knowledge to ask better questions, catch domain-specific gaps, and add domain concerns to generated code.
 
-Specialists do not work in isolation. They are invoked by the meeting leader (interview), the generate-project skill (recipe review), and the build-project skill (code augmentation). They receive context, do focused work, and return structured output.
+Specialists do not work in isolation. They are invoked by the meeting leader (interview), the generate skill (recipe review), and the build skill (code augmentation). They receive context, do focused work, and return structured output.
 
 ## Question Set Format
 

@@ -1,5 +1,5 @@
 /**
- * Smoke test — analyze-project on a real repo.
+ * Smoke test — analyze on a real repo.
  *
  * Verifies:
  * - Skill runs without errors
@@ -30,7 +30,7 @@ import { parseLog, testSummary } from "../lib/log-parser.js";
 import { existsSync, readdirSync, rmSync } from "fs";
 import { join } from "path";
 
-describe("analyze-project smoke test", () => {
+describe("analyze smoke test", () => {
   let result: RunResult;
   let outputDir: string;
   let configPath: string;
@@ -49,12 +49,12 @@ describe("analyze-project smoke test", () => {
       rmSync(outputDir, { recursive: true, force: true });
     }
 
-    console.log("[analyze-smoke] Starting analyze-project run...");
+    console.log("[analyze-smoke] Starting analyze run...");
     console.log(`[analyze-smoke] target: ${targetRepo}`);
     console.log(`[analyze-smoke] output: ${outputDir}`);
 
     result = await runSkill({
-      skillName: "analyze-project",
+      skillName: "analyze",
       cwd: targetRepo,
       configPath,
       targetPath: targetRepo,

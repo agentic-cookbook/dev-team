@@ -67,17 +67,17 @@ The three lint checklists currently live as skill reference files. They need to 
 
 **Files:**
 - Rename: `skills/interview/` → `skills/interview/` (already verb — no change needed, just update SKILL.md name field)
-- Rename: `skills/analyze-project/` → `skills/analyze/`
-- Rename: `skills/generate-project/` → `skills/generate/`
-- Rename: `skills/build-project/` → `skills/build/`
+- Rename: `skills/analyze/` → `skills/analyze/`
+- Rename: `skills/generate/` → `skills/generate/`
+- Rename: `skills/build/` → `skills/build/`
 - Modify: `.claude-plugin/plugin.json` — update skill references if listed
 - Modify: `CLAUDE.md` — update skill command references
 
-- [ ] **Step 1:** Rename `skills/analyze-project/` directory to `skills/analyze/`
+- [ ] **Step 1:** Rename `skills/analyze/` directory to `skills/analyze/`
 - [ ] **Step 2:** Update `skills/analyze/SKILL.md` frontmatter: `name: dev-team-analyze`, update description to mention `<target>` argument
-- [ ] **Step 3:** Rename `skills/generate-project/` directory to `skills/generate/`
+- [ ] **Step 3:** Rename `skills/generate/` directory to `skills/generate/`
 - [ ] **Step 4:** Update `skills/generate/SKILL.md` frontmatter: `name: dev-team-generate`
-- [ ] **Step 5:** Rename `skills/build-project/` directory to `skills/build/`
+- [ ] **Step 5:** Rename `skills/build/` directory to `skills/build/`
 - [ ] **Step 6:** Update `skills/build/SKILL.md` frontmatter: `name: dev-team-build`
 - [ ] **Step 7:** Update `.claude-plugin/plugin.json` if it references old skill names
 - [ ] **Step 8:** Update `CLAUDE.md` skill list with new command names and responsibility descriptions
@@ -88,7 +88,7 @@ The three lint checklists currently live as skill reference files. They need to 
 
 ## Task 3: Create the artifact-reviewer agent
 
-This generalizes the existing `recipe-reviewer` agent pattern to handle any artifact type (skill, rule, agent, recipe, implementation). The recipe-reviewer stays as-is for generate-project; this is a new agent for the Linter.
+This generalizes the existing `recipe-reviewer` agent pattern to handle any artifact type (skill, rule, agent, recipe, implementation). The recipe-reviewer stays as-is for generate; this is a new agent for the Linter.
 
 **Files:**
 - Create: `agents/artifact-reviewer.md`
@@ -134,7 +134,7 @@ This generalizes the existing `recipe-reviewer` agent pattern to handle any arti
   3. Determine specialist assignment:
      - All Claude Code artifacts → Claude Code specialist (always)
      - Recipes → Claude Code specialist + domain specialists based on recipe content
-     - Implementations → same logic as generate-project specialist assignment
+     - Implementations → same logic as generate specialist assignment
   4. Spawn artifact-reviewer agent per specialist (parallel, 2-3 at a time)
   5. Compile results into unified report
   6. Present findings with suggestions

@@ -1,5 +1,5 @@
 /**
- * Smoke test — generate-project on an existing cookbook project.
+ * Smoke test — generate on an existing cookbook project.
  *
  * Verifies:
  * - Skill runs without errors
@@ -24,7 +24,7 @@ import { parseLog, filterByEvent, testSummary } from "../lib/log-parser.js";
 import { existsSync } from "fs";
 import { join } from "path";
 
-describe("generate-project smoke test", () => {
+describe("generate smoke test", () => {
   let result: RunResult;
   let projectDir: string;
   let configPath: string;
@@ -33,11 +33,11 @@ describe("generate-project smoke test", () => {
     projectDir = getTargetProject();
     configPath = createTestConfig();
 
-    console.log("[generate-smoke] Starting generate-project run...");
+    console.log("[generate-smoke] Starting generate run...");
     console.log(`[generate-smoke] project: ${projectDir}`);
 
     result = await runSkill({
-      skillName: "generate-project",
+      skillName: "generate",
       cwd: projectDir,
       configPath,
       targetPath: projectDir,

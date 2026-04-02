@@ -2,7 +2,7 @@
 
 ## Problem
 
-The interview skill has a solid test infrastructure (Vitest, `claude -p` runner, personas, test-log.jsonl, E2E specs), but the other three skills (analyze-project, generate-project, build-project) have no test infrastructure. As the system grows, every skill and its agents need to be testable through a consistent, unified approach.
+The interview skill has a solid test infrastructure (Vitest, `claude -p` runner, personas, test-log.jsonl, E2E specs), but the other three skills (analyze, generate, build) have no test infrastructure. As the system grows, every skill and its agents need to be testable through a consistent, unified approach.
 
 ## Decisions
 
@@ -60,7 +60,7 @@ A specification document that all skills reference for their `--test-mode` behav
 | `analysis_written` | `analysis_file`, `transcript_id` |
 | `checklist_updated` | `topic`, `action` (covered/discovered) |
 
-#### analyze-project
+#### analyze
 | Event | Fields |
 |-------|--------|
 | `architecture_scanned` | `tech_stack`, `platforms`, `module_count` |
@@ -68,7 +68,7 @@ A specification document that all skills reference for their `--test-mode` behav
 | `recipe_generated` | `scope`, `output_path`, `needs_review_count` |
 | `project_assembled` | `component_count`, `manifest_path` |
 
-#### generate-project
+#### generate
 | Event | Fields |
 |-------|--------|
 | `reviewer_spawned` | `recipe_scope`, `specialist` |
@@ -77,7 +77,7 @@ A specification document that all skills reference for their `--test-mode` behav
 | `suggestion_rejected` | `recipe_scope`, `specialist`, `title` |
 | `recipe_updated` | `recipe_scope`, `changes_applied`, `new_version` |
 
-#### build-project
+#### build
 | Event | Fields |
 |-------|--------|
 | `scaffold_created` | `build_system`, `file_count`, `build_command` |
@@ -90,7 +90,7 @@ A specification document that all skills reference for their `--test-mode` behav
 
 ## Test Cases
 
-### analyze-project
+### analyze
 
 **Smoke test** (`specs/analyze-smoke.test.ts`):
 - Target: one of Mike's real repos
@@ -102,10 +102,10 @@ A specification document that all skills reference for their `--test-mode` behav
 - Verify: scope-matcher finds scopes appropriate to the repo's tech stack (e.g., iOS repo gets `recipe.ui.*` scopes)
 - Verify: recipe-writer generates recipes for all approved scopes
 
-### generate-project
+### generate
 
 **Smoke test** (`specs/generate-smoke.test.ts`):
-- Target: an existing cookbook project on disk (either from a prior analyze-project run or a pre-built fixture). The test config specifies the path via `TEST_TARGET_PROJECT` env var.
+- Target: an existing cookbook project on disk (either from a prior analyze run or a pre-built fixture). The test config specifies the path via `TEST_TARGET_PROJECT` env var.
 - Verify: at least 1 recipe reviewed, review files written, recipe versions bumped
 - Timeout: 16 minutes
 
@@ -113,7 +113,7 @@ A specification document that all skills reference for their `--test-mode` behav
 - Verify: specialist assignment matches recipe content (UI recipe gets UI/UX specialist)
 - Verify: all assigned specialists produce reviews
 
-### build-project
+### build
 
 **Smoke test** (`specs/build-smoke.test.ts`):
 - Target: an existing cookbook project on disk (same source as generate tests — path from `TEST_TARGET_PROJECT` env var)
@@ -133,7 +133,7 @@ A specification document that all skills reference for their `--test-mode` behav
 **Pipeline test** (`specs/pipeline.test.ts`):
 - Run: analyze → generate → build on the same repo
 - Verify: full pipeline produces output at each stage
-- Verify: build-project's input is generate-project's output
+- Verify: build's input is generate's output
 - Deferred until individual skill tests are stable
 
 ## Harness Changes
@@ -203,7 +203,7 @@ Key behaviors:
 - Keep `simulated-user` agent — interview is the only skill that needs it
 - Update existing test assertions to handle the new field names (backward-compatible migration)
 
-### analyze-project, generate-project, build-project
+### analyze, generate, build
 
 - Add `--test-mode` flag handling
 - Add `--target <path>` flag for specifying input
@@ -216,11 +216,11 @@ Key behaviors:
 2. Add `lib/log-parser.ts` to the harness
 3. Extend `lib/runner.ts` with `runSkill()`
 4. Extend `lib/assertions.ts` with skill-agnostic assertions
-5. Add `--test-mode` to analyze-project SKILL.md
+5. Add `--test-mode` to analyze SKILL.md
 6. Write `specs/analyze-smoke.test.ts`
-7. Add `--test-mode` to generate-project SKILL.md
+7. Add `--test-mode` to generate SKILL.md
 8. Write `specs/generate-smoke.test.ts`
-9. Add `--test-mode` to build-project SKILL.md
+9. Add `--test-mode` to build SKILL.md
 10. Write `specs/build-smoke.test.ts` and other build specs
 11. Migrate interview's test-log format to unified schema
 12. Update existing interview test assertions
@@ -232,5 +232,5 @@ When ready to replace real project targets with constrained fixtures:
 - Create minimal repos (2-3 files each) targeting specific platforms
 - Derive from interview personas (Sarah's iOS app, Marcus's SaaS, Priya's marketplace)
 - Store in `tests/fixtures/repos/` (small, committed to the repo)
-- Store pre-built cookbook projects in `tests/fixtures/projects/` (output of analyze-project on fixture repos)
+- Store pre-built cookbook projects in `tests/fixtures/projects/` (output of analyze on fixture repos)
 - Each fixture designed to exercise specific code paths (iOS scaffolding, multi-platform, empty repo edge case)

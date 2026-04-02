@@ -1,6 +1,6 @@
 ---
 name: build-runner
-description: Runs the platform build toolchain, captures errors, attempts fixes, and retries. Use during build-project to compile the generated code.
+description: Runs the platform build toolchain, captures errors, attempts fixes, and retries. Use during build to compile the generated code.
 tools:
   - Read
   - Glob

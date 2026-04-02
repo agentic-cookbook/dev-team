@@ -1,5 +1,5 @@
 ---
-name: dev-team-build-project
+name: dev-team-build
 version: 0.1.0
 description: Builds a working project from a cookbook project — scaffolds native build system, generates code from recipes with sequential specialist augmentation, compiles, and smoke tests
 allowed-tools: Read, Glob, Grep, Agent, Write, Edit, AskUserQuestion, Bash(git *), Bash(mkdir *), Bash(ls *), Bash(date *), Bash(cat *), Bash(cp *), Bash(chmod *), Bash(xcodebuild *), Bash(swift *), Bash(gradle *), Bash(./gradlew *), Bash(npm *), Bash(npx *), Bash(cargo *), Bash(make *), Bash(cmake *), Bash(dotnet *), Bash(python *), Bash(node *), Bash(wc *)
@@ -10,9 +10,9 @@ argument-hint: <project-path> [--output <path>] [--recipe <scope>] [--platform <
 
 ## Startup
 
-**First action**: If `$ARGUMENTS` is `--version`, print `build-project v0.1.0` and stop.
+**First action**: If `$ARGUMENTS` is `--version`, print `build v0.1.0` and stop.
 
-Otherwise, print `build-project v0.1.0` as the first line of output, then proceed.
+Otherwise, print `build v0.1.0` as the first line of output, then proceed.
 
 **Version check**: Read `${CLAUDE_SKILL_DIR}/SKILL.md` from disk and extract the `version:` field from frontmatter. If it differs from this skill's version (0.1.0), print:
 
@@ -73,7 +73,7 @@ If the output directory already exists with generated code, ask: "I see code alr
 
 Read the specialist-to-cookbook mapping at `${CLAUDE_PLUGIN_ROOT}/research/cookbook-specialist-mapping.md`.
 
-For each recipe, determine which specialists are relevant using the same mapping logic as `/dev-team-generate-project`:
+For each recipe, determine which specialists are relevant using the same mapping logic as `/dev-team-generate`:
 
 1. **Recipe category** → domain specialists:
    - `recipe.ui.*` → UI/UX & Design, Accessibility
@@ -368,7 +368,7 @@ title: "Build Summary — <project-name>"
 type: research
 created: <ISO 8601 datetime>
 modified: <ISO 8601 datetime>
-author: build-project
+author: build
 summary: "Built <project-name> from <N> recipes with <M> specialist passes"
 ---
 
@@ -477,7 +477,7 @@ If the session is interrupted at any point, everything up to the last completed 
 ## Error Handling
 
 - **No `cookbook-project.json` found**: Ask user for the correct path.
-- **Empty component tree**: "This project has no recipes. Run `/dev-team-analyze-project` first."
+- **Empty component tree**: "This project has no recipes. Run `/dev-team-analyze` first."
 - **Scaffolder fails**: Report the error and stop. Can't generate code without a project skeleton.
 - **Code generator fails for a recipe**: Skip that recipe, note in summary, continue with others.
 - **Specialist pass fails**: Log which specialist failed for which recipe, continue with next specialist. Code from the previous pass is still on disk.

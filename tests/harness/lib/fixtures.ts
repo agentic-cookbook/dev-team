@@ -23,7 +23,7 @@ const FIXTURES_DIR = join(import.meta.dirname, "../../fixtures");
  */
 export const REPO_PATHS = {
   interviewTeam: resolve(import.meta.dirname, "../../.."),
-  testOutput: resolve(import.meta.dirname, "../../../../my-agentic-dev-team-tests"),
+  testOutput: resolve(import.meta.dirname, "../../../../dev-team-tests"),
   cookbook: resolve(import.meta.dirname, "../../../../agentic-cookbook"),
 };
 
@@ -96,7 +96,7 @@ export function testProjectDir(projectName: string): string {
 }
 
 /**
- * Get the target repo path for analyze-project tests.
+ * Get the target repo path for analyze tests.
  * Reads from TEST_TARGET_REPO env var, or falls back to a default.
  */
 export function getTargetRepo(): string {

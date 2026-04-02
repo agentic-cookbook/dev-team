@@ -143,7 +143,7 @@ Ensure these directories exist in the output:
   context/
     research/       — architecture-map.md and scope-report.md already here
     decisions/      — create empty
-    reviews/        — create empty (for generate-project phase)
+    reviews/        — create empty (for generate phase)
   resources/        — create empty
 ```
 

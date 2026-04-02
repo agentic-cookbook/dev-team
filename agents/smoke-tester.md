@@ -1,6 +1,6 @@
 ---
 name: smoke-tester
-description: Runs launch tests and generated test suites from recipe conformance test vectors. Use during build-project to verify the built project works.
+description: Runs launch tests and generated test suites from recipe conformance test vectors. Use during build to verify the built project works.
 tools:
   - Read
   - Glob

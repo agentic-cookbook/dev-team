@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add `--test-mode` with unified test logging to all four skills (interview, analyze-project, generate-project, build-project) and extend the Vitest harness with specs for each.
+**Goal:** Add `--test-mode` with unified test logging to all four skills (interview, analyze, generate, build) and extend the Vitest harness with specs for each.
 
 **Architecture:** A shared test-mode contract (`tests/test-mode-spec.md`) defines common behavior and log schema. Each skill references it. The existing Vitest harness in `tests/harness/` is extended with a generic `runSkill()` function, a unified log parser, and skill-agnostic assertions. New E2E specs verify each skill's output.
 
@@ -80,7 +80,7 @@ Plus event-specific fields documented below.
 | `analysis_written` | `analysis_file`, `transcript_id` |
 | `checklist_updated` | `topic`, `action` |
 
-### analyze-project Events
+### analyze Events
 
 | Event | Additional Fields |
 |-------|------------------|
@@ -89,7 +89,7 @@ Plus event-specific fields documented below.
 | `recipe_generated` | `scope`, `output_path`, `needs_review_count` |
 | `project_assembled` | `component_count`, `manifest_path` |
 
-### generate-project Events
+### generate Events
 
 | Event | Additional Fields |
 |-------|------------------|
@@ -99,7 +99,7 @@ Plus event-specific fields documented below.
 | `suggestion_rejected` | `recipe_scope`, `specialist`, `title` |
 | `recipe_updated` | `recipe_scope`, `changes_applied`, `new_version` |
 
-### build-project Events
+### build Events
 
 | Event | Additional Fields |
 |-------|------------------|
@@ -116,18 +116,18 @@ Plus event-specific fields documented below.
 Skills write test log events by appending a JSON line to `test-log.jsonl` in the project output directory using the Write tool. Example:
 
 At each phase boundary:
-- Before starting Phase 1: write `{"skill": "analyze-project", "phase": "architecture-scan", "event": "phase_started", "timestamp": "<now>"}`
-- After completing Phase 1: write `{"skill": "analyze-project", "phase": "architecture-scan", "event": "phase_completed", "duration_ms": <elapsed>, "timestamp": "<now>"}`
+- Before starting Phase 1: write `{"skill": "analyze", "phase": "architecture-scan", "event": "phase_started", "timestamp": "<now>"}`
+- After completing Phase 1: write `{"skill": "analyze", "phase": "architecture-scan", "event": "phase_completed", "duration_ms": <elapsed>, "timestamp": "<now>"}`
 
 At each agent interaction:
-- Before spawning: write `{"skill": "analyze-project", "phase": "architecture-scan", "event": "agent_spawned", "agent": "codebase-scanner", "timestamp": "<now>"}`
-- After return: write `{"skill": "analyze-project", "phase": "architecture-scan", "event": "agent_completed", "agent": "codebase-scanner", "status": "success", "timestamp": "<now>"}`
+- Before spawning: write `{"skill": "analyze", "phase": "architecture-scan", "event": "agent_spawned", "agent": "codebase-scanner", "timestamp": "<now>"}`
+- After return: write `{"skill": "analyze", "phase": "architecture-scan", "event": "agent_completed", "agent": "codebase-scanner", "status": "success", "timestamp": "<now>"}`
 
 At each file write:
-- After persisting: write `{"skill": "analyze-project", "phase": "recipe-generation", "event": "file_written", "path": "app/ui/file-tree-browser.md", "file_type": "recipe", "timestamp": "<now>"}`
+- After persisting: write `{"skill": "analyze", "phase": "recipe-generation", "event": "file_written", "path": "app/ui/file-tree-browser.md", "file_type": "recipe", "timestamp": "<now>"}`
 
 At the end:
-- Write `{"skill": "analyze-project", "phase": "summary", "event": "test_complete", "phases_completed": 5, "agents_spawned": 8, "files_written": 12, "errors": 0, "timestamp": "<now>"}`
+- Write `{"skill": "analyze", "phase": "summary", "event": "test_complete", "phases_completed": 5, "agents_spawned": 8, "files_written": 12, "errors": 0, "timestamp": "<now>"}`
 ```
 
 Write this to `tests/test-mode-spec.md`.
@@ -534,7 +534,7 @@ Add these functions at the end of `tests/harness/lib/fixtures.ts`:
 
 ```typescript
 /**
- * Get the target repo path for analyze-project tests.
+ * Get the target repo path for analyze tests.
  * Reads from TEST_TARGET_REPO env var, or falls back to a default.
  */
 export function getTargetRepo(): string {
@@ -615,14 +615,14 @@ git push
 
 ---
 
-### Task 7: Add --test-mode to analyze-project skill
+### Task 7: Add --test-mode to analyze skill
 
 **Files:**
-- Modify: `skills/analyze-project/SKILL.md`
+- Modify: `skills/analyze/SKILL.md`
 
 - [ ] **Step 1: Add Test Mode section**
 
-Add this section before the `## Error Handling` section at the end of `skills/analyze-project/SKILL.md`:
+Add this section before the `## Error Handling` section at the end of `skills/analyze/SKILL.md`:
 
 ```markdown
 ## Test Mode
@@ -676,14 +676,14 @@ argument-hint: <repo-path> [--output <path>] [--config <path>] [--test-mode] [--
 - [ ] **Step 3: Commit**
 
 ```bash
-git add skills/analyze-project/SKILL.md
-git commit -m "Add --test-mode with unified logging to analyze-project skill"
+git add skills/analyze/SKILL.md
+git commit -m "Add --test-mode with unified logging to analyze skill"
 git push
 ```
 
 ---
 
-### Task 8: Write analyze-project smoke test
+### Task 8: Write analyze smoke test
 
 **Files:**
 - Create: `tests/harness/specs/analyze-smoke.test.ts`
@@ -692,7 +692,7 @@ git push
 
 ```typescript
 /**
- * Smoke test — analyze-project on a real repo.
+ * Smoke test — analyze on a real repo.
  *
  * Verifies:
  * - Skill runs without errors
@@ -723,7 +723,7 @@ import { parseLog, testSummary } from "../lib/log-parser.js";
 import { existsSync, readdirSync, rmSync } from "fs";
 import { join } from "path";
 
-describe("analyze-project smoke test", () => {
+describe("analyze smoke test", () => {
   let result: RunResult;
   let outputDir: string;
   let configPath: string;
@@ -742,12 +742,12 @@ describe("analyze-project smoke test", () => {
       rmSync(outputDir, { recursive: true, force: true });
     }
 
-    console.log("[analyze-smoke] Starting analyze-project run...");
+    console.log("[analyze-smoke] Starting analyze run...");
     console.log(`[analyze-smoke] target: ${targetRepo}`);
     console.log(`[analyze-smoke] output: ${outputDir}`);
 
     result = await runSkill({
-      skillName: "analyze-project",
+      skillName: "analyze",
       cwd: targetRepo,
       configPath,
       targetPath: targetRepo,
@@ -818,20 +818,20 @@ Write this to `tests/harness/specs/analyze-smoke.test.ts`.
 
 ```bash
 git add tests/harness/specs/analyze-smoke.test.ts
-git commit -m "Add analyze-project smoke test spec"
+git commit -m "Add analyze smoke test spec"
 git push
 ```
 
 ---
 
-### Task 9: Add --test-mode to generate-project skill
+### Task 9: Add --test-mode to generate skill
 
 **Files:**
-- Modify: `skills/generate-project/SKILL.md`
+- Modify: `skills/generate/SKILL.md`
 
 - [ ] **Step 1: Add Test Mode section**
 
-Add this section before the `## Aggressive Persistence` section in `skills/generate-project/SKILL.md`:
+Add this section before the `## Aggressive Persistence` section in `skills/generate/SKILL.md`:
 
 ```markdown
 ## Test Mode
@@ -883,14 +883,14 @@ argument-hint: <project-path> [--specialist <domain>] [--recipe <scope>] [--conf
 - [ ] **Step 3: Commit**
 
 ```bash
-git add skills/generate-project/SKILL.md
-git commit -m "Add --test-mode with unified logging to generate-project skill"
+git add skills/generate/SKILL.md
+git commit -m "Add --test-mode with unified logging to generate skill"
 git push
 ```
 
 ---
 
-### Task 10: Write generate-project smoke test
+### Task 10: Write generate smoke test
 
 **Files:**
 - Create: `tests/harness/specs/generate-smoke.test.ts`
@@ -899,7 +899,7 @@ git push
 
 ```typescript
 /**
- * Smoke test — generate-project on an existing cookbook project.
+ * Smoke test — generate on an existing cookbook project.
  *
  * Verifies:
  * - Skill runs without errors
@@ -924,7 +924,7 @@ import { parseLog, filterByEvent, testSummary } from "../lib/log-parser.js";
 import { existsSync } from "fs";
 import { join } from "path";
 
-describe("generate-project smoke test", () => {
+describe("generate smoke test", () => {
   let result: RunResult;
   let projectDir: string;
   let configPath: string;
@@ -933,11 +933,11 @@ describe("generate-project smoke test", () => {
     projectDir = getTargetProject();
     configPath = createTestConfig();
 
-    console.log("[generate-smoke] Starting generate-project run...");
+    console.log("[generate-smoke] Starting generate run...");
     console.log(`[generate-smoke] project: ${projectDir}`);
 
     result = await runSkill({
-      skillName: "generate-project",
+      skillName: "generate",
       cwd: projectDir,
       configPath,
       targetPath: projectDir,
@@ -989,20 +989,20 @@ Write this to `tests/harness/specs/generate-smoke.test.ts`.
 
 ```bash
 git add tests/harness/specs/generate-smoke.test.ts
-git commit -m "Add generate-project smoke test spec"
+git commit -m "Add generate smoke test spec"
 git push
 ```
 
 ---
 
-### Task 11: Add --test-mode to build-project skill
+### Task 11: Add --test-mode to build skill
 
 **Files:**
-- Modify: `skills/build-project/SKILL.md`
+- Modify: `skills/build/SKILL.md`
 
 - [ ] **Step 1: Add Test Mode section**
 
-Add this section before the `## Aggressive Persistence` section in `skills/build-project/SKILL.md`:
+Add this section before the `## Aggressive Persistence` section in `skills/build/SKILL.md`:
 
 ```markdown
 ## Test Mode
@@ -1059,14 +1059,14 @@ argument-hint: <project-path> [--output <path>] [--recipe <scope>] [--platform <
 - [ ] **Step 3: Commit**
 
 ```bash
-git add skills/build-project/SKILL.md
-git commit -m "Add --test-mode with unified logging to build-project skill"
+git add skills/build/SKILL.md
+git commit -m "Add --test-mode with unified logging to build skill"
 git push
 ```
 
 ---
 
-### Task 12: Write build-project smoke test
+### Task 12: Write build smoke test
 
 **Files:**
 - Create: `tests/harness/specs/build-smoke.test.ts`
@@ -1075,7 +1075,7 @@ git push
 
 ```typescript
 /**
- * Smoke test — build-project on an existing cookbook project.
+ * Smoke test — build on an existing cookbook project.
  *
  * Verifies:
  * - Skill runs without errors
@@ -1101,7 +1101,7 @@ import { parseLog, filterByEvent, testSummary } from "../lib/log-parser.js";
 import { existsSync, readFileSync } from "fs";
 import { join } from "path";
 
-describe("build-project smoke test", () => {
+describe("build smoke test", () => {
   let result: RunResult;
   let projectDir: string;
   let outputDir: string;
@@ -1111,17 +1111,17 @@ describe("build-project smoke test", () => {
     projectDir = getTargetProject();
     configPath = createTestConfig();
 
-    // Derive output dir — build-project creates <project>/../<name>-build/
+    // Derive output dir — build creates <project>/../<name>-build/
     const projectName = projectDir.split("/").pop()!;
     const parentDir = join(projectDir, "..");
     outputDir = join(parentDir, `${projectName}-build`);
 
-    console.log("[build-smoke] Starting build-project run...");
+    console.log("[build-smoke] Starting build run...");
     console.log(`[build-smoke] project: ${projectDir}`);
     console.log(`[build-smoke] expected output: ${outputDir}`);
 
     result = await runSkill({
-      skillName: "build-project",
+      skillName: "build",
       cwd: projectDir,
       configPath,
       targetPath: projectDir,
@@ -1209,7 +1209,7 @@ Write this to `tests/harness/specs/build-smoke.test.ts`.
 
 ```bash
 git add tests/harness/specs/build-smoke.test.ts
-git commit -m "Add build-project smoke test spec"
+git commit -m "Add build smoke test spec"
 git push
 ```
 
@@ -1335,7 +1335,7 @@ export default defineConfig({
 
 ```bash
 git add tests/harness/vitest.e2e.config.ts
-git commit -m "Increase E2E test timeout to 31 minutes for build-project tests"
+git commit -m "Increase E2E test timeout to 31 minutes for build tests"
 git push
 ```
 
@@ -1349,7 +1349,7 @@ After all tasks are complete, verify the infrastructure works:
 2. **Run analyze smoke test:**
    ```bash
    cd tests/harness
-   TEST_TARGET_REPO=~/projects/agentic-tools/agentic-cookbook npm run test:analyze:smoke
+   TEST_TARGET_REPO=~/projects/agentic-cookbook/agentic-cookbook npm run test:analyze:smoke
    ```
 3. **Run generate smoke test** (requires a cookbook project from a prior analyze run):
    ```bash

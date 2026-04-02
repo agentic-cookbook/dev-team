@@ -7,9 +7,9 @@ A Claude Code plugin for multi-agent product discovery, analysis, and project bu
 | Skill | Command | Description |
 |-------|---------|-------------|
 | **interview** | `/dev-team:interview` | Product discovery — structured and exploratory questioning to fully scope a product |
-| **analyze-project** | `/dev-team:analyze-project` | Reverse-engineer a codebase into a cookbook project |
-| **generate-project** | `/dev-team:generate-project` | Specialist review and improvement of cookbook recipes |
-| **build-project** | `/dev-team:build-project` | Build working code from a cookbook project |
+| **analyze** | `/dev-team:analyze` | Reverse-engineer a codebase into a cookbook project |
+| **generate** | `/dev-team:generate` | Specialist review and improvement of cookbook recipes |
+| **build** | `/dev-team:build` | Build working code from a cookbook project |
 
 ## Installation
 
@@ -58,9 +58,9 @@ Each skill orchestrates a team of specialist agents — domain experts (security
 agents/                    # 14 subagent definitions
 skills/
   interview/               # Product discovery interview
-  analyze-project/         # Codebase → cookbook project
-  generate-project/        # Specialist recipe review
-  build-project/           # Cookbook project → working code
+  analyze/                 # Codebase → cookbook project
+  generate/                # Specialist recipe review
+  build/                   # Cookbook project → working code
 research/
   specialists/             # 18 specialist question sets (12 domain + 6 platform)
   cookbook-specialist-mapping.md
