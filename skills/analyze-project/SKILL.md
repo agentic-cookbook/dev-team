@@ -1,5 +1,5 @@
 ---
-name: analyze-project
+name: dev-team-analyze-project
 version: 0.1.0
 description: Reverse-engineers an existing codebase into a cookbook project — discovers architecture, matches recipe scopes, generates recipes, and scaffolds the project directory
 allowed-tools: Read, Glob, Grep, Agent, Write, Edit, AskUserQuestion, Bash(git *), Bash(mkdir *), Bash(ls *), Bash(date *), Bash(cat *), Bash(wc *)
@@ -194,14 +194,14 @@ summary: "Automated analysis of <repo-name> into a cookbook project"
 <list recipes with <!-- NEEDS REVIEW --> markers and which sections>
 
 ## Next Steps
-Run `/generate-project <output-path>` to have specialists review and improve each recipe.
+Run `/dev-team-generate-project <output-path>` to have specialists review and improve each recipe.
 ```
 
 Present the summary to the user:
 - Component tree visualization
 - Count of recipes generated vs. needing review
 - The output path
-- "Your cookbook project is at `<output>`. Run `/generate-project <output>` to have specialists review and improve each recipe."
+- "Your cookbook project is at `<output>`. Run `/dev-team-generate-project <output>` to have specialists review and improve each recipe."
 
 ## Aggressive Persistence
 

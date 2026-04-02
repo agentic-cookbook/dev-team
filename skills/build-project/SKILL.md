@@ -1,5 +1,5 @@
 ---
-name: build-project
+name: dev-team-build-project
 version: 0.1.0
 description: Builds a working project from a cookbook project — scaffolds native build system, generates code from recipes with sequential specialist augmentation, compiles, and smoke tests
 allowed-tools: Read, Glob, Grep, Agent, Write, Edit, AskUserQuestion, Bash(git *), Bash(mkdir *), Bash(ls *), Bash(date *), Bash(cat *), Bash(cp *), Bash(chmod *), Bash(xcodebuild *), Bash(swift *), Bash(gradle *), Bash(./gradlew *), Bash(npm *), Bash(npx *), Bash(cargo *), Bash(make *), Bash(cmake *), Bash(dotnet *), Bash(python *), Bash(node *), Bash(wc *)
@@ -73,7 +73,7 @@ If the output directory already exists with generated code, ask: "I see code alr
 
 Read the specialist-to-cookbook mapping at `${CLAUDE_PLUGIN_ROOT}/research/cookbook-specialist-mapping.md`.
 
-For each recipe, determine which specialists are relevant using the same mapping logic as `/generate-project`:
+For each recipe, determine which specialists are relevant using the same mapping logic as `/dev-team-generate-project`:
 
 1. **Recipe category** → domain specialists:
    - `recipe.ui.*` → UI/UX & Design, Accessibility
@@ -477,7 +477,7 @@ If the session is interrupted at any point, everything up to the last completed 
 ## Error Handling
 
 - **No `cookbook-project.json` found**: Ask user for the correct path.
-- **Empty component tree**: "This project has no recipes. Run `/analyze-project` first."
+- **Empty component tree**: "This project has no recipes. Run `/dev-team-analyze-project` first."
 - **Scaffolder fails**: Report the error and stop. Can't generate code without a project skeleton.
 - **Code generator fails for a recipe**: Skip that recipe, note in summary, continue with others.
 - **Specialist pass fails**: Log which specialist failed for which recipe, continue with next specialist. Code from the previous pass is still on disk.

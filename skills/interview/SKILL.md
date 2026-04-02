@@ -1,5 +1,5 @@
 ---
-name: interview
+name: dev-team-interview
 version: 0.1.0
 description: Product discovery interview — guides users through structured and exploratory questioning to fully scope a product they want to build
 allowed-tools: Read, Glob, Grep, Agent, Write, Edit, AskUserQuestion, Bash(git *), Bash(mkdir *), Bash(ls *), Bash(date *), Bash(cat *)

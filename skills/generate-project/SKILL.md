@@ -1,5 +1,5 @@
 ---
-name: generate-project
+name: dev-team-generate-project
 version: 0.1.0
 description: Reviews and improves a cookbook project using specialist expertise — specialists review each recipe, suggest improvements, user approves/rejects, recipes updated
 allowed-tools: Read, Glob, Grep, Agent, Write, Edit, AskUserQuestion, Bash(git *), Bash(mkdir *), Bash(ls *), Bash(date *), Bash(cat *)
@@ -287,4 +287,4 @@ Follow the interview system's persistence pattern:
 - **Recipe file missing** (referenced in manifest but not on disk): Skip that recipe, note in summary.
 - **Reviewer fails**: Note the failure, continue with remaining specialists/recipes. Report in summary.
 - **No specialists match a recipe**: Skip review for that recipe, note in summary.
-- **User wants to stop mid-review**: Save progress. All reviews and changes completed so far are already on disk. The user can resume by running `/generate-project` again with `--recipe <scope>` to pick up where they left off.
+- **User wants to stop mid-review**: Save progress. All reviews and changes completed so far are already on disk. The user can resume by running `/dev-team-generate-project` again with `--recipe <scope>` to pick up where they left off.

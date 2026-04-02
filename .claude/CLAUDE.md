@@ -4,10 +4,10 @@ A Claude Code plugin for multi-agent product discovery, analysis, and project bu
 
 ## Skills
 
-- `/dev-team:interview` — Product discovery interview
-- `/dev-team:analyze-project` — Reverse-engineer codebase into cookbook project
-- `/dev-team:generate-project` — Specialist recipe review
-- `/dev-team:build-project` — Build working code from cookbook project
+- `/dev-team-interview` — Product discovery interview
+- `/dev-team-analyze-project` — Reverse-engineer codebase into cookbook project
+- `/dev-team-generate-project` — Specialist recipe review
+- `/dev-team-build-project` — Build working code from cookbook project
 
 ## Architecture
 
@@ -38,7 +38,7 @@ tests/                     # Test harness and personas
 
 Symlinks in `.claude/` point to top-level dirs for local testing. These are gitignored.
 
-To test locally: `cd` into this repo and invoke `/interview`.
+To test locally: `cd` into this repo and invoke `/dev-team-interview`.
 
 ## Config
 
