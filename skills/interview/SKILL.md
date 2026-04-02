@@ -302,13 +302,16 @@ When `$ARGUMENTS` contains `--test-mode`, the skill runs in automated testing mo
 
 ### Behavior Changes
 1. **No real user interaction.** Instead of asking the user questions via AskUserQuestion, spawn the `agents/simulated-user.md` agent with the persona file and the question. Use the simulated user's response as the answer.
-2. **Flow logging.** Write a structured log to `<interview_repo>/projects/<project>/test-log.jsonl`. Each line is a JSON object:
-   - `{"event": "specialist_invoked", "specialist": "<domain>", "mode": "structured|exploratory", "timestamp": "..."}`
-   - `{"event": "question_asked", "specialist": "<domain>", "question": "<text>", "timestamp": "..."}`
-   - `{"event": "answer_received", "transcript_file": "<filename>", "timestamp": "..."}`
-   - `{"event": "analysis_written", "analysis_file": "<filename>", "transcript_id": "<id>", "timestamp": "..."}`
-   - `{"event": "checklist_updated", "topic": "<topic>", "action": "covered|discovered", "timestamp": "..."}`
-3. **Bounded execution.** Stop after `--max-exchanges` question-answer pairs. Write a final summary to the log: `{"event": "test_complete", "exchanges": N, "specialists_invoked": [...], "files_written": N, "timestamp": "..."}`.
+2. **Flow logging.** Follow the unified log schema defined in `<interview_team_repo>/tests/test-mode-spec.md`. Write events to `<interview_repo>/projects/<project>/test-log.jsonl`. Each line is a JSON object with base fields `skill`, `phase`, `event`, `timestamp`:
+   - `{"skill": "interview", "phase": "interview-loop", "event": "specialist_invoked", "specialist": "<domain>", "mode": "structured|exploratory", "timestamp": "..."}`
+   - `{"skill": "interview", "phase": "interview-loop", "event": "question_asked", "specialist": "<domain>", "question_id": "<id>", "timestamp": "..."}`
+   - `{"skill": "interview", "phase": "interview-loop", "event": "answer_received", "transcript_file": "<filename>", "timestamp": "..."}`
+   - `{"skill": "interview", "phase": "interview-loop", "event": "analysis_written", "analysis_file": "<filename>", "transcript_id": "<id>", "timestamp": "..."}`
+   - `{"skill": "interview", "phase": "interview-loop", "event": "checklist_updated", "topic": "<topic>", "action": "covered|discovered", "timestamp": "..."}`
+   - Also write `phase_started`/`phase_completed` for: `startup`, `interview-loop`, `summary`
+   - Also write `agent_spawned`/`agent_completed` for: `transcript-analyzer`, `specialist-interviewer`, `specialist-analyst`, `simulated-user`
+   - Also write `file_written` for: each transcript file, each analysis file, checklist updates
+3. **Bounded execution.** Stop after `--max-exchanges` question-answer pairs. Write a final summary to the log: `{"skill": "interview", "phase": "summary", "event": "test_complete", "phases_completed": N, "agents_spawned": N, "files_written": N, "errors": 0, "timestamp": "..."}`.
 4. **No profile updates.** Don't modify the simulated user's profile — it's a test fixture.
 5. **Skip config setup.** Config must already exist at the `--config` path. If it doesn't, fail immediately with a clear error.
 
