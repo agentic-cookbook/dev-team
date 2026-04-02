@@ -30,11 +30,13 @@ Your persona: a quality-focused project lead running a design review. You presen
 
 ## Configuration
 
-**Config path**: If `$ARGUMENTS` contains `--config <path>`, use that path. Otherwise use `~/.agentic-interviewer/config.json`.
+**Config path**: If `$ARGUMENTS` contains `--config <path>`, use that path. Otherwise use `~/.agentic-cookbook/dev-team/config.json`.
 
-Read the config. Required fields: `cookbook_repo`, `interview_team_repo`, `interview_repo`, `user_name`.
+**Migration**: If `~/.agentic-cookbook/dev-team/config.json` doesn't exist but `~/.agentic-interviewer/config.json` does, read the old config, rename `interview_repo` to `workspace_repo`, remove `interview_team_repo`, write to the new path, and use it.
 
-If config doesn't exist: "I need a config file. Run `/interview` first to set one up, or create `~/.agentic-interviewer/config.json` manually."
+Read the config. Required fields: `cookbook_repo`, `workspace_repo`, `user_name`.
+
+If config doesn't exist: "I need a config file. Run `/dev-team:interview` first to set one up, or create `~/.agentic-cookbook/dev-team/config.json` manually."
 
 ## Phase 1 — Load Project
 
@@ -59,7 +61,7 @@ If config doesn't exist: "I need a config file. Run `/interview` first to set on
 
 ## Phase 2 — Specialist Assignment
 
-Read the specialist-to-cookbook mapping at `<interview_team_repo>/research/cookbook-specialist-mapping.md`.
+Read the specialist-to-cookbook mapping at `${CLAUDE_PLUGIN_ROOT}/research/cookbook-specialist-mapping.md`.
 
 For each recipe, determine which specialists are relevant based on:
 
@@ -114,7 +116,7 @@ For each assigned specialist, spawn a **recipe-reviewer** agent (`agents/recipe-
 Provide:
 - **Recipe path** — the recipe file to review
 - **Specialist domain** — e.g., "security"
-- **Specialist question set path** — `<interview_team_repo>/research/specialists/<domain>.md`
+- **Specialist question set path** — `${CLAUDE_PLUGIN_ROOT}/research/specialists/<domain>.md`
 - **Cookbook sources** — relevant guidelines, principles, compliance paths for this domain (use the cookbook-specialist-mapping to determine which)
 - **Original source code paths** — from the scope report's evidence paths (if `context/research/scope-report.md` exists)
 - **Cookbook repo path** from config
@@ -235,7 +237,7 @@ Present the final summary:
 
 ## Test Mode
 
-When `$ARGUMENTS` contains `--test-mode`, follow the test mode contract at `<interview_team_repo>/tests/test-mode-spec.md`.
+When `$ARGUMENTS` contains `--test-mode`, follow the test mode contract at `${CLAUDE_PLUGIN_ROOT}/tests/test-mode-spec.md`.
 
 Read the contract file at the start of test mode to understand the unified log schema.
 
