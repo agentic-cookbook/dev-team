@@ -37,6 +37,7 @@ research/
   specialists/             # 19 specialist question sets (13 domain + 6 platform)
   cookbook-specialist-mapping.md
 scripts/                   # Shell scripts for deterministic operations
+  db/                      # Database shell script API (db-init, db-project, db-run, etc.)
 planning/
   design-spec.md           # Full design specification
 tests/                     # Test harness and personas
@@ -47,6 +48,14 @@ tests/                     # Test harness and personas
 Symlinks in `.claude/` point to top-level dirs for local testing. These are gitignored.
 
 To test locally: `cd` into this repo and invoke `/dev-team interview`.
+
+## Database
+
+Shared state: `~/.agentic-cookbook/dev-team/dev-team.db` (SQLite)
+
+Tracks workflow runs, agent runs, findings, artifacts (full content), specialist assignments, comparisons, and agent activity messages. Accessed via shell scripts in `scripts/db/`.
+
+Key scripts: `db-init.sh` (create/migrate), `db-project.sh`, `db-run.sh`, `db-agent.sh`, `db-finding.sh`, `db-artifact.sh`, `db-message.sh`, `db-query.sh` (ad-hoc SQL), `db-cleanup.sh` (age out old runs).
 
 ## Config
 
