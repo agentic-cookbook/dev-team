@@ -1,13 +1,13 @@
 import { defineConfig } from "vitest/config";
 
-/** E2E config — only interview tests that invoke Claude. */
+/** E2E config — skill tests that invoke Claude. */
 export default defineConfig({
   test: {
     globals: true,
     include: ["specs/*.test.ts"],
     exclude: ["specs/unit/**"],
-    testTimeout: 960_000, // 16 minutes — interviews with agent spawns are slow
-    hookTimeout: 960_000, // 16 minutes — beforeAll runs the interview
+    testTimeout: 1_860_000, // 31 minutes — build tests are the longest
+    hookTimeout: 1_860_000, // 31 minutes — beforeAll runs the skill
     reporters: ["verbose"],
     pool: "threads",
     poolOptions: {
