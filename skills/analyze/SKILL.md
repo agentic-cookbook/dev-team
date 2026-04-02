@@ -14,11 +14,7 @@ argument-hint: <repo-path> [--output <path>] [--config <path>] [--test-mode] [--
 
 Otherwise, print `analyze v0.1.0` as the first line of output, then proceed.
 
-**Version check**: Read `${CLAUDE_SKILL_DIR}/SKILL.md` from disk and extract the `version:` field from frontmatter. If it differs from this skill's version (0.1.0), print:
-
-> Warning: This skill is running v0.1.0 but vA.B.C is installed. Restart the session to use the latest version.
-
-Continue running — do not stop.
+**Version check**: Run `${CLAUDE_PLUGIN_ROOT}/scripts/version-check.sh "${CLAUDE_SKILL_DIR}" "0.1.0"`. If it outputs a warning, print it and continue.
 
 ## Overview
 
@@ -34,20 +30,13 @@ Your persona: a methodical reverse-engineering lead. You present findings to the
 
 ## Configuration
 
-**Config path**: If `$ARGUMENTS` contains `--config <path>`, use that path. Otherwise use `~/.agentic-cookbook/dev-team/config.json`.
+**Config path**: If `$ARGUMENTS` contains `--config <path>`, use that path.
 
-**Migration**: If `~/.agentic-cookbook/dev-team/config.json` doesn't exist but `~/.agentic-interviewer/config.json` does, read the old config, rename `interview_repo` to `workspace_repo`, remove `interview_team_repo`, write to the new path, and use it.
+Run: `${CLAUDE_PLUGIN_ROOT}/scripts/load-config.sh` with `--config <path>` if specified. If the script fails (exit code 1), the error message tells the user what's wrong.
 
-Read the config file. It must contain:
-```json
-{
-  "workspace_repo": "<path>",
-  "cookbook_repo": "<path>",
-  "user_name": "<name>"
-}
-```
+Extract `cookbook_repo`, `workspace_repo`, and `user_name` from the JSON output.
 
-If the config doesn't exist, tell the user: "I need a config file. Run `/dev-team:interview` first to set one up, or create `~/.agentic-cookbook/dev-team/config.json` manually."
+If config doesn't exist: "I need a config file. Create `~/.agentic-cookbook/dev-team/config.json` with `workspace_repo`, `cookbook_repo`, and `user_name` fields."
 
 ## Resolve Paths
 
@@ -216,42 +205,7 @@ If the session is interrupted at any point, everything up to the last completed 
 
 ## Test Mode
 
-When `$ARGUMENTS` contains `--test-mode`, follow the test mode contract at `${CLAUDE_PLUGIN_ROOT}/tests/test-mode-spec.md`.
-
-Read the contract file at the start of test mode to understand the unified log schema.
-
-### Test Mode Behavior
-
-1. **Auto-approve all prompts.** Every `AskUserQuestion` call is auto-approved — proceed with the first/default option without waiting for input. This applies to:
-   - Architecture scan confirmation ("Does this look right?")
-   - Scope approval ("Want to add or remove any scopes?")
-   - Overwrite confirmation ("A project already exists...")
-
-2. **Write test log.** Append JSON events to `<output>/test-log.jsonl`:
-
-   Phase boundaries:
-   - `phase_started` / `phase_completed` for: `architecture-scan`, `scope-discovery`, `recipe-generation`, `project-assembly`, `summary`
-
-   Agent interactions:
-   - `agent_spawned` / `agent_completed` for: `codebase-scanner`, `scope-matcher`, `recipe-writer`, `project-assembler`
-
-   Skill-specific events:
-   - `architecture_scanned` — after scanner returns: `tech_stack`, `platforms`, `module_count`
-   - `scopes_matched` — after matcher returns: `count`, `high_confidence`, `medium_confidence`, `low_confidence`
-   - `recipe_generated` — after each recipe writer returns: `scope`, `output_path`, `needs_review_count`
-   - `project_assembled` — after assembler returns: `component_count`, `manifest_path`
-
-   File writes:
-   - `file_written` for every artifact persisted: architecture-map.md, scope-report.md, each recipe, cookbook-project.json, generation-summary.md
-
-   End:
-   - `test_complete` summary
-
-3. **Target path.** The `--target <path>` flag (or first positional arg) specifies the repo to analyze. In test mode, this is required.
-
-4. **No profile updates.** Don't modify any user data.
-
-5. **Config must pre-exist.** Fail immediately if config is missing.
+When `$ARGUMENTS` contains `--test-mode`, follow the test mode contract in `${CLAUDE_PLUGIN_ROOT}/tests/test-mode-spec.md`.
 
 ## Error Handling
 

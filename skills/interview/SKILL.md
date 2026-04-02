@@ -14,11 +14,7 @@ argument-hint: [--version] [--resume] [--summary] [--config <path>] [--test-mode
 
 Otherwise, print `interview v0.1.0` as the first line of output, then proceed.
 
-**Version check**: Read `${CLAUDE_SKILL_DIR}/SKILL.md` from disk and extract the `version:` field from frontmatter. If it differs from this skill's version (0.1.0), print:
-
-> Warning: This skill is running v0.1.0 but vA.B.C is installed. Restart the session to use the latest version.
-
-Continue running — do not stop.
+**Version check**: Run `${CLAUDE_PLUGIN_ROOT}/scripts/version-check.sh "${CLAUDE_SKILL_DIR}" "0.1.0"`. If it outputs a warning, print it and continue.
 
 ## Overview
 
@@ -30,11 +26,13 @@ Your persona: a seasoned engineering project lead who has shipped many products.
 
 ## Configuration
 
-**Config path**: If `$ARGUMENTS` contains `--config <path>`, use that path instead of the default. Otherwise use `~/.agentic-cookbook/dev-team/config.json`.
+**Config path**: If `$ARGUMENTS` contains `--config <path>`, use that path.
 
-**Migration**: If `~/.agentic-cookbook/dev-team/config.json` doesn't exist but `~/.agentic-interviewer/config.json` does, read the old config, rename `interview_repo` to `workspace_repo`, remove `interview_team_repo`, write to `~/.agentic-cookbook/dev-team/config.json`, and use it.
+Run: `${CLAUDE_PLUGIN_ROOT}/scripts/load-config.sh` with `--config <path>` if specified. If the script fails (exit code 1), the error message tells the user what's wrong.
 
-On first run, check for the config file. If it doesn't exist:
+Extract `cookbook_repo`, `workspace_repo`, and `user_name` from the JSON output.
+
+On first run, if config doesn't exist:
 
 1. Ask the user: "Where is your workspace repo? This is where transcripts, analyses, and your profile will be stored."
 2. Ask: "Where is your local clone of the agentic-cookbook? I use it to inform my specialists' questions."
@@ -293,27 +291,7 @@ If a new project cwd isn't in `authorized_repos`, ask: "I'd like to read your pr
 
 ## Test Mode
 
-When `$ARGUMENTS` contains `--test-mode`, the skill runs in automated testing mode:
-
-### Arguments
-- `--persona <path>` — path to a persona file for the simulated user (required in test mode)
-- `--max-exchanges <n>` — stop after N question-answer exchanges (required in test mode)
-- `--config <path>` — path to test config (should point workspace_repo at a test output directory)
-
-### Behavior Changes
-1. **No real user interaction.** Instead of asking the user questions via AskUserQuestion, spawn the `agents/simulated-user.md` agent with the persona file and the question. Use the simulated user's response as the answer.
-2. **Flow logging.** Follow the unified log schema defined in `${CLAUDE_PLUGIN_ROOT}/tests/test-mode-spec.md`. Write events to `<workspace_repo>/projects/<project>/test-log.jsonl`. Each line is a JSON object with base fields `skill`, `phase`, `event`, `timestamp`:
-   - `{"skill": "interview", "phase": "interview-loop", "event": "specialist_invoked", "specialist": "<domain>", "mode": "structured|exploratory", "timestamp": "..."}`
-   - `{"skill": "interview", "phase": "interview-loop", "event": "question_asked", "specialist": "<domain>", "question_id": "<id>", "timestamp": "..."}`
-   - `{"skill": "interview", "phase": "interview-loop", "event": "answer_received", "transcript_file": "<filename>", "timestamp": "..."}`
-   - `{"skill": "interview", "phase": "interview-loop", "event": "analysis_written", "analysis_file": "<filename>", "transcript_id": "<id>", "timestamp": "..."}`
-   - `{"skill": "interview", "phase": "interview-loop", "event": "checklist_updated", "topic": "<topic>", "action": "covered|discovered", "timestamp": "..."}`
-   - Also write `phase_started`/`phase_completed` for: `startup`, `interview-loop`, `summary`
-   - Also write `agent_spawned`/`agent_completed` for: `transcript-analyzer`, `specialist-interviewer`, `specialist-analyst`, `simulated-user`
-   - Also write `file_written` for: each transcript file, each analysis file, checklist updates
-3. **Bounded execution.** Stop after `--max-exchanges` question-answer pairs. Write a final summary to the log: `{"skill": "interview", "phase": "summary", "event": "test_complete", "phases_completed": N, "agents_spawned": N, "files_written": N, "errors": 0, "timestamp": "..."}`.
-4. **No profile updates.** Don't modify the simulated user's profile — it's a test fixture.
-5. **Skip config setup.** Config must already exist at the `--config` path. If it doesn't, fail immediately with a clear error.
+When `$ARGUMENTS` contains `--test-mode`, follow the test mode contract in `${CLAUDE_PLUGIN_ROOT}/tests/test-mode-spec.md`.
 
 ## Key Behaviors
 

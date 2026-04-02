@@ -14,11 +14,7 @@ argument-hint: <project-path> [--output <path>] [--recipe <scope>] [--platform <
 
 Otherwise, print `build v0.1.0` as the first line of output, then proceed.
 
-**Version check**: Read `${CLAUDE_SKILL_DIR}/SKILL.md` from disk and extract the `version:` field from frontmatter. If it differs from this skill's version (0.1.0), print:
-
-> Warning: This skill is running v0.1.0 but vA.B.C is installed. Restart the session to use the latest version.
-
-Continue running — do not stop.
+**Version check**: Run `${CLAUDE_PLUGIN_ROOT}/scripts/version-check.sh "${CLAUDE_SKILL_DIR}" "0.1.0"`. If it outputs a warning, print it and continue.
 
 ## Overview
 
@@ -35,13 +31,13 @@ Your persona: a build lead turning specifications into working software. You pre
 
 ## Configuration
 
-**Config path**: If `$ARGUMENTS` contains `--config <path>`, use that path. Otherwise use `~/.agentic-cookbook/dev-team/config.json`.
+**Config path**: If `$ARGUMENTS` contains `--config <path>`, use that path.
 
-**Migration**: If `~/.agentic-cookbook/dev-team/config.json` doesn't exist but `~/.agentic-interviewer/config.json` does, read the old config, rename `interview_repo` to `workspace_repo`, remove `interview_team_repo`, write to the new path, and use it.
+Run: `${CLAUDE_PLUGIN_ROOT}/scripts/load-config.sh` with `--config <path>` if specified. If the script fails (exit code 1), the error message tells the user what's wrong.
 
-Read the config file. Required fields: `cookbook_repo`, `workspace_repo`, `user_name`.
+Extract `cookbook_repo`, `workspace_repo`, and `user_name` from the JSON output.
 
-If config doesn't exist: "I need a config file. Run `/dev-team:interview` first to set one up, or create `~/.agentic-cookbook/dev-team/config.json` manually."
+If config doesn't exist: "I need a config file. Create `~/.agentic-cookbook/dev-team/config.json` with `workspace_repo`, `cookbook_repo`, and `user_name` fields."
 
 ## Phase 1 — Load Project
 
@@ -69,47 +65,19 @@ If config doesn't exist: "I need a config file. Run `/dev-team:interview` first 
 ### Resumability Check
 If the output directory already exists with generated code, ask: "I see code already exists for <N> recipes. Regenerate all, only missing/failed ones, or pick a new output directory?"
 
-## Phase 2 — Specialist Assignment
+## Phase 2 — Specialist Assignment & Ordering
 
-Read the specialist-to-cookbook mapping at `${CLAUDE_PLUGIN_ROOT}/research/cookbook-specialist-mapping.md`.
+Read the specialist assignment rules at `${CLAUDE_PLUGIN_ROOT}/research/specialist-assignment.md`.
 
-For each recipe, determine which specialists are relevant using the same mapping logic as `/dev-team-generate`:
+For each recipe, determine and order specialists by tier:
 
-1. **Recipe category** → domain specialists:
-   - `recipe.ui.*` → UI/UX & Design, Accessibility
-   - `recipe.infrastructure.*` → Software Architecture, Code Quality
-   - `recipe.app.*` → Software Architecture, Development Process
-   - All recipes → Reliability & Error Handling (if the recipe has behavioral requirements)
+```
+${CLAUDE_PLUGIN_ROOT}/scripts/assign-specialists.sh <recipe-path> --platforms '<platforms-json>' --tier-order
+```
 
-2. **Recipe content** → additional specialists:
-   - Recipe mentions auth/tokens → Security
-   - Recipe mentions network/API → Networking & API
-   - Recipe mentions storage/persistence → Data & Persistence
-   - Recipe mentions logging/analytics → DevOps & Observability
-   - Recipe mentions localization/i18n → Localization & I18n
-   - Recipe mentions tests → Testing & QA
+The `--tier-order` flag sorts specialists by build tier (foundation -> core -> cross-cutting -> platform).
 
-3. **Project platforms** → platform specialists:
-   - From `cookbook-project.json` `platforms` array
-   - Map: `ios`/`macos` → platform-ios-apple, `android` → platform-android, `windows` → platform-windows, `web` → platform-web-frontend + platform-web-backend
-
-### Limit and Order Specialists
-
-Assign at most **3-4 specialists per recipe**. Prioritize:
-1. The domain specialist most directly related to the recipe category
-2. Platform specialists matching the project's platforms
-3. Cross-cutting specialists (Security, Accessibility) for UI/API recipes
-
-Then **order them by tier** for sequential augmentation:
-
-| Tier | Order | Specialists |
-|------|-------|------------|
-| 1 — Foundation | First | software-architecture |
-| 2 — Core Domain | Second | reliability, data-persistence, networking-api |
-| 3 — Cross-Cutting | Third | security, ui-ux-design, accessibility, localization-i18n, testing-qa, devops-observability, code-quality, development-process |
-| 4 — Platform | Last | platform-ios-apple, platform-android, platform-windows, platform-web-frontend, platform-web-backend, platform-database |
-
-For each recipe, filter the global order to only the assigned specialists. This determines the execution sequence.
+Limit to 3-4 specialists per recipe. Present the assignment matrix with execution order and wait for approval.
 
 ### Present Assignment Matrix
 
@@ -419,47 +387,7 @@ Present the final summary:
 
 ## Test Mode
 
-When `$ARGUMENTS` contains `--test-mode`, follow the test mode contract at `${CLAUDE_PLUGIN_ROOT}/tests/test-mode-spec.md`.
-
-Read the contract file at the start of test mode to understand the unified log schema.
-
-### Test Mode Behavior
-
-1. **Auto-approve all prompts.** Every `AskUserQuestion` call is auto-approved — proceed with the first/default option without waiting for input. This applies to:
-   - Specialist assignment approval
-   - Scaffold confirmation
-   - Code review fix approval — **approve all fixes**
-   - Build failure options — **choose "try more fixes" up to 2 extra attempts, then "skip to smoke tests"**
-   - Resumability check — **choose "regenerate all"**
-
-2. **Write test log.** Append JSON events to `<output>/test-log.jsonl`:
-
-   Phase boundaries:
-   - `phase_started` / `phase_completed` for: `load-project`, `specialist-assignment`, `scaffolding`, `code-generation`, `code-review`, `build`, `smoke-test`, `final-report`
-
-   Agent interactions:
-   - `agent_spawned` / `agent_completed` for: `project-scaffolder`, `code-generator`, `specialist-code-pass`, `build-runner`, `smoke-tester`
-
-   Skill-specific events:
-   - `scaffold_created` — after scaffolder returns: `build_system`, `file_count`, `build_command`
-   - `code_generated` — after code-generator returns per recipe: `recipe_scope`, `files_written`, `must_implemented`, `must_total`
-   - `specialist_pass_complete` — after each specialist pass: `recipe_scope`, `specialist`, `changes_count`
-   - `code_review_complete` — after code review per recipe: `recipe_scope`, `issues_found`, `issues_fixed`
-   - `build_attempted` — after each build attempt: `attempt`, `error_count`, `fixed_count`
-   - `build_result` — final build outcome: `success`, `total_attempts`, `remaining_errors`
-   - `smoke_test_result` — test results: `launch_pass`, `conformance_passed`, `conformance_failed`, `conformance_skipped`
-
-   File writes:
-   - `file_written` for every artifact: scaffold files, source code, generation logs, review reports, build report, test report, build summary
-
-   End:
-   - `test_complete` summary
-
-3. **Target path.** Use `--target <path>` or first positional arg for the cookbook project directory.
-
-4. **No profile updates.** Don't modify any user data.
-
-5. **Config must pre-exist.** Fail immediately if config is missing.
+When `$ARGUMENTS` contains `--test-mode`, follow the test mode contract in `${CLAUDE_PLUGIN_ROOT}/tests/test-mode-spec.md`.
 
 ## Aggressive Persistence
 

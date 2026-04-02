@@ -14,11 +14,7 @@ argument-hint: <project-path> [--specialist <domain>] [--recipe <scope>] [--conf
 
 Otherwise, print `generate v0.1.0` as the first line of output, then proceed.
 
-**Version check**: Read `${CLAUDE_SKILL_DIR}/SKILL.md` from disk and extract the `version:` field from frontmatter. If it differs from this skill's version (0.1.0), print:
-
-> Warning: This skill is running v0.1.0 but vA.B.C is installed. Restart the session to use the latest version.
-
-Continue running — do not stop.
+**Version check**: Run `${CLAUDE_PLUGIN_ROOT}/scripts/version-check.sh "${CLAUDE_SKILL_DIR}" "0.1.0"`. If it outputs a warning, print it and continue.
 
 ## Overview
 
@@ -30,13 +26,13 @@ Your persona: a quality-focused project lead running a design review. You presen
 
 ## Configuration
 
-**Config path**: If `$ARGUMENTS` contains `--config <path>`, use that path. Otherwise use `~/.agentic-cookbook/dev-team/config.json`.
+**Config path**: If `$ARGUMENTS` contains `--config <path>`, use that path.
 
-**Migration**: If `~/.agentic-cookbook/dev-team/config.json` doesn't exist but `~/.agentic-interviewer/config.json` does, read the old config, rename `interview_repo` to `workspace_repo`, remove `interview_team_repo`, write to the new path, and use it.
+Run: `${CLAUDE_PLUGIN_ROOT}/scripts/load-config.sh` with `--config <path>` if specified. If the script fails (exit code 1), the error message tells the user what's wrong.
 
-Read the config. Required fields: `cookbook_repo`, `workspace_repo`, `user_name`.
+Extract `cookbook_repo`, `workspace_repo`, and `user_name` from the JSON output.
 
-If config doesn't exist: "I need a config file. Run `/dev-team:interview` first to set one up, or create `~/.agentic-cookbook/dev-team/config.json` manually."
+If config doesn't exist: "I need a config file. Create `~/.agentic-cookbook/dev-team/config.json` with `workspace_repo`, `cookbook_repo`, and `user_name` fields."
 
 ## Phase 1 — Load Project
 
@@ -61,33 +57,17 @@ If config doesn't exist: "I need a config file. Run `/dev-team:interview` first 
 
 ## Phase 2 — Specialist Assignment
 
-Read the specialist-to-cookbook mapping at `${CLAUDE_PLUGIN_ROOT}/research/cookbook-specialist-mapping.md`.
+Read the specialist assignment rules at `${CLAUDE_PLUGIN_ROOT}/research/specialist-assignment.md`.
 
-For each recipe, determine which specialists are relevant based on:
+For each recipe, determine relevant specialists. You can use the shell script for quick assignment:
 
-1. **Recipe category** → domain specialists:
-   - `recipe.ui.*` → UI/UX & Design, Accessibility
-   - `recipe.infrastructure.*` → Software Architecture, Code Quality
-   - `recipe.app.*` → Software Architecture, Development Process
-   - All recipes → Reliability & Error Handling (if the recipe has behavioral requirements)
+```
+${CLAUDE_PLUGIN_ROOT}/scripts/assign-specialists.sh <recipe-path> --platforms '<platforms-json>'
+```
 
-2. **Recipe content** → additional specialists:
-   - Recipe mentions auth/tokens → Security
-   - Recipe mentions network/API → Networking & API
-   - Recipe mentions storage/persistence → Data & Persistence
-   - Recipe mentions logging/analytics → DevOps & Observability
-   - Recipe mentions localization/i18n → Localization & I18n
-   - Recipe mentions tests → Testing & QA
+Or read `${CLAUDE_PLUGIN_ROOT}/research/specialist-assignment.json` directly and apply the category, content, and platform mappings.
 
-3. **Project platforms** → platform specialists:
-   - From `cookbook-project.json` `platforms` array
-   - Map: `ios`/`macos` → platform-ios-apple, `android` → platform-android, `windows` → platform-windows, `web` → platform-web-frontend + platform-web-backend
-
-### Limit Reviewers
-Assign at most **3-4 specialists per recipe** to keep review manageable. Prioritize:
-1. The domain specialist most directly related to the recipe category
-2. Platform specialists matching the project's platforms
-3. Cross-cutting specialists (Security, Accessibility) for UI/API recipes
+Limit to 3-4 specialists per recipe. Present the assignment matrix to the user and wait for approval.
 
 ### Present Assignment Matrix
 
@@ -237,42 +217,7 @@ Present the final summary:
 
 ## Test Mode
 
-When `$ARGUMENTS` contains `--test-mode`, follow the test mode contract at `${CLAUDE_PLUGIN_ROOT}/tests/test-mode-spec.md`.
-
-Read the contract file at the start of test mode to understand the unified log schema.
-
-### Test Mode Behavior
-
-1. **Auto-approve all prompts.** Every `AskUserQuestion` call is auto-approved — proceed with the first/default option without waiting for input. This applies to:
-   - Specialist assignment approval ("Want to adjust before I start reviews?")
-   - Individual suggestion approval — **approve all suggestions**
-   - Question answering — **skip all questions** (don't answer, mark as skipped)
-
-2. **Write test log.** Append JSON events to `<project>/test-log.jsonl`:
-
-   Phase boundaries:
-   - `phase_started` / `phase_completed` for: `load-project`, `specialist-assignment`, `review-loop`, `final-report`
-
-   Agent interactions:
-   - `agent_spawned` / `agent_completed` for each `recipe-reviewer` instance
-
-   Skill-specific events:
-   - `reviewer_spawned` — when launching a reviewer: `recipe_scope`, `specialist`
-   - `review_completed` — when a reviewer returns: `recipe_scope`, `specialist`, `suggestion_count`, `gap_count`
-   - `suggestion_approved` — for each auto-approved suggestion: `recipe_scope`, `specialist`, `title`
-   - `recipe_updated` — after applying changes to a recipe: `recipe_scope`, `changes_applied`, `new_version`
-
-   File writes:
-   - `file_written` for every artifact: review files, updated recipes, review-summary.md
-
-   End:
-   - `test_complete` summary
-
-3. **Target path.** Use `--target <path>` or first positional arg for the cookbook project directory.
-
-4. **No profile updates.** Don't modify any user data.
-
-5. **Config must pre-exist.** Fail immediately if config is missing.
+When `$ARGUMENTS` contains `--test-mode`, follow the test mode contract in `${CLAUDE_PLUGIN_ROOT}/tests/test-mode-spec.md`.
 
 ## Aggressive Persistence
 

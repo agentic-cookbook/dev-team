@@ -14,11 +14,7 @@ argument-hint: <path> [--type skill|rule|agent|recipe|implementation] [--recipe 
 
 Otherwise, print `lint v0.1.0` as the first line of output, then proceed.
 
-**Version check**: Read `${CLAUDE_SKILL_DIR}/SKILL.md` from disk and extract the `version:` field from frontmatter. If it differs from this skill's version (0.1.0), print:
-
-> Warning: This skill is running v0.1.0 but vA.B.C is installed. Restart the session to use the latest version.
-
-Continue running — do not stop.
+**Version check**: Run `${CLAUDE_PLUGIN_ROOT}/scripts/version-check.sh "${CLAUDE_SKILL_DIR}" "0.1.0"`. If it outputs a warning, print it and continue.
 
 ## Overview
 
@@ -30,13 +26,13 @@ Your persona: a thorough, fair code reviewer. You present findings clearly with 
 
 ## Configuration
 
-**Config path**: If `$ARGUMENTS` contains `--config <path>`, use that path. Otherwise use `~/.agentic-cookbook/dev-team/config.json`.
+**Config path**: If `$ARGUMENTS` contains `--config <path>`, use that path.
 
-**Migration**: If `~/.agentic-cookbook/dev-team/config.json` doesn't exist but `~/.agentic-interviewer/config.json` does, read the old config, rename `interview_repo` to `workspace_repo`, remove `interview_team_repo`, write to the new path, and use it.
+Run: `${CLAUDE_PLUGIN_ROOT}/scripts/load-config.sh` with `--config <path>` if specified. If the script fails (exit code 1), the error message tells the user what's wrong.
 
-Read the config file. Required fields: `cookbook_repo`, `workspace_repo`, `user_name`.
+Extract `cookbook_repo`, `workspace_repo`, and `user_name` from the JSON output.
 
-If config doesn't exist: "I need a config file. Run `/dev-team-interview` first to set one up, or create `~/.agentic-cookbook/dev-team/config.json` manually."
+If config doesn't exist: "I need a config file. Create `~/.agentic-cookbook/dev-team/config.json` with `workspace_repo`, `cookbook_repo`, and `user_name` fields."
 
 ## Phase 1 — Resolve Target
 
@@ -67,29 +63,21 @@ If the detected type is **implementation** but `$ARGUMENTS` does not contain `--
 
 ## Phase 2 — Specialist Assignment
 
-Read the specialist-to-cookbook mapping at `${CLAUDE_PLUGIN_ROOT}/research/cookbook-specialist-mapping.md`.
+Read the specialist assignment rules at `${CLAUDE_PLUGIN_ROOT}/research/specialist-assignment.md`.
 
 ### Assignment by Artifact Type
 
 **skill / rule / agent**: Assign **Claude Code & Agentic Development** as the primary (and usually only) reviewer. This specialist covers plugin architecture, skill/rule/agent authoring, hooks, MCP servers, context management, and performance optimization.
 
-**recipe**: Assign Claude Code as primary, plus domain specialists based on recipe content:
+**recipe**: Assign Claude Code as primary, plus domain specialists. You can use the shell script for quick assignment:
 
-1. **Recipe category** mapping:
-   - `recipe.ui.*` → UI/UX & Design, Accessibility
-   - `recipe.infrastructure.*` → Software Architecture, Code Quality
-   - `recipe.app.*` → Software Architecture, Development Process
-   - All recipes with behavioral requirements → Reliability & Error Handling
+```
+${CLAUDE_PLUGIN_ROOT}/scripts/assign-specialists.sh <recipe-path> --platforms '<platforms-json>'
+```
 
-2. **Recipe content** mapping:
-   - Mentions auth/tokens → Security
-   - Mentions network/API → Networking & API
-   - Mentions storage/persistence → Data & Persistence
-   - Mentions logging/analytics → DevOps & Observability
-   - Mentions localization/i18n → Localization & I18n
-   - Mentions tests → Testing & QA
+Or read `${CLAUDE_PLUGIN_ROOT}/research/specialist-assignment.json` directly and apply the category, content, and platform mappings.
 
-Limit to **3-4 specialists** per recipe. Prioritize the most directly relevant domain specialist, then cross-cutting concerns (Security, Accessibility).
+Limit to 3-4 specialists per recipe. Prioritize the most directly relevant domain specialist, then cross-cutting concerns (Security, Accessibility).
 
 **implementation**: Same assignment logic as the build skill — based on recipe content and platform. Specialists review the code against their domain concerns rather than augmenting it.
 
@@ -256,42 +244,7 @@ Wait for user approval on each (auto-approve in test mode).
 
 ## Test Mode
 
-When `$ARGUMENTS` contains `--test-mode`, follow the test mode contract at `${CLAUDE_PLUGIN_ROOT}/tests/test-mode-spec.md`.
-
-Read the contract file at the start of test mode to understand the unified log schema.
-
-### Test Mode Behavior
-
-1. **Auto-approve all prompts.** Every `AskUserQuestion` call is auto-approved — proceed with the first/default option without waiting for input. This applies to:
-   - Specialist assignment acknowledgment
-   - Individual fix approval — **approve all suggestions**
-   - Compliance fix approval — **approve all suggestions**
-
-2. **Write test log.** Append JSON events to `test-log.jsonl` in the current working directory:
-
-   Phase boundaries:
-   - `phase_started` / `phase_completed` for: `resolve-target`, `specialist-assignment`, `review`, `present-results`, `apply-fixes`, `compliance-only`
-
-   Agent interactions:
-   - `agent_spawned` / `agent_completed` for each `artifact-reviewer` instance
-
-   Skill-specific events:
-   - `reviewer_spawned` — when launching a reviewer: `artifact_path`, `specialist`
-   - `review_completed` — when a reviewer returns: `artifact_path`, `specialist`, `pass_count`, `warn_count`, `fail_count`
-   - `fix_approved` — for each auto-approved fix: `check_id`, `specialist`, `title`
-   - `fix_applied` — after applying a fix: `artifact_path`, `check_id`, `description`
-
-   File writes:
-   - `file_written` for every artifact: review reports, updated artifact, compliance report
-
-   End:
-   - `test_complete` summary with `pass_count`, `warn_count`, `fail_count`, `fixes_applied`, `verdict`
-
-3. **Target path.** Use `--target <path>` or first positional arg for the artifact path.
-
-4. **No profile updates.** Don't modify any user data.
-
-5. **Config must pre-exist.** Fail immediately if config is missing.
+When `$ARGUMENTS` contains `--test-mode`, follow the test mode contract in `${CLAUDE_PLUGIN_ROOT}/tests/test-mode-spec.md`.
 
 ## Aggressive Persistence
 
