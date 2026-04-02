@@ -6,10 +6,10 @@ A Claude Code plugin for multi-agent product discovery, analysis, and project bu
 
 | Skill | Command | Description |
 |-------|---------|-------------|
-| **interview** | `/dev-team:interview` | Product discovery — structured and exploratory questioning to fully scope a product |
-| **analyze** | `/dev-team:analyze` | Reverse-engineer a codebase into a cookbook project |
-| **generate** | `/dev-team:generate` | Specialist review and improvement of cookbook recipes |
-| **build** | `/dev-team:build` | Build working code from a cookbook project |
+| **interview** | `/dev-team interview` | Product discovery — structured and exploratory questioning to fully scope a product |
+| **create-project-from-code** | `/dev-team create-project-from-code` | Reverse-engineer a codebase into a cookbook project |
+| **generate** | `/dev-team generate` | Specialist review and improvement of cookbook recipes |
+| **build** | `/dev-team build` | Build working code from a cookbook project |
 
 ## Installation
 
@@ -20,7 +20,7 @@ claude plugin install dev-team@agentic-cookbook
 
 ## Setup
 
-On first run, `/dev-team:interview` creates `~/.agentic-cookbook/dev-team/config.json`:
+On first run, `/dev-team interview` creates `~/.agentic-cookbook/dev-team/config.json`:
 
 ```json
 {

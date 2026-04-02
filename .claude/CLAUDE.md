@@ -4,14 +4,16 @@ A Claude Code plugin for multi-agent product discovery, analysis, and project bu
 
 ## Skills
 
-| Role | Command | Responsibility |
-|------|---------|---------------|
-| **Interviewer** | `/dev-team-interview` | Discover product requirements through structured and exploratory questioning with specialist expertise |
-| **Cookbook Analyzer** | `/dev-team-create-project-from-code <target>` | Reverse-engineer an artifact into cookbook format — codebase into cookbook project |
-| **Cookbook Project Generator** | `/dev-team-generate <target>` | Improve a cookbook project through specialist review — review recipes, suggest changes, apply approved improvements |
-| **Project Builder** | `/dev-team-build <target>` | Build working code from a cookbook project — scaffold, generate, augment with specialists, compile, test |
-| **Linter** | `/dev-team-lint <target>` | Evaluate any artifact against cookbook standards — skills, rules, agents, recipes, implementations — produce PASS/WARN/FAIL report with specialist findings |
-| **Project Viewer** | `/dev-team-view-project <target>` | Generate a human-readable HTML view of a cookbook project and open it in the browser |
+Single entry point: `/dev-team <command>`
+
+| Command | Role | Responsibility |
+|---------|------|---------------|
+| `interview` | Interviewer | Discover product requirements through structured and exploratory questioning with specialist expertise |
+| `create-project-from-code` | Project Creator | Reverse-engineer a codebase into a cookbook project |
+| `generate` | Project Generator | Improve a cookbook project through specialist review |
+| `build` | Project Builder | Build working code from a cookbook project |
+| `lint` | Linter | Evaluate any artifact against cookbook standards |
+| `view-project` | Viewer | Generate HTML view of a cookbook project |
 
 ## Architecture
 
@@ -26,12 +28,9 @@ Three repos:
 .claude-plugin/            # Plugin manifest
 agents/                    # 15 subagent definitions
 skills/
-  interview/               # Product discovery interview
-  create-project-from-code/ # Codebase → cookbook project
-  generate/                # Specialist recipe review
-  build/                   # Cookbook project → working code
-  lint/                    # Artifact linting against cookbook standards
-  view-project/            # HTML project viewer
+  dev-team/                # Single skill with subcommand routing
+    SKILL.md               # Router
+    workflows/             # One workflow file per subcommand
 research/
   specialists/             # 19 specialist question sets (13 domain + 6 platform)
   cookbook-specialist-mapping.md
@@ -45,7 +44,7 @@ tests/                     # Test harness and personas
 
 Symlinks in `.claude/` point to top-level dirs for local testing. These are gitignored.
 
-To test locally: `cd` into this repo and invoke `/dev-team-interview`.
+To test locally: `cd` into this repo and invoke `/dev-team interview`.
 
 ## Config
 

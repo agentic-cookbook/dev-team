@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Move 7 cookbook lint/review skills into the dev-team plugin as a new `/dev-team-lint` skill backed by the specialist system, rename existing skills to verb-based commands, and document responsibilities.
+**Goal:** Move 7 cookbook lint/review skills into the dev-team plugin as a new `/dev-team lint` skill backed by the specialist system, rename existing skills to verb-based commands, and document responsibilities.
 
 **Architecture:** The Linter is a fifth dev-team role. It auto-detects artifact type (skill, rule, agent, recipe, implementation), runs structural validation (checklist-based, deterministic), then specialist review (domain-based, judgment-requiring), and produces a unified PASS/WARN/FAIL report. It reuses the existing specialist dispatch pattern (recipe-reviewer agent pattern generalized to an artifact-reviewer).
 
@@ -12,28 +12,28 @@
 
 ## Context
 
-The cookbook repo has 7 standalone lint/review skills that each inline their own domain knowledge. The dev-team plugin has a specialist system with 19 specialists, each with cookbook source mappings and three participation modes. The standalone skills duplicate what the specialist system does better — they apply domain expertise to evaluate artifacts against standards. This plan migrates those skills into the dev-team as a unified `/dev-team-lint` skill, removes them from the cookbook, and renames existing dev-team skills to a consistent verb-based pattern.
+The cookbook repo has 7 standalone lint/review skills that each inline their own domain knowledge. The dev-team plugin has a specialist system with 19 specialists, each with cookbook source mappings and three participation modes. The standalone skills duplicate what the specialist system does better — they apply domain expertise to evaluate artifacts against standards. This plan migrates those skills into the dev-team as a unified `/dev-team lint` skill, removes them from the cookbook, and renames existing dev-team skills to a consistent verb-based pattern.
 
 ## Dev-Team Responsibility Map
 
 | Role | Command | Responsibility |
 |------|---------|---------------|
-| **Interviewer** | `/dev-team-interview` | Discover product requirements through structured and exploratory questioning with specialist expertise |
-| **Cookbook Analyzer** | `/dev-team-create-project-from-code <target>` | Reverse-engineer an artifact into cookbook format — codebase into cookbook project |
-| **Cookbook Project Generator** | `/dev-team-generate <target>` | Improve a cookbook project through specialist review — review recipes, suggest changes, apply approved improvements |
-| **Project Builder** | `/dev-team-build <target>` | Build working code from a cookbook project — scaffold, generate, augment with specialists, compile, test |
-| **Linter** | `/dev-team-lint <target>` | Evaluate any artifact against cookbook standards — skills, rules, agents, recipes, implementations — produce PASS/WARN/FAIL report with specialist findings |
+| **Interviewer** | `/dev-team interview` | Discover product requirements through structured and exploratory questioning with specialist expertise |
+| **Cookbook Analyzer** | `/dev-team create-project-from-code <target>` | Reverse-engineer an artifact into cookbook format — codebase into cookbook project |
+| **Cookbook Project Generator** | `/dev-team generate <target>` | Improve a cookbook project through specialist review — review recipes, suggest changes, apply approved improvements |
+| **Project Builder** | `/dev-team build <target>` | Build working code from a cookbook project — scaffold, generate, augment with specialists, compile, test |
+| **Linter** | `/dev-team lint <target>` | Evaluate any artifact against cookbook standards — skills, rules, agents, recipes, implementations — produce PASS/WARN/FAIL report with specialist findings |
 
 ## Migration Map
 
 | Cookbook Skill (removed) | Dev-Team Equivalent |
 |--------------------------|-------------------|
-| `/lint-skill` | `/dev-team-lint <skill-path>` |
-| `/lint-rule` | `/dev-team-lint <rule-path>` |
-| `/lint-agent` | `/dev-team-lint <agent-path>` |
-| `/lint-recipe` | `/dev-team-lint <recipe-path>` |
-| `/lint-compliance` | `/dev-team-lint <recipe-path> --compliance-only` |
-| `/lint-project-with-cookbook` | `/dev-team-lint <impl-dir> --recipe <recipe-path>` |
+| `/lint-skill` | `/dev-team lint <skill-path>` |
+| `/lint-rule` | `/dev-team lint <rule-path>` |
+| `/lint-agent` | `/dev-team lint <agent-path>` |
+| `/lint-recipe` | `/dev-team lint <recipe-path>` |
+| `/lint-compliance` | `/dev-team lint <recipe-path> --compliance-only` |
+| `/lint-project-with-cookbook` | `/dev-team lint <impl-dir> --recipe <recipe-path>` |
 | `plan-cookbook-recipe` compliance step | Delegates to Linter internally |
 
 ## Skills NOT Migrated
@@ -74,11 +74,11 @@ The three lint checklists currently live as skill reference files. They need to 
 - Modify: `CLAUDE.md` — update skill command references
 
 - [ ] **Step 1:** Rename `skills/analyze/` directory to `skills/create-project-from-code/`
-- [ ] **Step 2:** Update `skills/create-project-from-code/SKILL.md` frontmatter: `name: dev-team-create-project-from-code`, update description to mention `<target>` argument
+- [ ] **Step 2:** Update `skills/create-project-from-code/SKILL.md` frontmatter: `name: dev-team`, update description to mention `<target>` argument
 - [ ] **Step 3:** Rename `skills/generate/` directory to `skills/generate/`
-- [ ] **Step 4:** Update `skills/generate/SKILL.md` frontmatter: `name: dev-team-generate`
+- [ ] **Step 4:** Update `skills/generate/SKILL.md` frontmatter: `name: dev-team`
 - [ ] **Step 5:** Rename `skills/build/` directory to `skills/build/`
-- [ ] **Step 6:** Update `skills/build/SKILL.md` frontmatter: `name: dev-team-build`
+- [ ] **Step 6:** Update `skills/build/SKILL.md` frontmatter: `name: dev-team`
 - [ ] **Step 7:** Update `.claude-plugin/plugin.json` if it references old skill names
 - [ ] **Step 8:** Update `CLAUDE.md` skill list with new command names and responsibility descriptions
 - [ ] **Step 9:** Grep for old skill names across the entire repo (agent files, other skills) and update all references
@@ -110,14 +110,14 @@ This generalizes the existing `recipe-reviewer` agent pattern to handle any arti
 
 ---
 
-## Task 4: Create the `/dev-team-lint` skill
+## Task 4: Create the `/dev-team lint` skill
 
 **Files:**
 - Create: `skills/lint/SKILL.md`
 
 - [ ] **Step 1:** Create `skills/lint/SKILL.md` with frontmatter:
   ```yaml
-  name: dev-team-lint
+  name: dev-team
   description: Evaluate skills, rules, agents, recipes, or implementations against cookbook standards. Produces PASS/WARN/FAIL report.
   argument-hint: <path> [--type skill|rule|agent|recipe|implementation] [--recipe <path>] [--compliance-only]
   ```
@@ -200,7 +200,7 @@ Only after the dev-team lint skill is working.
 - Modify: `cookbook/CLAUDE.md` — remove these skills from the skills table
 - Modify: `cookbook/README.md` — remove these skills from documentation
 
-- [ ] **Step 1:** Verify `/dev-team-lint` works for each artifact type (manual test)
+- [ ] **Step 1:** Verify `/dev-team lint` works for each artifact type (manual test)
 - [ ] **Step 2:** Remove the 6 skill directories from the cookbook repo
 - [ ] **Step 3:** Update cookbook `CLAUDE.md` to remove the skills and note they moved to the dev-team plugin
 - [ ] **Step 4:** Update cookbook `README.md` similarly
@@ -214,7 +214,7 @@ Only after the dev-team lint skill is working.
 - Modify: `cookbook/skills/plan-cookbook-recipe/SKILL.md`
 
 - [ ] **Step 1:** Read `cookbook/skills/plan-cookbook-recipe/SKILL.md`
-- [ ] **Step 2:** In the compliance guidance phase, add delegation: if dev-team plugin is available, invoke `/dev-team-lint <recipe> --compliance-only` instead of inline compliance evaluation
+- [ ] **Step 2:** In the compliance guidance phase, add delegation: if dev-team plugin is available, invoke `/dev-team lint <recipe> --compliance-only` instead of inline compliance evaluation
 - [ ] **Step 3:** Keep the inline compliance logic as fallback for users without dev-team
 - [ ] **Step 4:** Commit and push cookbook repo
 
@@ -222,11 +222,11 @@ Only after the dev-team lint skill is working.
 
 ## Verification
 
-1. **Lint a skill:** Run `/dev-team-lint path/to/some/skill/` — should auto-detect as skill, run S/C/B series checks via Claude Code specialist, produce PASS/WARN/FAIL report
-2. **Lint a rule:** Run `/dev-team-lint path/to/some/rule.md` — should auto-detect as rule, run C/B/R/O series checks
-3. **Lint an agent:** Run `/dev-team-lint path/to/some/agent.md` — should auto-detect as agent, run S/C/B/A series checks
-4. **Lint a recipe:** Run `/dev-team-lint path/to/some/recipe.md` — should run structural checks + domain specialist review
-5. **Lint an implementation:** Run `/dev-team-lint path/to/impl/ --recipe path/to/recipe.md` — should run guideline + recipe conformance checks
-6. **Renamed skills work:** Run `/dev-team-create-project-from-code`, `/dev-team-generate`, `/dev-team-build` — verify they invoke correctly
+1. **Lint a skill:** Run `/dev-team lint path/to/some/skill/` — should auto-detect as skill, run S/C/B series checks via Claude Code specialist, produce PASS/WARN/FAIL report
+2. **Lint a rule:** Run `/dev-team lint path/to/some/rule.md` — should auto-detect as rule, run C/B/R/O series checks
+3. **Lint an agent:** Run `/dev-team lint path/to/some/agent.md` — should auto-detect as agent, run S/C/B/A series checks
+4. **Lint a recipe:** Run `/dev-team lint path/to/some/recipe.md` — should run structural checks + domain specialist review
+5. **Lint an implementation:** Run `/dev-team lint path/to/impl/ --recipe path/to/recipe.md` — should run guideline + recipe conformance checks
+6. **Renamed skills work:** Run `/dev-team create-project-from-code`, `/dev-team generate`, `/dev-team build` — verify they invoke correctly
 7. **Cookbook skills removed:** Verify `/lint-skill`, `/lint-rule` etc. no longer exist in cookbook
 8. **plan-cookbook-recipe delegation:** Run `/plan-cookbook-recipe` and verify compliance phase delegates to dev-team if available

@@ -14,7 +14,7 @@
 
 The plugin currently has 6 skills, each with its own description loaded into every session (~1200 chars of always-on context). Consolidating to one skill with subcommands:
 - Reduces context to ~200 chars (one description)
-- Provides clearer UX: `/dev-team interview` instead of `/dev-team-interview`
+- Provides clearer UX: `/dev-team interview` instead of `/dev-team interview`
 - Centralizes shared logic (version check, config) in the router instead of duplicating in each workflow
 - Aligns with progressive disclosure: only the invoked workflow loads
 
@@ -22,12 +22,12 @@ The plugin currently has 6 skills, each with its own description loaded into eve
 
 | Current Command | New Command | Subcommand |
 |----------------|-------------|------------|
-| `/dev-team-interview` | `/dev-team interview` | `interview` |
-| `/dev-team-create-project-from-code` | `/dev-team create-project-from-code` | `create-project-from-code` |
-| `/dev-team-generate` | `/dev-team generate` | `generate` |
-| `/dev-team-build` | `/dev-team build` | `build` |
-| `/dev-team-lint` | `/dev-team lint` | `lint` |
-| `/dev-team-view-project` | `/dev-team view-project` | `view-project` |
+| `/dev-team interview` | `/dev-team interview` | `interview` |
+| `/dev-team create-project-from-code` | `/dev-team create-project-from-code` | `create-project-from-code` |
+| `/dev-team generate` | `/dev-team generate` | `generate` |
+| `/dev-team build` | `/dev-team build` | `build` |
+| `/dev-team lint` | `/dev-team lint` | `lint` |
+| `/dev-team view-project` | `/dev-team view-project` | `view-project` |
 
 ## New Directory Structure
 
@@ -191,13 +191,13 @@ skills/
 ```
 
 - [ ] **Step 2:** Grep the entire repo for old command patterns and update:
-  - `/dev-team-interview` → `/dev-team interview`
-  - `/dev-team-create-project-from-code` → `/dev-team create-project-from-code`
-  - `/dev-team-generate` → `/dev-team generate`
-  - `/dev-team-build` → `/dev-team build`
-  - `/dev-team-lint` → `/dev-team lint`
-  - `/dev-team-view-project` → `/dev-team view-project`
-  - `dev-team:interview` → `dev-team interview` (plugin:skill namespace syntax may appear)
+  - `/dev-team interview` → `/dev-team interview`
+  - `/dev-team create-project-from-code` → `/dev-team create-project-from-code`
+  - `/dev-team generate` → `/dev-team generate`
+  - `/dev-team build` → `/dev-team build`
+  - `/dev-team lint` → `/dev-team lint`
+  - `/dev-team view-project` → `/dev-team view-project`
+  - `/dev-team interview` → `dev-team interview` (plugin:skill namespace syntax may appear)
   - Same for all other `dev-team:*` patterns
 
 - [ ] **Step 3:** Update `tests/test-mode-spec.md` — skill names in examples and per-skill tables

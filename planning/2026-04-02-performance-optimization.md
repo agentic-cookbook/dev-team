@@ -564,9 +564,9 @@ git push
    ```
 
 4. **Skills still invoke correctly:**
-   - Run `/dev-team-interview` — should load config via script, print version
-   - Run `/dev-team-lint <path>` — should assign specialists via reference/script
-   - Run `/dev-team-generate <path>` — should assign specialists via reference/script
+   - Run `/dev-team interview` — should load config via script, print version
+   - Run `/dev-team lint <path>` — should assign specialists via reference/script
+   - Run `/dev-team generate <path>` — should assign specialists via reference/script
 
 5. **No duplicated logic remains:**
    ```bash
