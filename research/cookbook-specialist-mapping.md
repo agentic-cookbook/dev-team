@@ -37,7 +37,7 @@ Maps every principle, guideline topic, and compliance category from the agentic-
 | Logging | Analytics, Instrumented logging | DevOps & Observability |
 | Networking | Retry, Caching, Pagination, API Design, Rate Limiting, Offline, Error Responses, Timeouts, Real-Time | Networking & API |
 | Security | Auth, Transport, Dependencies, Tokens, Authorization, Privacy, Headers, Storage, CORS, CSP, Input Validation | Security |
-| Skills and Agents | Authoring skills and rules | (Meta — informs how we build the interview system itself) |
+| Skills and Agents | Authoring skills and rules, Performance | Claude Code & Agentic Development |
 | Testing | Verification, Test Data, Unit Patterns, Properties, Mutation, Property-Based, Workflow, Flaky Prevention, Pyramid, Doubles, Security Testing | Testing & QA |
 | UI | Scriptable, Deep linking, Icons, Feedback, Visual Hierarchy, State, Animation, Platform Design Languages, Color, Forms, Spacing, Typography, Touch Targets, Progress, Previews, Layout, Data Display | UI/UX & Design |
 
@@ -87,6 +87,7 @@ Maps every principle, guideline topic, and compliance category from the agentic-
 10. **Reliability & Error Handling** — fail fast, idempotency, error responses, recovery
 11. **Development Process & Product** — feature flags, A/B testing, iterative development, YAGNI
 12. **Data & Persistence** — storage, sync, conflict resolution, migration, offline data
+13. **Claude Code & Agentic Development** — plugin architecture, skill/rule/agent authoring, hooks, MCP servers, context management, performance optimization, multi-agent orchestration
 
 ### Platform Specialists (6)
 
@@ -99,7 +100,7 @@ Maps every principle, guideline topic, and compliance category from the agentic-
 
 ## Coverage Analysis
 
-Every cookbook principle, guideline topic, and compliance category maps to at least one specialist. The 18 specialists (12 domain + 6 platform) provide complete coverage with room to grow.
+Every cookbook principle, guideline topic, and compliance category maps to at least one specialist. The 19 specialists (13 domain + 6 platform) provide complete coverage with room to grow.
 
 Specialists that cover the most cookbook content:
 - **Software Architecture** — 5 principles, concurrency guidelines
