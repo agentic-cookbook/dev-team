@@ -1,20 +1,20 @@
 ---
 name: dev-team-create-project-from-code
-version: 0.1.1
+version: 0.1.2
 description: Reverse-engineers an existing codebase into a cookbook project — discovers architecture, matches recipe scopes, generates recipes, and scaffolds the project directory
 allowed-tools: Read, Glob, Grep, Agent, Write, Edit, AskUserQuestion, Bash(git *), Bash(mkdir *), Bash(ls *), Bash(date *), Bash(cat *), Bash(wc *)
 argument-hint: <repo-path> [--output <path>] [--config <path>] [--test-mode] [--target <path>]
 ---
 
-# Create Project From Code v0.1.1
+# Create Project From Code v0.1.2
 
 ## Startup
 
-**First action**: If `$ARGUMENTS` is `--version`, print `create-project-from-code v0.1.1` and stop.
+**First action**: If `$ARGUMENTS` is `--version`, print `create-project-from-code v0.1.2` and stop.
 
-Otherwise, print `create-project-from-code v0.1.1` as the first line of output, then proceed.
+Otherwise, print `create-project-from-code v0.1.2` as the first line of output, then proceed.
 
-**Version check**: Run `${CLAUDE_PLUGIN_ROOT}/scripts/version-check.sh "${CLAUDE_SKILL_DIR}" "0.1.1"`. If it outputs a warning, print it and continue.
+**Version check**: Run `${CLAUDE_PLUGIN_ROOT}/scripts/version-check.sh "${CLAUDE_SKILL_DIR}" "0.1.2"`. If it outputs a warning, print it and continue.
 
 ## Overview
 
@@ -48,8 +48,11 @@ If config doesn't exist: "I need a config file. Create `~/.agentic-cookbook/dev-
 
 ### Output Directory
 - If `$ARGUMENTS` contains `--output <path>`, use that
-- Otherwise: `<workspace_repo>/projects/<project-name>-cookbook/`
-- If the output directory already exists, ask the user: "A project already exists at `<path>`. Overwrite, resume, or pick a new name?"
+- Otherwise: `./<project-name>-cookbook/` (in the current working directory)
+- If the output directory already exists, ask the user:
+  1. **Replace** — delete the existing directory and start fresh
+  2. **New name** — prompt for a new project name, use `./<new-name>-cookbook/`
+  3. **Cancel** — stop without making changes
 
 ## Phase 1 — Architecture Scan
 
