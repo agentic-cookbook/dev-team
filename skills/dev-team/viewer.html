@@ -8,20 +8,20 @@
   :root {
     --sidebar-width: 300px;
     --header-height: 72px;
-    --bg: #fafafa;
-    --sidebar-bg: #ffffff;
-    --border: #e2e8f0;
-    --text: #1a202c;
-    --text-muted: #64748b;
-    --accent: #3b82f6;
-    --accent-hover: #2563eb;
-    --tag-bg: #e0f2fe;
-    --tag-text: #0369a1;
-    --code-bg: #f1f5f9;
-    --tree-hover: #f1f5f9;
-    --tree-active: #e0f2fe;
-    --badge-bg: #f0fdf4;
-    --badge-text: #166534;
+    --bg: #0c1222;
+    --sidebar-bg: #111a2e;
+    --border: #1e2d4a;
+    --text: #e2e8f0;
+    --text-muted: #7b8ba5;
+    --accent: #60a5fa;
+    --accent-hover: #93bbfd;
+    --tag-bg: #172554;
+    --tag-text: #7dd3fc;
+    --code-bg: #0f1a30;
+    --tree-hover: #162040;
+    --tree-active: #1e3a5f;
+    --badge-bg: #0c2d1f;
+    --badge-text: #4ade80;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -36,7 +36,7 @@
   /* Header */
   .header {
     height: var(--header-height);
-    background: #ffffff;
+    background: #111a2e;
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
@@ -137,6 +137,8 @@
     border-radius: 6px;
     font-size: 13px;
     outline: none;
+    background: var(--bg);
+    color: var(--text);
   }
 
   .search-box input:focus {
@@ -250,13 +252,13 @@
   .recipe-deps {
     margin-bottom: 20px;
     padding: 12px 16px;
-    background: #fffbeb;
-    border: 1px solid #fde68a;
+    background: #1a1a2e;
+    border: 1px solid #2d3a5c;
     border-radius: 8px;
     font-size: 13px;
   }
 
-  .recipe-deps strong { color: #92400e; }
+  .recipe-deps strong { color: #fbbf24; }
 
   .dep-link {
     color: var(--accent);
@@ -355,7 +357,7 @@
   }
 
   .overview-card {
-    background: #ffffff;
+    background: #111a2e;
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 16px;
@@ -381,7 +383,7 @@
   }
 
   .desc-box {
-    background: #ffffff;
+    background: #111a2e;
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 20px;
@@ -615,7 +617,7 @@
 
     html += '<div class="recipe-meta">';
     (r.tags || []).forEach(function(t) { html += '<span class="tag">' + escapeHtml(t) + '</span>'; });
-    (r.platforms || []).forEach(function(p) { html += '<span class="tag" style="background:#f0fdf4;color:#166534">' + escapeHtml(p) + '</span>'; });
+    (r.platforms || []).forEach(function(p) { html += '<span class="tag" style="background:#0c2d1f;color:#4ade80">' + escapeHtml(p) + '</span>'; });
     html += '</div>';
 
     if (node.dependsOn && node.dependsOn.length > 0) {
