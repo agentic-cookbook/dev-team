@@ -3,7 +3,7 @@ name: build-project
 version: 0.1.0
 description: Builds a working project from a cookbook project — scaffolds native build system, generates code from recipes with sequential specialist augmentation, compiles, and smoke tests
 allowed-tools: Read, Glob, Grep, Agent, Write, Edit, AskUserQuestion, Bash(git *), Bash(mkdir *), Bash(ls *), Bash(date *), Bash(cat *), Bash(cp *), Bash(chmod *), Bash(xcodebuild *), Bash(swift *), Bash(gradle *), Bash(./gradlew *), Bash(npm *), Bash(npx *), Bash(cargo *), Bash(make *), Bash(cmake *), Bash(dotnet *), Bash(python *), Bash(node *), Bash(wc *)
-argument-hint: <project-path> [--output <path>] [--recipe <scope>] [--platform <platform>] [--config <path>]
+argument-hint: <project-path> [--output <path>] [--recipe <scope>] [--platform <platform>] [--config <path>] [--test-mode] [--target <path>]
 ---
 
 # Build Project v0.1.0
@@ -414,6 +414,50 @@ Present the final summary:
 - **Build:** <succeeded/failed>
 - **Tests:** <X>/<Y> passing (<percentage>%)
 - **Output at:** `<output-path>`"
+
+## Test Mode
+
+When `$ARGUMENTS` contains `--test-mode`, follow the test mode contract at `<interview_team_repo>/tests/test-mode-spec.md`.
+
+Read the contract file at the start of test mode to understand the unified log schema.
+
+### Test Mode Behavior
+
+1. **Auto-approve all prompts.** Every `AskUserQuestion` call is auto-approved — proceed with the first/default option without waiting for input. This applies to:
+   - Specialist assignment approval
+   - Scaffold confirmation
+   - Code review fix approval — **approve all fixes**
+   - Build failure options — **choose "try more fixes" up to 2 extra attempts, then "skip to smoke tests"**
+   - Resumability check — **choose "regenerate all"**
+
+2. **Write test log.** Append JSON events to `<output>/test-log.jsonl`:
+
+   Phase boundaries:
+   - `phase_started` / `phase_completed` for: `load-project`, `specialist-assignment`, `scaffolding`, `code-generation`, `code-review`, `build`, `smoke-test`, `final-report`
+
+   Agent interactions:
+   - `agent_spawned` / `agent_completed` for: `project-scaffolder`, `code-generator`, `specialist-code-pass`, `build-runner`, `smoke-tester`
+
+   Skill-specific events:
+   - `scaffold_created` — after scaffolder returns: `build_system`, `file_count`, `build_command`
+   - `code_generated` — after code-generator returns per recipe: `recipe_scope`, `files_written`, `must_implemented`, `must_total`
+   - `specialist_pass_complete` — after each specialist pass: `recipe_scope`, `specialist`, `changes_count`
+   - `code_review_complete` — after code review per recipe: `recipe_scope`, `issues_found`, `issues_fixed`
+   - `build_attempted` — after each build attempt: `attempt`, `error_count`, `fixed_count`
+   - `build_result` — final build outcome: `success`, `total_attempts`, `remaining_errors`
+   - `smoke_test_result` — test results: `launch_pass`, `conformance_passed`, `conformance_failed`, `conformance_skipped`
+
+   File writes:
+   - `file_written` for every artifact: scaffold files, source code, generation logs, review reports, build report, test report, build summary
+
+   End:
+   - `test_complete` summary
+
+3. **Target path.** Use `--target <path>` or first positional arg for the cookbook project directory.
+
+4. **No profile updates.** Don't modify any user data.
+
+5. **Config must pre-exist.** Fail immediately if config is missing.
 
 ## Aggressive Persistence
 
