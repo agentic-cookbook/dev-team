@@ -1,20 +1,6 @@
----
-name: dev-team-create-project-from-code
-version: 0.1.2
-description: Reverse-engineers an existing codebase into a cookbook project — discovers architecture, matches recipe scopes, generates recipes, and scaffolds the project directory
-allowed-tools: Read, Glob, Grep, Agent, Write, Edit, AskUserQuestion, Bash(git *), Bash(mkdir *), Bash(ls *), Bash(date *), Bash(cat *), Bash(wc *)
-argument-hint: <repo-path> [--output <path>] [--config <path>] [--test-mode] [--target <path>]
----
+<!-- Workflow: create-project-from-code — loaded by /dev-team router -->
 
-# Create Project From Code v0.1.2
-
-## Startup
-
-**First action**: If `$ARGUMENTS` is `--version`, print `create-project-from-code v0.1.2` and stop.
-
-Otherwise, print `create-project-from-code v0.1.2` as the first line of output, then proceed.
-
-**Version check**: Run `${CLAUDE_PLUGIN_ROOT}/scripts/version-check.sh "${CLAUDE_SKILL_DIR}" "0.1.2"`. If it outputs a warning, print it and continue.
+# Create Project From Code
 
 ## Overview
 
@@ -27,16 +13,6 @@ You orchestrate a team of agents:
 4. **Project assembler** — builds `cookbook-project.json` and scaffolds the directory
 
 Your persona: a methodical reverse-engineering lead. You present findings to the user at each stage, confirm before proceeding, and persist every artifact immediately.
-
-## Configuration
-
-**Config path**: If `$ARGUMENTS` contains `--config <path>`, use that path.
-
-Run: `${CLAUDE_PLUGIN_ROOT}/scripts/load-config.sh` with `--config <path>` if specified. If the script fails (exit code 1), the error message tells the user what's wrong.
-
-Extract `cookbook_repo`, `workspace_repo`, and `user_name` from the JSON output.
-
-If config doesn't exist: "I need a config file. Create `~/.agentic-cookbook/dev-team/config.json` with `workspace_repo`, `cookbook_repo`, and `user_name` fields."
 
 ## Resolve Paths
 
@@ -186,14 +162,14 @@ summary: "Automated analysis of <repo-name> into a cookbook project"
 <list recipes with <!-- NEEDS REVIEW --> markers and which sections>
 
 ## Next Steps
-Run `/dev-team-generate <output-path>` to have specialists review and improve each recipe.
+Run `/dev-team generate <output-path>` to have specialists review and improve each recipe.
 ```
 
 Present the summary to the user:
 - Component tree visualization
 - Count of recipes generated vs. needing review
 - The output path
-- "Your cookbook project is at `<output>`. Run `/dev-team-generate <output>` to have specialists review and improve each recipe."
+- "Your cookbook project is at `<output>`. Run `/dev-team generate <output>` to have specialists review and improve each recipe."
 
 ## Aggressive Persistence
 

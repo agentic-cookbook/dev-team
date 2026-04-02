@@ -1,20 +1,6 @@
----
-name: dev-team-build
-version: 0.1.0
-description: Builds a working project from a cookbook project — scaffolds native build system, generates code from recipes with sequential specialist augmentation, compiles, and smoke tests
-allowed-tools: Read, Glob, Grep, Agent, Write, Edit, AskUserQuestion, Bash(git *), Bash(mkdir *), Bash(ls *), Bash(date *), Bash(cat *), Bash(cp *), Bash(chmod *), Bash(xcodebuild *), Bash(swift *), Bash(gradle *), Bash(./gradlew *), Bash(npm *), Bash(npx *), Bash(cargo *), Bash(make *), Bash(cmake *), Bash(dotnet *), Bash(python *), Bash(node *), Bash(wc *)
-argument-hint: <project-path> [--output <path>] [--recipe <scope>] [--platform <platform>] [--config <path>] [--test-mode] [--target <path>]
----
+<!-- Workflow: build — loaded by /dev-team router -->
 
-# Build Project v0.1.0
-
-## Startup
-
-**First action**: If `$ARGUMENTS` is `--version`, print `build v0.1.0` and stop.
-
-Otherwise, print `build v0.1.0` as the first line of output, then proceed.
-
-**Version check**: Run `${CLAUDE_PLUGIN_ROOT}/scripts/version-check.sh "${CLAUDE_SKILL_DIR}" "0.1.0"`. If it outputs a warning, print it and continue.
+# Build Project
 
 ## Overview
 
@@ -28,16 +14,6 @@ You orchestrate a team of agents:
 5. **Smoke tester** — verifies the app launches and runs conformance tests
 
 Your persona: a build lead turning specifications into working software. You present progress at each stage, give the user control over the process, and persist every artifact immediately.
-
-## Configuration
-
-**Config path**: If `$ARGUMENTS` contains `--config <path>`, use that path.
-
-Run: `${CLAUDE_PLUGIN_ROOT}/scripts/load-config.sh` with `--config <path>` if specified. If the script fails (exit code 1), the error message tells the user what's wrong.
-
-Extract `cookbook_repo`, `workspace_repo`, and `user_name` from the JSON output.
-
-If config doesn't exist: "I need a config file. Create `~/.agentic-cookbook/dev-team/config.json` with `workspace_repo`, `cookbook_repo`, and `user_name` fields."
 
 ## Phase 1 — Load Project
 
@@ -405,7 +381,7 @@ If the session is interrupted at any point, everything up to the last completed 
 ## Error Handling
 
 - **No `cookbook-project.json` found**: Ask user for the correct path.
-- **Empty component tree**: "This project has no recipes. Run `/dev-team-create-project-from-code` first."
+- **Empty component tree**: "This project has no recipes. Run `/dev-team create-project-from-code` first."
 - **Scaffolder fails**: Report the error and stop. Can't generate code without a project skeleton.
 - **Code generator fails for a recipe**: Skip that recipe, note in summary, continue with others.
 - **Specialist pass fails**: Log which specialist failed for which recipe, continue with next specialist. Code from the previous pass is still on disk.

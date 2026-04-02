@@ -1,20 +1,6 @@
----
-name: dev-team-view-project
-version: 0.1.0
-description: Generate a human-readable HTML view of a cookbook project and open it in the browser — shows component tree, recipe details, dependencies, and context files
-allowed-tools: Read, Glob, Grep, Write, Bash(open *), Bash(mktemp *), Bash(date *), Bash(cat *), Bash(ls *), AskUserQuestion
-argument-hint: <project-path> [--config <path>]
----
+<!-- Workflow: view-project — loaded by /dev-team router -->
 
-# View Project v0.1.0
-
-## Startup
-
-**First action**: If `$ARGUMENTS` is `--version`, print `view-project v0.1.0` and stop.
-
-Otherwise, print `view-project v0.1.0` as the first line of output, then proceed.
-
-**Version check**: Run `${CLAUDE_PLUGIN_ROOT}/scripts/version-check.sh "${CLAUDE_SKILL_DIR}" "0.1.0"`. If it outputs a warning, print it and continue.
+# View Project
 
 ## Overview
 
@@ -25,16 +11,6 @@ Your job:
 2. Read all recipe markdown files and context files referenced in the manifest
 3. Inject the data into the HTML viewer template
 4. Write the result to a temp file and open it in the default browser
-
-## Configuration
-
-**Config path**: If `$ARGUMENTS` contains `--config <path>`, use that path.
-
-Run: `${CLAUDE_PLUGIN_ROOT}/scripts/load-config.sh` with `--config <path>` if specified. If the script fails (exit code 1), the error message tells the user what's wrong.
-
-Extract `cookbook_repo`, `workspace_repo`, and `user_name` from the JSON output.
-
-If config doesn't exist: "I need a config file. Create `~/.agentic-cookbook/dev-team/config.json` with `workspace_repo`, `cookbook_repo`, and `user_name` fields."
 
 ## Phase 1 — Load Project
 

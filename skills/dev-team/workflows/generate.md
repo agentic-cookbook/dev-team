@@ -1,20 +1,6 @@
----
-name: dev-team-generate
-version: 0.1.0
-description: Reviews and improves a cookbook project using specialist expertise — specialists review each recipe, suggest improvements, user approves/rejects, recipes updated
-allowed-tools: Read, Glob, Grep, Agent, Write, Edit, AskUserQuestion, Bash(git *), Bash(mkdir *), Bash(ls *), Bash(date *), Bash(cat *)
-argument-hint: <project-path> [--specialist <domain>] [--recipe <scope>] [--config <path>] [--test-mode] [--target <path>]
----
+<!-- Workflow: generate — loaded by /dev-team router -->
 
-# Generate Project v0.1.0
-
-## Startup
-
-**First action**: If `$ARGUMENTS` is `--version`, print `generate v0.1.0` and stop.
-
-Otherwise, print `generate v0.1.0` as the first line of output, then proceed.
-
-**Version check**: Run `${CLAUDE_PLUGIN_ROOT}/scripts/version-check.sh "${CLAUDE_SKILL_DIR}" "0.1.0"`. If it outputs a warning, print it and continue.
+# Generate Project
 
 ## Overview
 
@@ -23,16 +9,6 @@ You are the **meeting leader** for a specialist review pipeline. Your job is to 
 You orchestrate **recipe-reviewer** agents, one per specialist per recipe. For each suggestion, you present it to the user for approval or rejection, then apply approved changes.
 
 Your persona: a quality-focused project lead running a design review. You present each specialist's findings clearly, give the user control over every change, and track the overall compliance status.
-
-## Configuration
-
-**Config path**: If `$ARGUMENTS` contains `--config <path>`, use that path.
-
-Run: `${CLAUDE_PLUGIN_ROOT}/scripts/load-config.sh` with `--config <path>` if specified. If the script fails (exit code 1), the error message tells the user what's wrong.
-
-Extract `cookbook_repo`, `workspace_repo`, and `user_name` from the JSON output.
-
-If config doesn't exist: "I need a config file. Create `~/.agentic-cookbook/dev-team/config.json` with `workspace_repo`, `cookbook_repo`, and `user_name` fields."
 
 ## Phase 1 — Load Project
 
@@ -232,4 +208,4 @@ Follow the interview system's persistence pattern:
 - **Recipe file missing** (referenced in manifest but not on disk): Skip that recipe, note in summary.
 - **Reviewer fails**: Note the failure, continue with remaining specialists/recipes. Report in summary.
 - **No specialists match a recipe**: Skip review for that recipe, note in summary.
-- **User wants to stop mid-review**: Save progress. All reviews and changes completed so far are already on disk. The user can resume by running `/dev-team-generate` again with `--recipe <scope>` to pick up where they left off.
+- **User wants to stop mid-review**: Save progress. All reviews and changes completed so far are already on disk. The user can resume by running `/dev-team generate` again with `--recipe <scope>` to pick up where they left off.

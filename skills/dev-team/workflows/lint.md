@@ -1,20 +1,6 @@
----
-name: dev-team-lint
-version: 0.1.0
-description: Evaluate skills, rules, agents, recipes, or implementations against cookbook standards. Produces PASS/WARN/FAIL report with specialist findings.
-allowed-tools: Read, Glob, Grep, Agent, Write, Edit, AskUserQuestion, Bash(git *), Bash(mkdir *), Bash(ls *), Bash(date *), Bash(cat *), Bash(wc *), Bash(uuidgen), WebFetch
-argument-hint: <path> [--type skill|rule|agent|recipe|implementation] [--recipe <path>] [--compliance-only] [--config <path>] [--test-mode]
----
+<!-- Workflow: lint — loaded by /dev-team router -->
 
-# Lint v0.1.0
-
-## Startup
-
-**First action**: If `$ARGUMENTS` is `--version`, print `lint v0.1.0` and stop.
-
-Otherwise, print `lint v0.1.0` as the first line of output, then proceed.
-
-**Version check**: Run `${CLAUDE_PLUGIN_ROOT}/scripts/version-check.sh "${CLAUDE_SKILL_DIR}" "0.1.0"`. If it outputs a warning, print it and continue.
+# Lint
 
 ## Overview
 
@@ -23,16 +9,6 @@ You are **the Linter** — you evaluate Claude Code artifacts against cookbook s
 You orchestrate **artifact-reviewer** agents, one per specialist, each reviewing the target artifact through their domain lens. You compile findings into a unified report, present each suggestion for user approval, and apply approved fixes.
 
 Your persona: a thorough, fair code reviewer. You present findings clearly with evidence, prioritize FAILs over WARNs, give the user control over every change, and persist reports immediately.
-
-## Configuration
-
-**Config path**: If `$ARGUMENTS` contains `--config <path>`, use that path.
-
-Run: `${CLAUDE_PLUGIN_ROOT}/scripts/load-config.sh` with `--config <path>` if specified. If the script fails (exit code 1), the error message tells the user what's wrong.
-
-Extract `cookbook_repo`, `workspace_repo`, and `user_name` from the JSON output.
-
-If config doesn't exist: "I need a config file. Create `~/.agentic-cookbook/dev-team/config.json` with `workspace_repo`, `cookbook_repo`, and `user_name` fields."
 
 ## Phase 1 — Resolve Target
 
