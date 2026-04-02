@@ -13,6 +13,7 @@ Single entry point: `/dev-team <command>`
 | `generate` | Project Generator | Improve a cookbook project through specialist review |
 | `create-code-from-project` | Project Builder | Build working code from a cookbook project |
 | `lint` | Linter | Evaluate any artifact against cookbook standards |
+| `align-specialists` | Alignment Reviewer | Review specialist-cookbook alignment after guideline changes |
 | `compare-code` | Comparator | Compare two code projects for round-trip verification |
 | `view-project` | Viewer | Generate HTML view of a cookbook project |
 
@@ -27,7 +28,7 @@ Three repos:
 
 ```
 .claude-plugin/            # Plugin manifest
-agents/                    # 16 subagent definitions
+agents/                    # 17 subagent definitions
 skills/
   dev-team/                # Single skill with subcommand routing
     SKILL.md               # Router
