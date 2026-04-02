@@ -11,7 +11,7 @@ Maps every principle, guideline topic, and compliance category from the agentic-
 | Design for deletion | Code Quality & Maintainability |
 | Explicit over implicit | Code Quality & Maintainability |
 | Fail fast | Reliability & Error Handling |
-| Idempotency | Reliability & Error Handling |
+| Idempotency | Reliability & Error Handling / Data & Persistence |
 | Immutability by default | Software Architecture / Concurrency |
 | Make It Work, Make It Right, Make It Fast | Development Process & Product |
 | Manage complexity through boundaries | Software Architecture |
@@ -23,6 +23,7 @@ Maps every principle, guideline topic, and compliance category from the agentic-
 | Simplicity | Code Quality & Maintainability |
 | Small, reversible decisions | Development Process & Product |
 | Tight feedback loops | DevOps & Observability |
+| Support automation | Claude Code & Agentic Development |
 | YAGNI | Development Process & Product |
 
 ## Guideline Topics (14+) → Specialist Domains
@@ -66,7 +67,7 @@ Maps every principle, guideline topic, and compliance category from the agentic-
 | Internationalization | Localization & I18n |
 | Performance | DevOps & Observability |
 | Platform Compliance | Platform Specialists (all) |
-| Privacy and Data | Security |
+| Privacy and Data | Security / Data & Persistence |
 | Reliability | Reliability & Error Handling |
 | Security Compliance | Security |
 | User Safety | Security |
