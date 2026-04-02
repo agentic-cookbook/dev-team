@@ -3,7 +3,7 @@ name: analyze-project
 version: 0.1.0
 description: Reverse-engineers an existing codebase into a cookbook project — discovers architecture, matches recipe scopes, generates recipes, and scaffolds the project directory
 allowed-tools: Read, Glob, Grep, Agent, Write, Edit, AskUserQuestion, Bash(git *), Bash(mkdir *), Bash(ls *), Bash(date *), Bash(cat *), Bash(wc *)
-argument-hint: <repo-path> [--output <path>] [--config <path>]
+argument-hint: <repo-path> [--output <path>] [--config <path>] [--test-mode] [--target <path>]
 ---
 
 # Analyze Project v0.1.0
@@ -212,6 +212,45 @@ Follow the interview system's persistence pattern:
 - Write the summary **immediately** at the end (Phase 5)
 
 If the session is interrupted at any point, everything up to the last completed step is on disk and resumable.
+
+## Test Mode
+
+When `$ARGUMENTS` contains `--test-mode`, follow the test mode contract at `<interview_team_repo>/tests/test-mode-spec.md`.
+
+Read the contract file at the start of test mode to understand the unified log schema.
+
+### Test Mode Behavior
+
+1. **Auto-approve all prompts.** Every `AskUserQuestion` call is auto-approved — proceed with the first/default option without waiting for input. This applies to:
+   - Architecture scan confirmation ("Does this look right?")
+   - Scope approval ("Want to add or remove any scopes?")
+   - Overwrite confirmation ("A project already exists...")
+
+2. **Write test log.** Append JSON events to `<output>/test-log.jsonl`:
+
+   Phase boundaries:
+   - `phase_started` / `phase_completed` for: `architecture-scan`, `scope-discovery`, `recipe-generation`, `project-assembly`, `summary`
+
+   Agent interactions:
+   - `agent_spawned` / `agent_completed` for: `codebase-scanner`, `scope-matcher`, `recipe-writer`, `project-assembler`
+
+   Skill-specific events:
+   - `architecture_scanned` — after scanner returns: `tech_stack`, `platforms`, `module_count`
+   - `scopes_matched` — after matcher returns: `count`, `high_confidence`, `medium_confidence`, `low_confidence`
+   - `recipe_generated` — after each recipe writer returns: `scope`, `output_path`, `needs_review_count`
+   - `project_assembled` — after assembler returns: `component_count`, `manifest_path`
+
+   File writes:
+   - `file_written` for every artifact persisted: architecture-map.md, scope-report.md, each recipe, cookbook-project.json, generation-summary.md
+
+   End:
+   - `test_complete` summary
+
+3. **Target path.** The `--target <path>` flag (or first positional arg) specifies the repo to analyze. In test mode, this is required.
+
+4. **No profile updates.** Don't modify any user data.
+
+5. **Config must pre-exist.** Fail immediately if config is missing.
 
 ## Error Handling
 
