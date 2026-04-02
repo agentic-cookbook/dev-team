@@ -22,6 +22,19 @@ The router passes the execution mode: **one-shot** or **incremental**.
 - **One-shot**: Run all phases without pausing for approval. Present brief status after each phase but proceed immediately. Still stop on errors, output directory conflicts, and build failures that exhaust retries.
 - **Incremental**: Pause between phases for user review and approval as described in each phase below. Sections marked "(incremental only)" are skipped in one-shot mode.
 
+## UI Framework Selection (Apple platforms)
+
+If `$ARGUMENTS` contains `--no-swiftui`:
+- **macOS**: Use AppKit (NSWindow, NSView, NSViewController, storyboards or programmatic)
+- **iOS**: Use UIKit (UIWindow, UIView, UIViewController, storyboards or programmatic)
+- Do NOT use SwiftUI for any UI code
+
+If `--no-swiftui` is NOT present (default):
+- Use SwiftUI for all UI code on Apple platforms
+- This is the default because SwiftUI is the modern standard
+
+Pass this preference to the **code-generator** and **specialist-code-pass** agents as part of their input context, so they know which UI framework to target.
+
 ## Phase 1 — Load Project
 
 ### Resolve Project Path
@@ -133,7 +146,7 @@ If there are circular dependencies, warn the user and proceed with an arbitrary 
 ### Determine Target Language
 
 From platform:
-- `ios`/`macos` → Swift
+- `ios`/`macos` → Swift — UI Framework: SwiftUI (default) or AppKit/UIKit (if `--no-swiftui`)
 - `android` → Kotlin
 - `web` (frontend) → TypeScript
 - `web` (backend) → TypeScript (default) or Python/Go if architecture map specifies
@@ -159,6 +172,7 @@ Provide:
 - **Architecture map path** (if available)
 - **Cookbook repo path** from config
 - **Dependent recipe paths** — recipes this component depends on
+- **UI framework preference** — "SwiftUI" or "AppKit" (macOS) / "UIKit" (iOS) based on `--no-swiftui` flag (Apple platforms only)
 
 **Immediately persist** the generated code.
 
@@ -175,6 +189,7 @@ Provide:
 - **Specialist question set path** — `${CLAUDE_PLUGIN_ROOT}/research/specialists/<domain>.md`
 - **Cookbook guidelines paths** — relevant guidelines for this domain (use cookbook-specialist-mapping)
 - **Target platform and language**
+- **UI framework preference** — "SwiftUI" or "AppKit" (macOS) / "UIKit" (iOS) based on `--no-swiftui` flag (Apple platforms only)
 - **Previous specialist passes** — list of which specialists have already run
 
 **Important**: Run specialist passes **sequentially**, not in parallel. Each pass reads the output of the previous one.

@@ -1,20 +1,20 @@
 ---
 name: dev-team
-version: 0.3.0
+version: 0.3.1
 description: Multi-agent dev team for product discovery, project creation, specialist review, building, and linting. Subcommands: interview, create-project-from-code, generate, create-code-from-project, lint, view-project.
 allowed-tools: Read, Glob, Grep, Agent, Write, Edit, AskUserQuestion, Bash(git *), Bash(mkdir *), Bash(ls *), Bash(date *), Bash(cat *), Bash(wc *), Bash(uuidgen), Bash(chmod *), Bash(open *), WebFetch
-argument-hint: <command> [args...] — commands: interview, create-project-from-code, generate, create-code-from-project, lint, view-project
+argument-hint: <command> [args...] — commands: interview, create-project-from-code, generate, create-code-from-project [--no-swiftui], lint, view-project
 ---
 
-# Dev Team v0.3.0
+# Dev Team v0.3.1
 
 ## Startup
 
-**First action**: If `$ARGUMENTS` is `--version`, print `dev-team v0.3.0` and stop.
+**First action**: If `$ARGUMENTS` is `--version`, print `dev-team v0.3.1` and stop.
 
-Otherwise, print `dev-team v0.3.0` as the first line of output.
+Otherwise, print `dev-team v0.3.1` as the first line of output.
 
-**Version check**: Run `${CLAUDE_PLUGIN_ROOT}/scripts/version-check.sh "${CLAUDE_SKILL_DIR}" "0.3.0"`. If it outputs a warning, print it and continue.
+**Version check**: Run `${CLAUDE_PLUGIN_ROOT}/scripts/version-check.sh "${CLAUDE_SKILL_DIR}" "0.3.1"`. If it outputs a warning, print it and continue.
 
 ## Configuration
 
