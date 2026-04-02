@@ -33,6 +33,7 @@ skills/
 research/
   specialists/             # 19 specialist question sets (13 domain + 6 platform)
   cookbook-specialist-mapping.md
+scripts/                   # Shell scripts for deterministic operations
 planning/
   design-spec.md           # Full design specification
 tests/                     # Test harness and personas

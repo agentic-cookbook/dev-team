@@ -84,6 +84,10 @@ Key constraints:
 - **Must compile** — code must compile before and after the pass
 - **Stay in your lane** — add your domain's concerns, not someone else's (but flag critical cross-domain issues)
 
+## Specialist Assignment
+
+The rules for assigning specialists to recipes are defined in `research/specialist-assignment.md`. This single reference is used by the generate, build, and lint skills. The machine-readable mappings are in `research/specialist-assignment.json`, and a shell script at `scripts/assign-specialists.sh` automates the assignment.
+
 ## Cross-Domain Responsibilities
 
 Each specialist stays focused on their domain. However, when a specialist notices a critical issue outside their lane, they flag it rather than ignoring it:
