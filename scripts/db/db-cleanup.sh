@@ -27,7 +27,7 @@ fi
 
 # Parse duration into SQLite modifier string
 UNIT="${OLDER_THAN: -1}"
-VALUE="${OLDER_THAN:0:-1}"
+VALUE="${OLDER_THAN%?}"
 
 if ! [[ "$VALUE" =~ ^[0-9]+$ ]]; then
   echo "Error: invalid duration '${OLDER_THAN}' — expected integer + unit (d/m/y)" >&2
