@@ -23,7 +23,7 @@ const FIXTURES_DIR = join(import.meta.dirname, "../../fixtures");
  */
 export const REPO_PATHS = {
   interviewTeam: resolve(import.meta.dirname, "../../.."),
-  testOutput: resolve(import.meta.dirname, "../../../../agentic-interview-team-tests"),
+  testOutput: resolve(import.meta.dirname, "../../../../my-agentic-dev-team-tests"),
   cookbook: resolve(import.meta.dirname, "../../../../agentic-cookbook"),
 };
 

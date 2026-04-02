@@ -1,4 +1,4 @@
-# Agentic Interview Team
+# My Agentic Dev Team
 
 A multi-agent product discovery interview system. Helps users fully scope products they want to build through structured and exploratory questioning.
 

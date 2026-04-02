@@ -1,4 +1,4 @@
-# Agentic Interview Team
+# My Agentic Dev Team
 
 A multi-agent product discovery interview system that helps users fully scope products they want to build through structured and exploratory questioning.
 
@@ -28,7 +28,7 @@ The system produces a folder of timestamped markdown transcripts and analyses th
 
 | Repo | Purpose |
 |------|---------|
-| **agentic-interview-team** (this) | The system — agents, skills, specialist research |
+| **my-agentic-dev-team** (this) | The system — agents, skills, specialist research |
 | **agentic-cookbook** | Upstream knowledge — principles, guidelines, compliance |
 | **User's interview repo** | Per-user data — profiles, transcripts, analyses, knowledge |
 

@@ -36,7 +36,7 @@ On first run, check for the config file. If it doesn't exist:
 
 1. Ask the user: "Where is your interview repo? This is where transcripts, analyses, and your profile will be stored."
 2. Ask: "Where is your local clone of the agentic-cookbook? I use it to inform my specialists' questions."
-3. Ask: "Where is your local clone of the agentic-interview-team repo? I need it for specialist question sets and agent definitions."
+3. Ask: "Where is your local clone of the my-agentic-dev-team repo? I need it for specialist question sets and agent definitions."
 4. Ask: "What name should I use for you?"
 5. Create `~/.agentic-interviewer/config.json`:
 

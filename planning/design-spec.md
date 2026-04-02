@@ -1,4 +1,4 @@
-# Agentic Interview Team — Design Spec
+# My Agentic Dev Team — Design Spec
 
 **Date:** 2026-04-01
 **Status:** Initial buildout complete. Ready for first test run.
@@ -10,7 +10,7 @@ A multi-agent interview system that helps users scope and define products they w
 ## Three-Repo Architecture
 
 1. **agentic-cookbook** — principles, guidelines, recipes. Curated, versioned, stable. Specialists draw initial knowledge from here. Cloned locally as a peer repo.
-2. **agentic-interview-team** (this repo) — the interviewer system itself. Skill definitions, agent definitions, specialist roster, shared learnings that improve for everyone.
+2. **my-agentic-dev-team** (this repo) — the interviewer system itself. Skill definitions, agent definitions, specialist roster, shared learnings that improve for everyone.
 3. **User's interview repo** (e.g., `~/projects/personal/my-agentic-interviews`) — per-user growth. User profiles, transcripts, analyses, per-user specialist maturation, user-specific knowledge base.
 
 ## Skill vs. Agent
@@ -215,14 +215,14 @@ my-agentic-interviews/
 | Repo | Path | Purpose |
 |------|------|---------|
 | agentic-cookbook | `~/projects/agentic-tools/agentic-cookbook` | Upstream knowledge |
-| agentic-interview-team | `~/projects/agentic-tools/agentic-interview-team` | The system, test harness, personas |
+| my-agentic-dev-team | `~/projects/agentic-tools/my-agentic-dev-team` | The system, test harness, personas |
 | my-agentic-interviews | `~/projects/personal/my-agentic-interviews` | User's real interview data |
-| agentic-interview-team-tests | `~/projects/agentic-tools/agentic-interview-team-tests` | Test output destination |
+| my-agentic-dev-team-tests | `~/projects/agentic-tools/my-agentic-dev-team-tests` | Test output destination |
 
 ## Interview Team Repo Structure (Current)
 
 ```
-agentic-interview-team/
+my-agentic-dev-team/
   .claude/
     CLAUDE.md                          # Project instructions
     rules/always-commit-and-push.md
@@ -280,7 +280,7 @@ Top-level directories (not `.claude/`) so content is surfaceable for global inst
 {
   "interview_repo": "~/projects/personal/my-agentic-interviews",
   "cookbook_repo": "~/projects/agentic-tools/agentic-cookbook",
-  "interview_team_repo": "~/projects/agentic-tools/agentic-interview-team",
+  "interview_team_repo": "~/projects/agentic-tools/my-agentic-dev-team",
   "user_name": "mike",
   "authorized_repos": []
 }
