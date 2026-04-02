@@ -6,22 +6,35 @@
 <title>Cookbook Project Viewer</title>
 <style>
   :root {
-    --sidebar-width: 300px;
-    --header-height: 72px;
+    --sidebar-width: 320px;
+    --header-height: 56px;
+    --toolbar-height: 88px;
     --bg: #0c1222;
     --sidebar-bg: #111a2e;
+    --header-bg: #0f172a;
     --border: #1e2d4a;
     --text: #e2e8f0;
     --text-muted: #7b8ba5;
+    --text-dim: #4a5568;
     --accent: #60a5fa;
     --accent-hover: #93bbfd;
+    --accent-dim: #1e3a5f;
     --tag-bg: #172554;
     --tag-text: #7dd3fc;
-    --code-bg: #0f1a30;
+    --code-bg: #0a1120;
     --tree-hover: #162040;
     --tree-active: #1e3a5f;
     --badge-bg: #0c2d1f;
     --badge-text: #4ade80;
+    --warn-bg: #1a1a2e;
+    --warn-border: #2d3a5c;
+    --warn-text: #fbbf24;
+    --find-color: #f59e0b;
+    --filter-color: #0891b2;
+    --chat-user: #1e3a5f;
+    --chat-specialist: #172554;
+    --card-bg: #111a2e;
+    --group-bg: #0f172a;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -36,360 +49,220 @@
   /* Header */
   .header {
     height: var(--header-height);
-    background: #111a2e;
+    background: var(--header-bg);
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
-    padding: 0 24px;
-    gap: 24px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 10;
-  }
-
-  .header h1 {
-    font-size: 20px;
-    font-weight: 600;
-    white-space: nowrap;
-  }
-
-  .header-meta {
-    display: flex;
+    padding: 0 20px;
     gap: 16px;
-    align-items: center;
-    font-size: 13px;
-    color: var(--text-muted);
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 20;
   }
-
-  .header-meta .badge {
-    background: var(--badge-bg);
-    color: var(--badge-text);
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-weight: 500;
-  }
-
-  .platform-tag {
-    background: var(--tag-bg);
-    color: var(--tag-text);
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 500;
-  }
+  .header h1 { font-size: 16px; font-weight: 600; white-space: nowrap; }
+  .header-meta { display: flex; gap: 10px; align-items: center; font-size: 12px; color: var(--text-muted); }
+  .badge { background: var(--badge-bg); color: var(--badge-text); padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; }
+  .platform-tag { background: var(--tag-bg); color: var(--tag-text); padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; }
 
   /* Layout */
-  .container {
-    display: flex;
-    margin-top: var(--header-height);
-    height: calc(100vh - var(--header-height));
-  }
+  .container { display: flex; margin-top: var(--header-height); height: calc(100vh - var(--header-height)); }
 
   /* Sidebar */
   .sidebar {
-    width: var(--sidebar-width);
-    min-width: var(--sidebar-width);
+    width: var(--sidebar-width); min-width: var(--sidebar-width);
     background: var(--sidebar-bg);
     border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
+    display: flex; flex-direction: column;
     overflow: hidden;
   }
 
-  .sidebar-tabs {
-    display: flex;
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-  }
-
-  .sidebar-tab {
-    flex: 1;
-    padding: 10px 12px;
-    font-size: 13px;
-    font-weight: 500;
-    text-align: center;
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    color: var(--text-muted);
-    background: none;
-    border-top: none;
-    border-left: none;
-    border-right: none;
-  }
-
-  .sidebar-tab.active {
-    color: var(--accent);
-    border-bottom-color: var(--accent);
-  }
-
-  .search-box {
+  /* Search toolbar */
+  .search-toolbar {
     padding: 8px 12px;
     border-bottom: 1px solid var(--border);
+    display: flex; flex-direction: column; gap: 6px;
     flex-shrink: 0;
   }
-
-  .search-box input {
-    width: 100%;
-    padding: 6px 10px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    font-size: 13px;
-    outline: none;
-    background: var(--bg);
-    color: var(--text);
+  .search-row { display: flex; align-items: center; gap: 6px; }
+  .search-row label { font-size: 11px; color: var(--text-muted); width: 36px; text-align: right; flex-shrink: 0; text-transform: uppercase; letter-spacing: 0.05em; }
+  .search-wrap { flex: 1; position: relative; }
+  .search-wrap input {
+    width: 100%; padding: 5px 28px 5px 8px;
+    border: 1px solid var(--border); border-radius: 5px;
+    font-size: 12px; outline: none;
+    background: var(--bg); color: var(--text);
   }
-
-  .search-box input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+  .search-wrap input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.15); }
+  .search-wrap input::placeholder { color: var(--text-dim); }
+  .clear-btn {
+    display: none; position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 14px; padding: 2px 4px;
   }
-
-  .tree-container {
-    flex: 1;
-    overflow-y: auto;
-    padding: 8px 0;
+  .search-wrap.has-value .clear-btn { display: block; }
+  .find-nav { display: flex; align-items: center; gap: 4px; }
+  .nav-btn {
+    background: none; border: 1px solid var(--border); color: var(--text-muted);
+    border-radius: 4px; padding: 2px 6px; cursor: pointer; font-size: 11px;
   }
+  .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .nav-btn:disabled { opacity: 0.3; cursor: default; }
+  .find-pos { font-size: 11px; color: var(--text-muted); min-width: 40px; text-align: center; }
+  .search-help { font-size: 10px; color: var(--text-dim); padding: 2px 0 0 42px; }
 
-  /* Tree */
+  /* Sidebar nav */
+  .sidebar-nav { flex: 1; overflow-y: auto; padding: 4px 0; }
+
+  .nav-group { margin-bottom: 2px; }
+  .nav-group-header {
+    display: flex; align-items: center; padding: 6px 12px; gap: 6px;
+    font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--text-muted); cursor: pointer; user-select: none;
+  }
+  .nav-group-header:hover { color: var(--text); }
+  .nav-group-toggle { font-size: 8px; width: 12px; transition: transform 0.15s; }
+  .nav-group.collapsed .nav-group-toggle { transform: rotate(-90deg); }
+  .nav-group-items { }
+  .nav-group.collapsed .nav-group-items { display: none; }
+  .nav-group-count { color: var(--text-dim); font-weight: 400; margin-left: auto; }
+
+  .nav-item {
+    display: flex; align-items: center; padding: 4px 12px 4px 28px;
+    font-size: 12px; cursor: pointer; gap: 6px; color: var(--text);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .nav-item:hover { background: var(--tree-hover); }
+  .nav-item.active { background: var(--tree-active); font-weight: 500; }
+  .nav-item-icon { font-size: 11px; flex-shrink: 0; width: 16px; text-align: center; }
+  .nav-item-label { overflow: hidden; text-overflow: ellipsis; }
+  .nav-item-badge { font-size: 10px; color: var(--text-dim); margin-left: auto; flex-shrink: 0; }
+
+  /* Tree (for components) */
   .tree-node { user-select: none; }
-
   .tree-row {
-    display: flex;
-    align-items: center;
-    padding: 4px 12px;
-    cursor: pointer;
-    font-size: 13px;
-    gap: 4px;
+    display: flex; align-items: center; padding: 3px 12px 3px 28px;
+    cursor: pointer; font-size: 12px; gap: 4px;
   }
-
   .tree-row:hover { background: var(--tree-hover); }
   .tree-row.active { background: var(--tree-active); font-weight: 500; }
-
-  .tree-toggle {
-    width: 16px;
-    height: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-    color: var(--text-muted);
-    flex-shrink: 0;
-  }
-
-  .tree-icon {
-    width: 16px;
-    height: 16px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-  }
-
-  .tree-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
+  .tree-toggle { width: 14px; font-size: 9px; color: var(--text-muted); flex-shrink: 0; text-align: center; }
+  .tree-icon { font-size: 11px; flex-shrink: 0; }
+  .tree-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .tree-children { display: none; }
   .tree-node.expanded > .tree-children { display: block; }
-
-  .tree-depth-1 .tree-row { padding-left: 24px; }
-  .tree-depth-2 .tree-row { padding-left: 40px; }
-  .tree-depth-3 .tree-row { padding-left: 56px; }
-  .tree-depth-4 .tree-row { padding-left: 72px; }
+  .tree-depth-1 .tree-row { padding-left: 42px; }
+  .tree-depth-2 .tree-row { padding-left: 56px; }
+  .tree-depth-3 .tree-row { padding-left: 70px; }
+  .tree-depth-4 .tree-row { padding-left: 84px; }
 
   .hidden { display: none !important; }
 
-  /* Context list */
-  .context-list { padding: 8px 0; }
-
-  .context-item {
-    display: flex;
-    align-items: center;
-    padding: 6px 12px;
-    cursor: pointer;
-    font-size: 13px;
-    gap: 8px;
-  }
-
-  .context-item:hover { background: var(--tree-hover); }
-  .context-item.active { background: var(--tree-active); font-weight: 500; }
-
   /* Main content */
-  .main {
-    flex: 1;
-    overflow-y: auto;
-    padding: 32px 48px;
-    max-width: 900px;
-  }
+  .main { flex: 1; overflow-y: auto; padding: 28px 40px; }
+  .main.constrained { max-width: 900px; }
 
-  /* Welcome */
-  .welcome { color: var(--text-muted); padding: 48px 0; text-align: center; }
-  .welcome h2 { font-size: 24px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
-  .welcome p { font-size: 15px; max-width: 400px; margin: 0 auto; }
+  /* Overview cards */
+  .overview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .overview-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+  .overview-card h3 { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 6px; }
+  .overview-card .value { font-size: 24px; font-weight: 600; }
+  .overview-card .detail { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .desc-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 20px; font-size: 13px; }
+
+  /* Timeline */
+  .timeline { margin-bottom: 20px; }
+  .timeline-item {
+    display: flex; align-items: center; gap: 10px; padding: 6px 0;
+    font-size: 12px; border-left: 2px solid var(--border); margin-left: 8px; padding-left: 16px;
+  }
+  .timeline-item .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex-shrink: 0; margin-left: -21px; }
+  .timeline-item .dot.completed { background: var(--badge-text); }
+  .timeline-item .dot.failed { background: #ef4444; }
+  .timeline-item .dot.running { background: var(--warn-text); }
+  .timeline-label { font-weight: 500; }
+  .timeline-time { color: var(--text-muted); font-size: 11px; }
+
+  /* Section header */
+  .section-header { margin-bottom: 20px; }
+  .section-header h2 { font-size: 22px; font-weight: 600; margin-bottom: 6px; }
+  .section-header .subtitle { font-size: 13px; color: var(--text-muted); }
 
   /* Recipe detail */
-  .recipe-header { margin-bottom: 24px; }
-  .recipe-header h2 { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
-  .recipe-summary { font-size: 15px; color: var(--text-muted); margin-bottom: 12px; }
-
-  .recipe-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 16px;
-  }
-
-  .recipe-meta .tag {
-    background: var(--tag-bg);
-    color: var(--tag-text);
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 500;
-  }
-
-  .recipe-deps {
-    margin-bottom: 20px;
-    padding: 12px 16px;
-    background: #1a1a2e;
-    border: 1px solid #2d3a5c;
-    border-radius: 8px;
-    font-size: 13px;
-  }
-
-  .recipe-deps strong { color: #fbbf24; }
-
-  .dep-link {
-    color: var(--accent);
-    cursor: pointer;
-    text-decoration: underline;
-  }
-
+  .recipe-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .recipe-meta .tag { background: var(--tag-bg); color: var(--tag-text); padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; }
+  .recipe-meta .tag.platform { background: var(--badge-bg); color: var(--badge-text); }
+  .recipe-deps { margin-bottom: 16px; padding: 10px 14px; background: var(--warn-bg); border: 1px solid var(--warn-border); border-radius: 6px; font-size: 12px; }
+  .recipe-deps strong { color: var(--warn-text); }
+  .dep-link { color: var(--accent); cursor: pointer; text-decoration: underline; }
   .dep-link:hover { color: var(--accent-hover); }
+  .recipe-path { font-size: 11px; color: var(--text-muted); font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; margin-bottom: 12px; }
 
-  .recipe-path {
-    font-size: 12px;
-    color: var(--text-muted);
-    font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
-    margin-bottom: 16px;
-  }
+  hr.divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
 
-  hr.divider {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 20px 0;
-  }
+  /* Specialist panel */
+  .specialist-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .specialist-icon { width: 48px; height: 48px; border-radius: 12px; background: var(--tag-bg); display: flex; align-items: center; justify-content: center; font-size: 24px; }
+  .specialist-stats { display: flex; gap: 20px; margin-bottom: 20px; }
+  .specialist-stat { text-align: center; }
+  .specialist-stat .num { font-size: 20px; font-weight: 600; }
+  .specialist-stat .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; }
+  .change-list { list-style: none; }
+  .change-item { padding: 10px 14px; border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px; background: var(--card-bg); }
+  .change-item .recipe-name { font-weight: 500; font-size: 13px; margin-bottom: 4px; color: var(--accent); }
+  .change-item .change-desc { font-size: 12px; color: var(--text-muted); }
 
-  /* Rendered markdown */
-  .md-content h1 { font-size: 22px; font-weight: 600; margin: 24px 0 12px; }
-  .md-content h2 { font-size: 18px; font-weight: 600; margin: 20px 0 10px; }
-  .md-content h3 { font-size: 15px; font-weight: 600; margin: 16px 0 8px; }
-  .md-content h4 { font-size: 14px; font-weight: 600; margin: 14px 0 6px; }
+  /* Transcript */
+  .transcript { display: flex; flex-direction: column; gap: 8px; }
+  .chat-msg { padding: 10px 14px; border-radius: 8px; max-width: 85%; font-size: 13px; }
+  .chat-msg.specialist { background: var(--chat-specialist); align-self: flex-start; border-bottom-left-radius: 2px; }
+  .chat-msg.user { background: var(--chat-user); align-self: flex-end; border-bottom-right-radius: 2px; }
+  .chat-msg .chat-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .chat-msg .chat-persona { font-weight: 500; font-size: 12px; }
+  .chat-msg .chat-domain { font-size: 10px; color: var(--tag-text); background: var(--tag-bg); padding: 1px 6px; border-radius: 3px; }
+  .chat-msg .chat-time { font-size: 10px; color: var(--text-dim); margin-left: auto; }
+  .chat-msg .chat-body { line-height: 1.5; }
 
-  .md-content p { margin: 8px 0; font-size: 14px; }
-
-  .md-content ul, .md-content ol { margin: 8px 0 8px 24px; font-size: 14px; }
-  .md-content li { margin: 4px 0; }
-
-  .md-content code {
-    background: var(--code-bg);
-    padding: 1px 5px;
-    border-radius: 3px;
-    font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
-    font-size: 13px;
-  }
-
-  .md-content pre {
-    background: var(--code-bg);
-    padding: 14px 18px;
-    border-radius: 8px;
-    overflow-x: auto;
-    margin: 12px 0;
-    line-height: 1.5;
-  }
-
-  .md-content pre code {
-    background: none;
-    padding: 0;
-    font-size: 13px;
-  }
-
-  .md-content blockquote {
-    border-left: 3px solid var(--accent);
-    padding: 4px 16px;
-    margin: 12px 0;
-    color: var(--text-muted);
-  }
-
+  /* Markdown content */
+  .md-content h1 { font-size: 20px; font-weight: 600; margin: 20px 0 10px; }
+  .md-content h2 { font-size: 17px; font-weight: 600; margin: 18px 0 8px; }
+  .md-content h3 { font-size: 14px; font-weight: 600; margin: 14px 0 6px; }
+  .md-content h4 { font-size: 13px; font-weight: 600; margin: 12px 0 4px; }
+  .md-content p { margin: 6px 0; font-size: 13px; }
+  .md-content ul, .md-content ol { margin: 6px 0 6px 20px; font-size: 13px; }
+  .md-content li { margin: 3px 0; }
+  .md-content code { background: var(--code-bg); padding: 1px 5px; border-radius: 3px; font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; font-size: 12px; }
+  .md-content pre { background: var(--code-bg); padding: 12px 16px; border-radius: 6px; overflow-x: auto; margin: 10px 0; line-height: 1.5; }
+  .md-content pre code { background: none; padding: 0; font-size: 12px; }
+  .md-content blockquote { border-left: 3px solid var(--accent); padding: 4px 14px; margin: 10px 0; color: var(--text-muted); }
   .md-content strong { font-weight: 600; }
   .md-content em { font-style: italic; }
+  .md-content a { color: var(--accent); text-decoration: underline; }
+  .md-content table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 12px; }
+  .md-content th, .md-content td { border: 1px solid var(--border); padding: 6px 10px; text-align: left; }
+  .md-content th { background: var(--code-bg); font-weight: 600; }
 
-  .md-content a {
-    color: var(--accent);
-    text-decoration: underline;
-  }
+  /* Find/filter highlights */
+  mark.find-mark { background: var(--find-color); color: #111; border-radius: 2px; }
+  mark.filter-mark { background: var(--filter-color); color: #111; border-radius: 2px; }
 
-  .md-content table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 12px 0;
-    font-size: 13px;
-  }
+  /* Empty state */
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+  .empty-state h2 { font-size: 20px; color: var(--text); margin-bottom: 8px; }
+  .empty-state p { font-size: 13px; max-width: 360px; margin: 0 auto; }
 
-  .md-content th, .md-content td {
-    border: 1px solid var(--border);
-    padding: 8px 12px;
-    text-align: left;
-  }
-
-  .md-content th {
-    background: var(--code-bg);
-    font-weight: 600;
-  }
-
-  /* Overview panel */
-  .overview-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 24px;
-  }
-
-  .overview-card {
-    background: #111a2e;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 16px;
-  }
-
-  .overview-card h3 {
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--text-muted);
-    margin-bottom: 8px;
-  }
-
-  .overview-card .value {
-    font-size: 28px;
-    font-weight: 600;
-  }
-
-  .overview-card .detail {
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-top: 4px;
-  }
-
-  .desc-box {
-    background: #111a2e;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 24px;
-    font-size: 14px;
-  }
+  /* Specialist domain colors */
+  .domain-security { color: #f87171; }
+  .domain-accessibility { color: #a78bfa; }
+  .domain-ui-ux-design { color: #fb923c; }
+  .domain-software-architecture { color: #60a5fa; }
+  .domain-code-quality { color: #34d399; }
+  .domain-testing-qa { color: #fbbf24; }
+  .domain-networking-api { color: #38bdf8; }
+  .domain-devops-observability { color: #c084fc; }
+  .domain-localization-i18n { color: #fb7185; }
+  .domain-reliability { color: #22d3ee; }
+  .domain-data-persistence { color: #4ade80; }
+  .domain-development-process { color: #e879f9; }
+  .domain-claude-code { color: #f472b6; }
 </style>
 </head>
 <body>
@@ -407,256 +280,386 @@
 
 <div class="container">
   <div class="sidebar">
-    <div class="sidebar-tabs">
-      <button class="sidebar-tab active" data-tab="components" onclick="switchTab('components')">Components</button>
-      <button class="sidebar-tab" data-tab="context" onclick="switchTab('context')">Context</button>
+    <div class="search-toolbar">
+      <div class="search-row">
+        <label>Find</label>
+        <div class="search-wrap" id="find-wrap">
+          <input type="text" id="find-input" placeholder="Search content...">
+          <button class="clear-btn" id="find-clear">&times;</button>
+        </div>
+        <div class="find-nav">
+          <button class="nav-btn" id="prev-btn" disabled>&uarr;</button>
+          <span class="find-pos" id="find-pos"></span>
+          <button class="nav-btn" id="next-btn" disabled>&darr;</button>
+        </div>
+      </div>
+      <div class="search-row">
+        <label>Filter</label>
+        <div class="search-wrap" id="filter-wrap">
+          <input type="text" id="filter-input" placeholder="specialist: category: recipe:">
+          <button class="clear-btn" id="filter-clear">&times;</button>
+        </div>
+      </div>
+      <div class="search-help">Prefixes: specialist: category: recipe:</div>
     </div>
-    <div class="search-box">
-      <input type="text" id="search-input" placeholder="Search components..." oninput="filterTree(this.value)">
-    </div>
-    <div class="tree-container" id="components-panel">
-      <div id="component-tree"></div>
-    </div>
-    <div class="context-list hidden" id="context-panel"></div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
   </div>
 
   <div class="main" id="main-content">
-    <div class="welcome" id="welcome-panel">
+    <div class="empty-state" id="welcome-panel">
       <h2 id="welcome-title">Cookbook Project</h2>
-      <p>Select a component from the sidebar to view its recipe, or browse the context files.</p>
+      <p>Select an item from the sidebar to view details.</p>
     </div>
     <div id="detail-panel" class="hidden"></div>
   </div>
 </div>
 
 <script>
-// Cookbook Project Viewer
+// Cookbook Project Viewer v2
 // All user content is escaped via escapeHtml() before DOM insertion.
-// Data source: local cookbook-project.json files only (no untrusted input).
+// Data source: local cookbook-project.json + SQLite DB (no untrusted input).
 (function() {
   var data = typeof PROJECT_DATA !== 'undefined' ? PROJECT_DATA : null;
-  if (!data) {
-    document.getElementById('welcome-title').textContent = 'No project data loaded';
-    return;
-  }
+  if (!data) { document.getElementById('welcome-title').textContent = 'No project data loaded'; return; }
 
-  var project = data.project;
-  var components = data.components;
-  var context = data.context || {};
+  var project = data.project || {};
+  var components = data.components || [];
+  var sections = data.sections || [];
+  var specialists = data.specialists || [];
+  var transcript = data.transcript || [];
+  var timeline = data.timeline || [];
 
-  // Utility: escape HTML entities for safe text rendering
-  function escapeHtml(text) {
-    var div = document.createElement('div');
-    div.appendChild(document.createTextNode(text));
-    return div.innerHTML;
-  }
-
-  // Utility: set element content safely using DOM methods
-  function setContent(el, htmlContent) {
-    // Clear existing content
+  // -- Utilities --
+  function escapeHtml(t) { var d = document.createElement('div'); d.appendChild(document.createTextNode(t)); return d.innerHTML; }
+  function setContent(el, html) {
     while (el.firstChild) el.removeChild(el.firstChild);
-    // Parse and append — all dynamic text has been escaped via escapeHtml()
-    var temp = document.createElement('template');
-    temp.innerHTML = htmlContent;
-    el.appendChild(temp.content.cloneNode(true));
+    var t = document.createElement('template');
+    t.innerHTML = html;
+    el.appendChild(t.content.cloneNode(true));
+  }
+  function domainClass(d) { return d ? 'domain-' + d.replace(/[^a-z-]/g, '') : ''; }
+  function specialistIcon(d) {
+    var icons = { security: '\uD83D\uDD12', accessibility: '\u267F', 'ui-ux-design': '\uD83C\uDFA8', 'software-architecture': '\uD83C\uDFD7', 'code-quality': '\u2728', 'testing-qa': '\uD83E\uDDEA', 'networking-api': '\uD83C\uDF10', 'devops-observability': '\uD83D\uDCCA', 'localization-i18n': '\uD83C\uDF0D', reliability: '\uD83D\uDEE1', 'data-persistence': '\uD83D\uDCBE', 'development-process': '\u2699', 'claude-code': '\uD83E\uDD16' };
+    return icons[d] || '\uD83D\uDD0D';
+  }
+  function categoryIcon(c) {
+    var icons = { architecture: '\uD83C\uDFD7', scope: '\uD83C\uDFAF', review: '\uD83D\uDD0D', build: '\u2692', decision: '\uD83D\uDCCB', research: '\uD83D\uDCCA' };
+    return icons[c] || '\uD83D\uDCC4';
   }
 
-  // Header
-  document.getElementById('project-title').textContent = project.name || 'Untitled Project';
+  // -- Header --
+  document.getElementById('project-title').textContent = project.name || 'Untitled';
   document.getElementById('project-version').textContent = 'v' + (project.version || '0.0.0');
   document.getElementById('welcome-title').textContent = project.name || 'Cookbook Project';
-
-  var platformsEl = document.getElementById('project-platforms');
-  (project.platforms || []).forEach(function(p) {
-    var span = document.createElement('span');
-    span.className = 'platform-tag';
-    span.textContent = p;
-    platformsEl.appendChild(span);
-  });
-
+  var pe = document.getElementById('project-platforms');
+  (project.platforms || []).forEach(function(p) { var s = document.createElement('span'); s.className = 'platform-tag'; s.textContent = p; pe.appendChild(s); });
   document.getElementById('project-author').textContent = project.author ? 'by ' + project.author : '';
 
-  // Build tree
-  var activeRow = null;
+  // -- State --
+  var activeNavItem = null;
+  var allNavItems = [];
+
+  // -- Build sidebar --
+  var nav = document.getElementById('sidebar-nav');
+
+  // PROJECT group
+  addGroup('PROJECT', [
+    { id: 'overview', label: 'Overview', icon: '\uD83D\uDCCA', handler: showOverview }
+  ]);
+
+  // COMPONENTS group (tree)
+  if (components.length > 0) {
+    var compGroup = addGroupHeader('COMPONENTS', countRecipes(components));
+    var compItems = document.createElement('div');
+    compItems.className = 'nav-group-items';
+    buildTree(components, compItems, 0);
+    compGroup.appendChild(compItems);
+    nav.appendChild(compGroup);
+  }
+
+  // Section-based groups
+  var groupedSections = {};
+  sections.forEach(function(s) {
+    if (!groupedSections[s.category]) groupedSections[s.category] = [];
+    groupedSections[s.category].push(s);
+  });
+
+  var categoryOrder = ['architecture', 'scope', 'research', 'review', 'build', 'decision'];
+  var categoryNames = { architecture: 'ARCHITECTURE', scope: 'SCOPES', research: 'RESEARCH', review: 'REVIEWS', build: 'BUILD LOG', decision: 'DECISIONS' };
+  categoryOrder.forEach(function(cat) {
+    var items = groupedSections[cat];
+    if (!items || items.length === 0) return;
+    var navItems = items.map(function(s, i) {
+      return {
+        id: cat + '-' + i,
+        label: s.title,
+        icon: categoryIcon(cat),
+        specialist: s.specialist,
+        recipe: s.recipe,
+        handler: function() { showSection(s); }
+      };
+    });
+    addGroup(categoryNames[cat] || cat.toUpperCase(), navItems);
+  });
+
+  // SPECIALISTS group
+  if (specialists.length > 0) {
+    var specItems = specialists.map(function(sp) {
+      return {
+        id: 'spec-' + sp.domain,
+        label: sp.displayName,
+        icon: specialistIcon(sp.domain),
+        badge: sp.recipes ? sp.recipes.length + ' recipes' : '',
+        specialist: sp.domain,
+        handler: function() { showSpecialist(sp); }
+      };
+    });
+    addGroup('SPECIALISTS', specItems);
+  }
+
+  // TRANSCRIPT group
+  if (transcript.length > 0) {
+    addGroup('TRANSCRIPT', [
+      { id: 'transcript', label: 'Full Transcript', icon: '\uD83D\uDCAC', badge: transcript.length + ' msgs', handler: showTranscript }
+    ]);
+  }
+
+  // -- Sidebar builders --
+  function addGroup(name, items) {
+    var group = addGroupHeader(name, items.length);
+    var container = document.createElement('div');
+    container.className = 'nav-group-items';
+    items.forEach(function(item) {
+      var el = document.createElement('div');
+      el.className = 'nav-item';
+      el.setAttribute('data-id', item.id);
+      if (item.specialist) el.setAttribute('data-specialist', item.specialist);
+      if (item.recipe) el.setAttribute('data-recipe', item.recipe);
+      el.setAttribute('data-label', (item.label || '').toLowerCase());
+
+      var iconSpan = document.createElement('span');
+      iconSpan.className = 'nav-item-icon';
+      iconSpan.textContent = item.icon || '';
+      el.appendChild(iconSpan);
+
+      var labelSpan = document.createElement('span');
+      labelSpan.className = 'nav-item-label';
+      labelSpan.textContent = item.label;
+      el.appendChild(labelSpan);
+
+      if (item.badge) {
+        var badgeSpan = document.createElement('span');
+        badgeSpan.className = 'nav-item-badge';
+        badgeSpan.textContent = item.badge;
+        el.appendChild(badgeSpan);
+      }
+
+      el.addEventListener('click', function() { selectNavItem(el); item.handler(); });
+      container.appendChild(el);
+      allNavItems.push({ el: el, id: item.id, label: (item.label || '').toLowerCase(), specialist: item.specialist || '', recipe: item.recipe || '', category: name.toLowerCase() });
+    });
+    group.appendChild(container);
+    nav.appendChild(group);
+  }
+
+  function addGroupHeader(name, count) {
+    var group = document.createElement('div');
+    group.className = 'nav-group';
+    var header = document.createElement('div');
+    header.className = 'nav-group-header';
+
+    var toggle = document.createElement('span');
+    toggle.className = 'nav-group-toggle';
+    toggle.textContent = '\u25BE';
+    header.appendChild(toggle);
+
+    var nameText = document.createTextNode(name);
+    header.appendChild(nameText);
+
+    var countSpan = document.createElement('span');
+    countSpan.className = 'nav-group-count';
+    countSpan.textContent = count || '';
+    header.appendChild(countSpan);
+
+    header.addEventListener('click', function() { group.classList.toggle('collapsed'); });
+    group.appendChild(header);
+    return group;
+  }
 
   function buildTree(nodes, container, depth) {
     nodes.forEach(function(node) {
       var el = document.createElement('div');
       el.className = 'tree-node tree-depth-' + depth;
       if (node.children && node.children.length > 0) el.classList.add('expanded');
+      el.setAttribute('data-label', node.key.toLowerCase());
 
       var row = document.createElement('div');
       row.className = 'tree-row';
-
       var toggle = document.createElement('span');
       toggle.className = 'tree-toggle';
       if (node.children && node.children.length > 0) {
         toggle.textContent = '\u25BE';
-        toggle.addEventListener('click', function(e) {
-          e.stopPropagation();
-          el.classList.toggle('expanded');
-          toggle.textContent = el.classList.contains('expanded') ? '\u25BE' : '\u25B8';
-        });
+        toggle.addEventListener('click', function(e) { e.stopPropagation(); el.classList.toggle('expanded'); toggle.textContent = el.classList.contains('expanded') ? '\u25BE' : '\u25B8'; });
       }
-
       var icon = document.createElement('span');
       icon.className = 'tree-icon';
       icon.textContent = node.recipe ? '\uD83D\uDCC4' : '\uD83D\uDCC1';
-
       var label = document.createElement('span');
       label.className = 'tree-label';
       label.textContent = node.key;
-
-      row.appendChild(toggle);
-      row.appendChild(icon);
-      row.appendChild(label);
+      row.appendChild(toggle); row.appendChild(icon); row.appendChild(label);
       el.appendChild(row);
 
-      row.addEventListener('click', function() {
-        if (activeRow) activeRow.classList.remove('active');
-        row.classList.add('active');
-        activeRow = row;
-        showComponent(node);
-      });
+      row.addEventListener('click', function() { selectNavItem(row); showComponent(node); });
+      allNavItems.push({ el: row, id: 'comp-' + node.key, label: node.key.toLowerCase(), specialist: '', recipe: node.key.toLowerCase(), category: 'components' });
 
       if (node.children && node.children.length > 0) {
-        var children = document.createElement('div');
-        children.className = 'tree-children';
-        buildTree(node.children, children, depth + 1);
-        el.appendChild(children);
+        var ch = document.createElement('div');
+        ch.className = 'tree-children';
+        buildTree(node.children, ch, depth + 1);
+        el.appendChild(ch);
       }
-
       container.appendChild(el);
     });
   }
 
-  buildTree(components, document.getElementById('component-tree'), 0);
+  function selectNavItem(el) {
+    if (activeNavItem) activeNavItem.classList.remove('active');
+    el.classList.add('active');
+    activeNavItem = el;
+  }
 
-  // Context panel
-  var contextPanel = document.getElementById('context-panel');
-  Object.keys(context).forEach(function(key) {
-    var item = document.createElement('div');
-    item.className = 'context-item';
-    var clipIcon = document.createElement('span');
-    clipIcon.textContent = '\uD83D\uDCCB';
-    var nameSpan = document.createElement('span');
-    nameSpan.textContent = key;
-    item.appendChild(clipIcon);
-    item.appendChild(nameSpan);
-    item.addEventListener('click', function() {
-      var items = contextPanel.querySelectorAll('.context-item');
-      items.forEach(function(i) { i.classList.remove('active'); });
-      item.classList.add('active');
-      if (activeRow) { activeRow.classList.remove('active'); activeRow = null; }
-      showContext(key, context[key]);
-    });
-    contextPanel.appendChild(item);
-  });
+  // -- Panel renderers --
+  var detail = document.getElementById('detail-panel');
+  var mainEl = document.getElementById('main-content');
 
-  // Show overview on load
-  showOverview();
+  function showPanel(html, wide) {
+    document.getElementById('welcome-panel').classList.add('hidden');
+    detail.classList.remove('hidden');
+    mainEl.classList.toggle('constrained', !wide);
+    setContent(detail, html);
+    detail.scrollTop = 0;
+    mainEl.scrollTop = 0;
+  }
 
   function showOverview() {
-    var detail = document.getElementById('detail-panel');
-    var recipeCount = countRecipes(components);
-    var groupCount = countGroups(components);
+    var rc = countRecipes(components);
+    var gc = countGroups(components);
+    var html = '<div class="section-header"><h2>' + escapeHtml(project.name || 'Project Overview') + '</h2><div class="subtitle">' + escapeHtml(project.description || '') + '</div></div>';
 
-    var html = '<div class="overview-grid">';
-    html += '<div class="overview-card"><h3>Recipes</h3><div class="value">' + recipeCount + '</div><div class="detail">behavioral specifications</div></div>';
-    html += '<div class="overview-card"><h3>Components</h3><div class="value">' + (recipeCount + groupCount) + '</div><div class="detail">' + groupCount + ' groups, ' + recipeCount + ' with recipes</div></div>';
-    html += '<div class="overview-card"><h3>Platforms</h3><div class="value">' + escapeHtml((project.platforms || []).join(', ')) + '</div><div class="detail">' + (project.platforms || []).length + ' target platform(s)</div></div>';
-    html += '<div class="overview-card"><h3>Modified</h3><div class="value" style="font-size:18px">' + escapeHtml(project.modified || project.created || 'unknown') + '</div><div class="detail">created ' + escapeHtml(project.created || 'unknown') + '</div></div>';
+    html += '<div class="overview-grid">';
+    html += '<div class="overview-card"><h3>Recipes</h3><div class="value">' + rc + '</div><div class="detail">behavioral specifications</div></div>';
+    html += '<div class="overview-card"><h3>Components</h3><div class="value">' + (rc + gc) + '</div><div class="detail">' + gc + ' groups, ' + rc + ' with recipes</div></div>';
+    html += '<div class="overview-card"><h3>Platforms</h3><div class="value">' + escapeHtml((project.platforms || []).join(', ') || 'none') + '</div><div class="detail">' + (project.platforms || []).length + ' target(s)</div></div>';
+    html += '<div class="overview-card"><h3>Specialists</h3><div class="value">' + specialists.length + '</div><div class="detail">domain experts contributed</div></div>';
+    html += '<div class="overview-card"><h3>Sections</h3><div class="value">' + sections.length + '</div><div class="detail">reviews, logs, decisions</div></div>';
+    html += '<div class="overview-card"><h3>Transcript</h3><div class="value">' + transcript.length + '</div><div class="detail">messages in conversation</div></div>';
     html += '</div>';
 
-    if (project.description) {
-      html += '<div class="desc-box">' + escapeHtml(project.description) + '</div>';
-    }
-
-    setContent(detail, html);
-    detail.classList.remove('hidden');
-    document.getElementById('welcome-panel').classList.add('hidden');
-  }
-
-  function countRecipes(nodes) {
-    var count = 0;
-    nodes.forEach(function(n) {
-      if (n.recipe) count++;
-      if (n.children) count += countRecipes(n.children);
-    });
-    return count;
-  }
-
-  function countGroups(nodes) {
-    var count = 0;
-    nodes.forEach(function(n) {
-      if (!n.recipe && n.children && n.children.length > 0) count++;
-      if (n.children) count += countGroups(n.children);
-    });
-    return count;
-  }
-
-  // Show component detail
-  function showComponent(node) {
-    var detail = document.getElementById('detail-panel');
-    document.getElementById('welcome-panel').classList.add('hidden');
-    detail.classList.remove('hidden');
-
-    if (!node.recipe) {
-      var childCount = node.children ? node.children.length : 0;
-      setContent(detail, '<div class="recipe-header"><h2>' + escapeHtml(node.key) + '</h2>' +
-        '<p class="recipe-summary">Component group' + (node.description ? ' \u2014 ' + escapeHtml(node.description) : '') + '</p>' +
-        '<p style="color:var(--text-muted);font-size:13px">' + childCount + ' child component' + (childCount !== 1 ? 's' : '') + '</p></div>');
-      return;
-    }
-
-    var r = node.recipe;
-    var html = '<div class="recipe-header">';
-    html += '<h2>' + escapeHtml(r.title || node.key) + '</h2>';
-    if (r.summary) html += '<p class="recipe-summary">' + escapeHtml(r.summary) + '</p>';
-    html += '<div class="recipe-path">' + escapeHtml(node.recipePath || '') + '</div>';
-
-    html += '<div class="recipe-meta">';
-    (r.tags || []).forEach(function(t) { html += '<span class="tag">' + escapeHtml(t) + '</span>'; });
-    (r.platforms || []).forEach(function(p) { html += '<span class="tag" style="background:#0c2d1f;color:#4ade80">' + escapeHtml(p) + '</span>'; });
-    html += '</div>';
-
-    if (node.dependsOn && node.dependsOn.length > 0) {
-      html += '<div class="recipe-deps"><strong>Depends on:</strong> ';
-      html += node.dependsOn.map(function(d) {
-        return '<span class="dep-link" data-target="' + escapeHtml(d) + '">' + escapeHtml(d) + '</span>';
-      }).join(', ');
+    // Timeline
+    if (timeline.length > 0) {
+      html += '<h3 style="margin:16px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted)">Workflow History</h3>';
+      html += '<div class="timeline">';
+      timeline.forEach(function(t) {
+        var dotClass = t.status === 'completed' ? 'completed' : t.status === 'failed' ? 'failed' : t.status === 'running' ? 'running' : '';
+        html += '<div class="timeline-item"><span class="dot ' + dotClass + '"></span><span class="timeline-label">' + escapeHtml(t.workflow) + '</span><span class="badge">' + escapeHtml(t.status) + '</span><span class="timeline-time">' + escapeHtml(t.started || '') + '</span></div>';
+      });
       html += '</div>';
     }
 
-    html += '</div><hr class="divider"><div class="md-content">' + renderMarkdown(r.body || '') + '</div>';
-    setContent(detail, html);
-
-    // Attach click handlers for dep-links
-    detail.querySelectorAll('.dep-link').forEach(function(link) {
-      link.addEventListener('click', function() {
-        navigateTo(link.getAttribute('data-target'));
-      });
-    });
-
-    detail.scrollTop = 0;
+    showPanel(html, false);
   }
 
-  // Navigate to component by dot-path
+  function showComponent(node) {
+    if (!node.recipe) {
+      var cc = node.children ? node.children.length : 0;
+      showPanel('<div class="section-header"><h2>' + escapeHtml(node.key) + '</h2><div class="subtitle">Component group' + (node.description ? ' \u2014 ' + escapeHtml(node.description) : '') + '</div></div><p style="color:var(--text-muted);font-size:13px">' + cc + ' child component' + (cc !== 1 ? 's' : '') + '</p>', false);
+      return;
+    }
+    var r = node.recipe;
+    var html = '<div class="section-header"><h2>' + escapeHtml(r.title || node.key) + '</h2>';
+    if (r.summary) html += '<div class="subtitle">' + escapeHtml(r.summary) + '</div>';
+    html += '</div>';
+    html += '<div class="recipe-path">' + escapeHtml(node.recipePath || '') + '</div>';
+    html += '<div class="recipe-meta">';
+    (r.tags || []).forEach(function(t) { html += '<span class="tag">' + escapeHtml(t) + '</span>'; });
+    (r.platforms || []).forEach(function(p) { html += '<span class="tag platform">' + escapeHtml(p) + '</span>'; });
+    html += '</div>';
+    if (node.dependsOn && node.dependsOn.length > 0) {
+      html += '<div class="recipe-deps"><strong>Depends on:</strong> ';
+      html += node.dependsOn.map(function(d) { return '<span class="dep-link" data-target="' + escapeHtml(d) + '">' + escapeHtml(d) + '</span>'; }).join(', ');
+      html += '</div>';
+    }
+    html += '<hr class="divider"><div class="md-content">' + renderMarkdown(r.body || '') + '</div>';
+    showPanel(html, false);
+    detail.querySelectorAll('.dep-link').forEach(function(link) {
+      link.addEventListener('click', function() { navigateTo(link.getAttribute('data-target')); });
+    });
+  }
+
+  function showSection(s) {
+    var html = '<div class="section-header"><h2>' + escapeHtml(s.title) + '</h2>';
+    if (s.specialist) html += '<div class="subtitle"><span class="' + domainClass(s.specialist) + '">' + escapeHtml(s.specialist) + '</span>' + (s.recipe ? ' \u2014 ' + escapeHtml(s.recipe) : '') + '</div>';
+    html += '</div><hr class="divider"><div class="md-content">' + renderMarkdown(s.content || '') + '</div>';
+    showPanel(html, true);
+  }
+
+  function showSpecialist(sp) {
+    var html = '<div class="specialist-header"><div class="specialist-icon">' + specialistIcon(sp.domain) + '</div><div><h2 class="' + domainClass(sp.domain) + '">' + escapeHtml(sp.displayName) + '</h2><div class="subtitle">' + escapeHtml(sp.domain) + '</div></div></div>';
+
+    html += '<div class="specialist-stats">';
+    html += '<div class="specialist-stat"><div class="num">' + (sp.recipes ? sp.recipes.length : 0) + '</div><div class="label">Recipes</div></div>';
+    html += '<div class="specialist-stat"><div class="num">' + (sp.reviewFindings || 0) + '</div><div class="label">Findings</div></div>';
+    html += '<div class="specialist-stat"><div class="num">' + (sp.suggestionsApproved || 0) + '</div><div class="label">Approved</div></div>';
+    html += '</div>';
+
+    if (sp.summary) {
+      html += '<div class="desc-box"><strong>Summary:</strong> ' + escapeHtml(sp.summary) + '</div>';
+    }
+
+    if (sp.changes && sp.changes.length > 0) {
+      html += '<h3 style="margin:16px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted)">Changes by Recipe</h3>';
+      html += '<ul class="change-list">';
+      sp.changes.forEach(function(c) {
+        html += '<li class="change-item"><div class="recipe-name">' + escapeHtml(c.recipe) + '</div><div class="change-desc">' + escapeHtml(c.description) + '</div></li>';
+      });
+      html += '</ul>';
+    }
+
+    if (sp.recipes && sp.recipes.length > 0) {
+      html += '<h3 style="margin:16px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted)">Recipes Covered</h3>';
+      html += '<div class="recipe-meta">';
+      sp.recipes.forEach(function(r) { html += '<span class="tag">' + escapeHtml(r) + '</span>'; });
+      html += '</div>';
+    }
+
+    showPanel(html, false);
+  }
+
+  function showTranscript() {
+    if (transcript.length === 0) {
+      showPanel('<div class="empty-state"><h2>No Transcript</h2><p>No messages found. Run an interview or build workflow first.</p></div>', false);
+      return;
+    }
+    var html = '<div class="section-header"><h2>Transcript</h2><div class="subtitle">' + transcript.length + ' messages</div></div><hr class="divider"><div class="transcript">';
+    transcript.forEach(function(msg) {
+      var isUser = !msg.specialist && !msg.agent;
+      var cls = isUser ? 'user' : 'specialist';
+      html += '<div class="chat-msg ' + cls + '"><div class="chat-header">';
+      html += '<span class="chat-persona ' + domainClass(msg.specialist || '') + '">' + escapeHtml(msg.persona || msg.agent || 'User') + '</span>';
+      if (msg.specialist) html += '<span class="chat-domain">' + escapeHtml(msg.specialist) + '</span>';
+      if (msg.timestamp) html += '<span class="chat-time">' + escapeHtml(msg.timestamp) + '</span>';
+      html += '</div><div class="chat-body md-content">' + renderMarkdown(msg.message || '') + '</div></div>';
+    });
+    html += '</div>';
+    showPanel(html, true);
+  }
+
+  // -- Navigation --
   function navigateTo(dotPath) {
     var parts = dotPath.split('.');
     var found = findNode(components, parts, 0);
-    if (found) {
-      if (activeRow) activeRow.classList.remove('active');
-      var rows = document.querySelectorAll('.tree-row');
-      rows.forEach(function(row) {
-        var labelEl = row.querySelector('.tree-label');
-        if (labelEl && labelEl.textContent === parts[parts.length - 1]) {
-          row.classList.add('active');
-          activeRow = row;
-          showComponent(found);
-        }
-      });
-    }
+    if (found) showComponent(found);
   }
   window.navigateTo = navigateTo;
 
@@ -670,184 +673,186 @@
     return null;
   }
 
-  // Show context file
-  function showContext(key, content) {
-    var detail = document.getElementById('detail-panel');
-    document.getElementById('welcome-panel').classList.add('hidden');
-    detail.classList.remove('hidden');
-    setContent(detail, '<div class="recipe-header"><h2>' + escapeHtml(key) + '</h2></div>' +
-      '<hr class="divider"><div class="md-content">' + renderMarkdown(content) + '</div>');
-    detail.scrollTop = 0;
+  function countRecipes(n) { var c = 0; n.forEach(function(x) { if (x.recipe) c++; if (x.children) c += countRecipes(x.children); }); return c; }
+  function countGroups(n) { var c = 0; n.forEach(function(x) { if (!x.recipe && x.children && x.children.length > 0) c++; if (x.children) c += countGroups(x.children); }); return c; }
+
+  // -- Filter --
+  var filterInput = document.getElementById('filter-input');
+  var filterWrap = document.getElementById('filter-wrap');
+  var filterClear = document.getElementById('filter-clear');
+
+  filterInput.addEventListener('input', function() {
+    filterWrap.classList.toggle('has-value', filterInput.value.length > 0);
+    applyFilter(filterInput.value);
+  });
+  filterClear.addEventListener('mousedown', function(e) { e.preventDefault(); });
+  filterClear.addEventListener('click', function() { filterInput.value = ''; filterWrap.classList.remove('has-value'); applyFilter(''); filterInput.focus(); });
+
+  function parseFilterQuery(raw) {
+    var q = raw.toLowerCase().trim();
+    var prefixes = ['specialist:', 'category:', 'recipe:'];
+    for (var i = 0; i < prefixes.length; i++) {
+      if (q.indexOf(prefixes[i]) === 0) {
+        return { mode: prefixes[i].slice(0, -1), term: q.slice(prefixes[i].length).trim() };
+      }
+    }
+    return { mode: 'text', term: q };
   }
 
-  // Tab switching
-  window.switchTab = function(tab) {
-    document.querySelectorAll('.sidebar-tab').forEach(function(t) {
-      t.classList.toggle('active', t.dataset.tab === tab);
+  function applyFilter(raw) {
+    var q = parseFilterQuery(raw);
+    allNavItems.forEach(function(item) {
+      if (!q.term) { item.el.classList.remove('hidden'); return; }
+      var match = false;
+      if (q.mode === 'specialist') match = item.specialist.indexOf(q.term) >= 0;
+      else if (q.mode === 'category') match = item.category.indexOf(q.term) >= 0;
+      else if (q.mode === 'recipe') match = item.recipe.indexOf(q.term) >= 0;
+      else match = item.label.indexOf(q.term) >= 0 || item.specialist.indexOf(q.term) >= 0 || item.recipe.indexOf(q.term) >= 0;
+      item.el.classList.toggle('hidden', !match);
     });
-    document.getElementById('components-panel').classList.toggle('hidden', tab !== 'components');
-    document.getElementById('context-panel').classList.toggle('hidden', tab !== 'context');
-  };
+    // Hide empty groups
+    document.querySelectorAll('.nav-group').forEach(function(g) {
+      var items = g.querySelector('.nav-group-items');
+      if (!items) return;
+      var hasVisible = false;
+      var children = items.children;
+      for (var i = 0; i < children.length; i++) {
+        if (!children[i].classList.contains('hidden')) { hasVisible = true; break; }
+      }
+      g.classList.toggle('hidden', !hasVisible && !!q.term);
+    });
+  }
 
-  // Search / filter
-  window.filterTree = function(query) {
-    query = query.toLowerCase().trim();
-    var nodes = document.querySelectorAll('.tree-node');
-    if (!query) {
-      nodes.forEach(function(n) { n.classList.remove('hidden'); });
+  // -- Find (sequential search in content) --
+  var findInputEl = document.getElementById('find-input');
+  var findWrap = document.getElementById('find-wrap');
+  var findClearBtn = document.getElementById('find-clear');
+  var findPosEl = document.getElementById('find-pos');
+  var prevBtn = document.getElementById('prev-btn');
+  var nextBtn = document.getElementById('next-btn');
+  var findMatches = [];
+  var findIdx = -1;
+
+  findInputEl.addEventListener('input', function() {
+    findWrap.classList.toggle('has-value', findInputEl.value.length > 0);
+    runFind(findInputEl.value);
+  });
+  findInputEl.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { e.shiftKey ? findPrev() : findNext(); e.preventDefault(); }
+    if (e.key === 'Escape') { findInputEl.value = ''; findWrap.classList.remove('has-value'); clearFindMarks(); }
+  });
+  findClearBtn.addEventListener('mousedown', function(e) { e.preventDefault(); });
+  findClearBtn.addEventListener('click', function() { findInputEl.value = ''; findWrap.classList.remove('has-value'); clearFindMarks(); findInputEl.focus(); });
+  prevBtn.addEventListener('click', findPrev);
+  nextBtn.addEventListener('click', findNext);
+
+  function runFind(query) {
+    clearFindMarks();
+    if (!query.trim()) return;
+    var q = query.toLowerCase();
+    var container = document.getElementById('detail-panel');
+    if (container.classList.contains('hidden')) return;
+    findMatches = [];
+    findIdx = -1;
+    highlightFindInNode(container, q);
+    findMatches = Array.from(container.querySelectorAll('mark.find-mark'));
+    updateFindPos();
+    if (findMatches.length > 0) { findIdx = 0; scrollToMatch(0); updateFindPos(); }
+  }
+
+  function highlightFindInNode(node, q) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      var idx = node.textContent.toLowerCase().indexOf(q);
+      if (idx === -1) return;
+      var before = node.textContent.slice(0, idx);
+      var match = node.textContent.slice(idx, idx + q.length);
+      var after = node.textContent.slice(idx + q.length);
+      var mark = document.createElement('mark');
+      mark.className = 'find-mark';
+      mark.textContent = match;
+      var parent = node.parentNode;
+      if (before) parent.insertBefore(document.createTextNode(before), node);
+      parent.insertBefore(mark, node);
+      if (after) { var afterNode = document.createTextNode(after); parent.insertBefore(afterNode, node); highlightFindInNode(afterNode, q); }
+      parent.removeChild(node);
       return;
     }
-    nodes.forEach(function(n) {
-      var label = n.querySelector(':scope > .tree-row .tree-label');
-      if (!label) return;
-      var matches = label.textContent.toLowerCase().indexOf(query) >= 0;
-      var hasVisibleChild = false;
-      var children = n.querySelectorAll('.tree-node');
-      children.forEach(function(c) {
-        var cl = c.querySelector(':scope > .tree-row .tree-label');
-        if (cl && cl.textContent.toLowerCase().indexOf(query) >= 0) hasVisibleChild = true;
-      });
-      n.classList.toggle('hidden', !matches && !hasVisibleChild);
-      if (matches || hasVisibleChild) n.classList.add('expanded');
-    });
-  };
+    if (node.nodeType === Node.ELEMENT_NODE && node.tagName !== 'SCRIPT' && node.tagName !== 'STYLE' && !node.classList.contains('find-mark')) {
+      var children = Array.from(node.childNodes);
+      children.forEach(function(c) { highlightFindInNode(c, q); });
+    }
+  }
 
-  // Markdown renderer — all text passes through escapeHtml() via inline()
+  function clearFindMarks() {
+    document.querySelectorAll('mark.find-mark').forEach(function(m) {
+      var p = m.parentNode; p.replaceChild(document.createTextNode(m.textContent), m); p.normalize();
+    });
+    findMatches = []; findIdx = -1; updateFindPos();
+  }
+
+  function findNext() { if (findMatches.length === 0) return; findIdx = (findIdx + 1) % findMatches.length; scrollToMatch(findIdx); updateFindPos(); }
+  function findPrev() { if (findMatches.length === 0) return; findIdx = (findIdx - 1 + findMatches.length) % findMatches.length; scrollToMatch(findIdx); updateFindPos(); }
+
+  function scrollToMatch(i) {
+    findMatches.forEach(function(m, j) { m.style.outline = j === i ? '2px solid var(--find-color)' : 'none'; });
+    findMatches[i].scrollIntoView({ block: 'center', behavior: 'smooth' });
+  }
+
+  function updateFindPos() {
+    var has = findMatches.length > 0;
+    findPosEl.textContent = has ? (findIdx + 1) + '/' + findMatches.length : '';
+    prevBtn.disabled = !has; nextBtn.disabled = !has;
+  }
+
+  // -- Markdown renderer --
   function renderMarkdown(text) {
     if (!text) return '';
-    var lines = text.split('\n');
-    var html = '';
-    var inCode = false;
-    var inList = false;
-    var listType = '';
-    var inTable = false;
-    var tableRows = [];
-
+    var lines = text.split('\n'), html = '', inCode = false, inList = false, listType = '', inTable = false, tableRows = [];
     for (var i = 0; i < lines.length; i++) {
       var line = lines[i];
-
-      // Fenced code blocks
-      if (line.match(/^```/)) {
-        if (inCode) {
-          html += '</code></pre>';
-          inCode = false;
-        } else {
-          if (inList) { html += '</' + listType + '>'; inList = false; }
-          html += '<pre><code>';
-          inCode = true;
-        }
-        continue;
-      }
-      if (inCode) {
-        html += escapeHtml(line) + '\n';
-        continue;
-      }
-
-      // Tables
+      if (line.match(/^```/)) { if (inCode) { html += '</code></pre>'; inCode = false; } else { if (inList) { html += '</' + listType + '>'; inList = false; } html += '<pre><code>'; inCode = true; } continue; }
+      if (inCode) { html += escapeHtml(line) + '\n'; continue; }
       if (line.match(/^\|/)) {
-        if (!inTable) {
-          if (inList) { html += '</' + listType + '>'; inList = false; }
-          inTable = true;
-          tableRows = [];
-        }
+        if (!inTable) { if (inList) { html += '</' + listType + '>'; inList = false; } inTable = true; tableRows = []; }
         if (line.match(/^\|[\s\-:|]+\|$/)) continue;
-        tableRows.push(line.split('|').filter(function(c, idx, arr) { return idx > 0 && idx < arr.length - 1; }).map(function(c) { return c.trim(); }));
+        tableRows.push(line.split('|').filter(function(c, j, a) { return j > 0 && j < a.length - 1; }).map(function(c) { return c.trim(); }));
         continue;
-      } else if (inTable) {
-        html += renderTable(tableRows);
-        inTable = false;
-        tableRows = [];
-      }
-
-      // Headings
-      var hMatch = line.match(/^(#{1,6})\s+(.*)/);
-      if (hMatch) {
-        if (inList) { html += '</' + listType + '>'; inList = false; }
-        var level = hMatch[1].length;
-        html += '<h' + level + '>' + inline(hMatch[2]) + '</h' + level + '>';
-        continue;
-      }
-
-      // Blockquote
-      if (line.match(/^>\s?/)) {
-        if (inList) { html += '</' + listType + '>'; inList = false; }
-        html += '<blockquote><p>' + inline(line.replace(/^>\s?/, '')) + '</p></blockquote>';
-        continue;
-      }
-
-      // Unordered list
-      var ulMatch = line.match(/^(\s*)[-*+]\s+(.*)/);
-      if (ulMatch) {
-        if (!inList || listType !== 'ul') {
-          if (inList) html += '</' + listType + '>';
-          html += '<ul>';
-          inList = true;
-          listType = 'ul';
-        }
-        html += '<li>' + inline(ulMatch[2]) + '</li>';
-        continue;
-      }
-
-      // Ordered list
-      var olMatch = line.match(/^(\s*)\d+\.\s+(.*)/);
-      if (olMatch) {
-        if (!inList || listType !== 'ol') {
-          if (inList) html += '</' + listType + '>';
-          html += '<ol>';
-          inList = true;
-          listType = 'ol';
-        }
-        html += '<li>' + inline(olMatch[2]) + '</li>';
-        continue;
-      }
-
-      if (inList && line.trim() === '') {
-        html += '</' + listType + '>';
-        inList = false;
-      }
-
-      // Horizontal rule
-      if (line.match(/^---+$/)) {
-        html += '<hr class="divider">';
-        continue;
-      }
-
+      } else if (inTable) { html += renderTable(tableRows); inTable = false; tableRows = []; }
+      var hM = line.match(/^(#{1,6})\s+(.*)/);
+      if (hM) { if (inList) { html += '</' + listType + '>'; inList = false; } html += '<h' + hM[1].length + '>' + inlineMd(hM[2]) + '</h' + hM[1].length + '>'; continue; }
+      if (line.match(/^>\s?/)) { if (inList) { html += '</' + listType + '>'; inList = false; } html += '<blockquote><p>' + inlineMd(line.replace(/^>\s?/, '')) + '</p></blockquote>'; continue; }
+      var ulM = line.match(/^(\s*)[-*+]\s+(.*)/);
+      if (ulM) { if (!inList || listType !== 'ul') { if (inList) html += '</' + listType + '>'; html += '<ul>'; inList = true; listType = 'ul'; } html += '<li>' + inlineMd(ulM[2]) + '</li>'; continue; }
+      var olM = line.match(/^(\s*)\d+\.\s+(.*)/);
+      if (olM) { if (!inList || listType !== 'ol') { if (inList) html += '</' + listType + '>'; html += '<ol>'; inList = true; listType = 'ol'; } html += '<li>' + inlineMd(olM[2]) + '</li>'; continue; }
+      if (inList && line.trim() === '') { html += '</' + listType + '>'; inList = false; }
+      if (line.match(/^---+$/)) { html += '<hr class="divider">'; continue; }
       if (line.trim() === '') continue;
-
-      // Paragraph
       if (inList) { html += '</' + listType + '>'; inList = false; }
-      html += '<p>' + inline(line) + '</p>';
+      html += '<p>' + inlineMd(line) + '</p>';
     }
-
     if (inCode) html += '</code></pre>';
     if (inList) html += '</' + listType + '>';
     if (inTable) html += renderTable(tableRows);
-
     return html;
   }
-
   function renderTable(rows) {
-    if (rows.length === 0) return '';
-    var h = '<table><thead><tr>';
-    rows[0].forEach(function(c) { h += '<th>' + inline(c) + '</th>'; });
-    h += '</tr></thead><tbody>';
-    for (var i = 1; i < rows.length; i++) {
-      h += '<tr>';
-      rows[i].forEach(function(c) { h += '<td>' + inline(c) + '</td>'; });
-      h += '</tr>';
-    }
-    h += '</tbody></table>';
-    return h;
+    if (!rows.length) return '';
+    var h = '<table><thead><tr>'; rows[0].forEach(function(c) { h += '<th>' + inlineMd(c) + '</th>'; }); h += '</tr></thead><tbody>';
+    for (var i = 1; i < rows.length; i++) { h += '<tr>'; rows[i].forEach(function(c) { h += '<td>' + inlineMd(c) + '</td>'; }); h += '</tr>'; }
+    return h + '</tbody></table>';
+  }
+  function inlineMd(t) {
+    t = escapeHtml(t);
+    t = t.replace(/`([^`]+)`/g, '<code>$1</code>');
+    t = t.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    t = t.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+    t = t.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    return t;
   }
 
-  function inline(text) {
-    text = escapeHtml(text);
-    text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
-    text = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-    text = text.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-    text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
-    return text;
-  }
+  // Show overview on load
+  showOverview();
 })();
 </script>
 

@@ -6,18 +6,26 @@
 
 You are the **Project Viewer** — you generate a self-contained HTML dashboard from a cookbook project and open it in the browser. No agents, no subprocesses — just read, assemble, and display.
 
+The viewer is a comprehensive project dashboard showing: component tree, recipe details, architecture sections, scope analysis, specialist contributions with summaries, build logs, reviews, transcript history, and project decisions — all searchable and filterable.
+
 Your job:
 1. Load and validate `cookbook-project.json`
-2. Read all recipe markdown files and context files referenced in the manifest
-3. Inject the data into the HTML viewer template
-4. Write the result to a temp file and open it in the default browser
+2. Read all recipe files, context files, reviews, build logs, and decisions
+3. Parse scope-report and architecture-map into discrete sections
+4. Query the DB for transcript messages, specialist assignments, and findings
+5. Build specialist summaries from review + build log data
+6. Inject everything into the HTML viewer template
+7. Write the result to a temp file and open it in the default browser
 
 ## DB Integration
 
 This workflow is read-only — it does not log runs to the DB. Query the DB to enrich the HTML view:
 
-- Recent workflow runs: `${CLAUDE_PLUGIN_ROOT}/scripts/db/db-query.sh "SELECT workflow, status, started, completed FROM workflow_runs WHERE project_id=$PROJECT_ID ORDER BY started DESC LIMIT 10"`
+- Recent workflow runs: `${CLAUDE_PLUGIN_ROOT}/scripts/db/db-query.sh "SELECT workflow, status, started, completed FROM workflow_runs WHERE project_id=$PROJECT_ID ORDER BY started DESC LIMIT 20"`
 - Open findings: `${CLAUDE_PLUGIN_ROOT}/scripts/db/db-finding.sh --list --project $PROJECT_ID --status open`
+- Specialist assignments: `${CLAUDE_PLUGIN_ROOT}/scripts/db/db-query.sh "SELECT recipe_path, specialist, tier, approved FROM specialist_assignments WHERE project_id=$PROJECT_ID"`
+- Transcript messages: `${CLAUDE_PLUGIN_ROOT}/scripts/db/db-query.sh "SELECT m.timestamp, m.agent_type, m.specialist_domain, m.persona, m.message FROM messages m JOIN workflow_runs w ON m.workflow_run_id=w.id WHERE w.project_id=$PROJECT_ID ORDER BY m.timestamp"`
+- Transcript artifacts: `${CLAUDE_PLUGIN_ROOT}/scripts/db/db-artifact.sh search --project $PROJECT_ID --category transcript`
 - Comparison trends: `${CLAUDE_PLUGIN_ROOT}/scripts/db/db-query.sh "SELECT preservation_pct, created FROM comparisons WHERE project_id=$PROJECT_ID ORDER BY created"`
 
 Include this data in the HTML output if available. If the DB doesn't exist or has no data for this project, skip enrichment gracefully.
@@ -58,12 +66,103 @@ For each component that has a `recipe` field:
 
 If a recipe file is missing, log a warning and continue — set the recipe body to "(Recipe file not found)".
 
-### Read Context Files
-For each entry in the manifest's `context` object:
-1. Read the file at `<project-dir>/<path>`
-2. Store the content keyed by the context entry name (e.g., "architecture-map", "scope-report")
+### Read and Parse Context Files
 
-If a context file is missing, skip it silently.
+#### Architecture Map
+Read `context/research/architecture-map.md`. Split into sections by `## ` headings. Each section becomes a separate entry:
+```json
+{ "category": "architecture", "title": "<heading text>", "content": "<section body>" }
+```
+
+#### Scope Report
+Read `context/research/scope-report.md`. Split into sections by `## ` headings. Each section becomes a separate entry:
+```json
+{ "category": "scope", "title": "<heading text>", "content": "<section body>" }
+```
+
+#### Other Research Files
+For any other files in `context/research/` (review-summary.md, build-summary.md, test-report.md), add each as:
+```json
+{ "category": "research", "title": "<filename without .md, title-cased>", "content": "<full content>" }
+```
+
+### Read Reviews
+Glob `context/reviews/*.md`. For each file:
+1. Read the file
+2. Parse the filename to extract recipe slug and specialist domain (format: `<slug>-<specialist>.md` or `<slug>-code-review.md`)
+3. Add as:
+```json
+{ "category": "review", "title": "<specialist display name> — <recipe name>", "content": "<body>", "specialist": "<domain>", "recipe": "<slug>" }
+```
+
+### Read Build Logs
+Glob `context/build-log/*.md`. For each file:
+1. Read the file
+2. Parse the filename to extract type (scaffold-report, build-report, or `<slug>-generation`)
+3. For generation logs, parse specialist augmentation sections (look for `### <Specialist Name>` subsections under each recipe's generation log)
+4. Add as:
+```json
+{ "category": "build", "title": "<descriptive title>", "content": "<body>", "specialist": "<domain if applicable>", "recipe": "<slug if applicable>" }
+```
+
+### Read Decisions
+Glob `context/decisions/*.md`. For each file:
+```json
+{ "category": "decision", "title": "<title from frontmatter or filename>", "content": "<body>" }
+```
+
+### Build Specialist Summaries
+Aggregate data from reviews and build logs to build per-specialist summaries:
+
+For each specialist that appears in reviews or build logs:
+1. Collect all recipes they reviewed (from review files)
+2. Collect all code changes they made (from generation log specialist sections)
+3. Collect findings from DB if available
+4. Collect assignments from DB if available
+5. Build a summary object:
+```json
+{
+  "domain": "security",
+  "displayName": "Security",
+  "recipes": ["app.main-window", "app.settings"],
+  "summary": "<2-3 sentence summary of what this specialist contributed>",
+  "changes": [
+    { "recipe": "main-window", "description": "Added input validation, CSP headers, and auth token encryption" },
+    { "recipe": "settings", "description": "Added credential encryption for stored passwords" }
+  ],
+  "reviewFindings": 3,
+  "suggestionsApproved": 2
+}
+```
+
+Write the summary prose yourself by reading the specialist's review findings and code changes, then composing a concise description of their contributions. Focus on what cookbook principles were applied and where.
+
+### Query DB for Transcript
+If the database exists and has data for this project:
+1. Query messages table for all messages ordered by timestamp
+2. Query artifacts table for transcript category
+3. For transcript artifacts, read the full content
+4. Build transcript array:
+```json
+[
+  {
+    "timestamp": "2026-04-02T10:30:00Z",
+    "agent": "specialist-interviewer",
+    "specialist": "security",
+    "persona": "Security Specialist",
+    "message": "What authentication method will the app use?"
+  }
+]
+```
+
+### Query DB for Timeline
+Query workflow_runs for this project to build a timeline:
+```json
+[
+  { "workflow": "interview", "status": "completed", "started": "...", "completed": "..." },
+  { "workflow": "create-project-from-code", "status": "completed", "started": "...", "completed": "..." }
+]
+```
 
 ## Phase 3 — Generate HTML
 
@@ -97,10 +196,19 @@ Assemble a JSON object with this structure:
       "children": [ ... ]
     }
   ],
-  "context": {
-    "architecture-map": "markdown content...",
-    "scope-report": "markdown content..."
-  }
+  "sections": [
+    { "category": "architecture", "title": "Tech Stack", "content": "..." },
+    { "category": "architecture", "title": "Module Structure", "content": "..." },
+    { "category": "scope", "title": "Matched Scopes", "content": "..." },
+    { "category": "scope", "title": "Custom Scopes", "content": "..." },
+    { "category": "research", "title": "Build Summary", "content": "..." },
+    { "category": "review", "title": "Security — Main Window", "content": "...", "specialist": "security", "recipe": "main-window" },
+    { "category": "build", "title": "Generation Log — Toolbar", "content": "...", "specialist": "...", "recipe": "..." },
+    { "category": "decision", "title": "Auth Strategy", "content": "..." }
+  ],
+  "specialists": [ ... ],
+  "transcript": [ ... ],
+  "timeline": [ ... ]
 }
 ```
 
@@ -128,3 +236,5 @@ Print: "Opened project viewer in your browser. File saved to `/tmp/cookbook-view
 - **Missing recipe files**: Warn per file, continue with remaining recipes.
 - **Empty project (no recipes)**: Still generate the viewer — it will show the overview with 0 recipes.
 - **Template not found**: Print "Viewer template not found at `${CLAUDE_SKILL_DIR}/viewer.html`. The skill installation may be incomplete."
+- **No DB or no project in DB**: Skip all DB queries gracefully. Transcript/timeline/specialist assignments will be empty arrays.
+- **No reviews/build-logs/decisions**: Corresponding sidebar categories will simply not appear.
