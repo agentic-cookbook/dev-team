@@ -1,5 +1,7 @@
 # Specialist Guide
 
+> **Formal spec**: See [`specialist-spec.md`](specialist-spec.md) for the machine-referenceable file format specification and validation rules.
+
 The canonical reference for the specialty-team architecture — how specialists are structured, how specialty-teams work, and how specialists participate in dev-team workflows.
 
 ## Architecture
