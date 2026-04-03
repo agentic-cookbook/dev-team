@@ -87,19 +87,46 @@ Process recipes one at a time. For each recipe:
 ### 3a. Announce
 "Reviewing **<recipe scope>** — <N> specialists assigned."
 
-### 3b. Run Reviews
-For each assigned specialist, spawn a **recipe-reviewer** agent (`agents/recipe-reviewer.md`) using the Agent tool with `subagent_type: "recipe-reviewer"`:
+### 3b. Run Reviews (Specialty-Team Loop)
 
-Provide:
-- **Recipe path** — the recipe file to review
-- **Specialist domain** — e.g., "security"
-- **Specialist question set path** — `${CLAUDE_PLUGIN_ROOT}/research/specialists/<domain>.md`
-- **Cookbook sources** — relevant guidelines, principles, compliance paths for this domain (use the cookbook-specialist-mapping to determine which)
-- **Original source code paths** — from the scope report's evidence paths (if `context/research/scope-report.md` exists)
-- **Cookbook repo path** from config
-- **Recipe template path** — `<cookbook_repo>/cookbook/recipes/_template.md`
+For each assigned specialist, run the **specialty-team worker-verifier loop**:
 
-You may run 2-3 specialist reviews in parallel for the same recipe since they're independent.
+#### Step 1: Get the team manifest
+
+Run `${CLAUDE_PLUGIN_ROOT}/scripts/run-specialty-teams.sh <specialist-file>` to get the JSON array of specialty-teams.
+
+#### Step 2: Iterate teams
+
+For each team in the manifest, run the worker-verifier loop:
+
+**Spawn worker** — use Agent tool with `subagent_type: "dev-team:specialist-code-pass"` (or any agent type with Read/Glob/Grep access):
+- **Prompt the agent** with the instructions from `${CLAUDE_PLUGIN_ROOT}/agents/specialty-team-worker.md`
+- **Mode**: `review`
+- **Artifact path**: the team's `artifact` field, resolved under `<cookbook_repo>`
+- **Cookbook repo path**: from config
+- **Target**: the recipe file being reviewed
+- **Worker focus**: the team's `worker_focus` field
+- If this is a retry, include the verifier's failure reasons as **Previous feedback**
+
+**Spawn verifier** — use Agent tool with `subagent_type: "dev-team:recipe-reviewer"` (or any agent type with Read/Glob/Grep access):
+- **Prompt the agent** with the instructions from `${CLAUDE_PLUGIN_ROOT}/agents/specialty-team-verifier.md`
+- **Artifact path**: same as worker
+- **Cookbook repo path**: from config
+- **Worker output**: the worker's complete output
+- **Verify criteria**: the team's `verify` field
+- **Mode**: `review`
+
+**Loop**: If the verifier returns FAIL and this is iteration < 3, re-run the worker with the verifier's failure reasons. If PASS, record the result. If FAIL after 3 iterations, record as escalation.
+
+#### Step 3: Aggregate
+
+After all teams for a specialist complete, combine the team results into a single review:
+- Merge all requirement coverage tables
+- Collect all suggestions
+- Collect all questions for user
+- Note any escalations (teams that failed verification after 3 attempts)
+
+You may run 2-3 specialist reviews in parallel for the same recipe since they're independent (each specialist runs its own set of specialty-teams).
 
 ### 3c. Persist Review
 **Immediately write** each review to:
