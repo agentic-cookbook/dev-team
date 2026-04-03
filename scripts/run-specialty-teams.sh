@@ -33,6 +33,11 @@ if [[ ! -f "$SPECIALIST_FILE" ]]; then
     exit 1
 fi
 
+# Escape double quotes and backslashes for JSON string values
+json_escape() {
+    echo "$1" | sed 's/\\/\\\\/g; s/"/\\"/g'
+}
+
 # Parse specialty teams from the specialist file
 # Format expected:
 #   ### <team-name>
@@ -62,7 +67,7 @@ while IFS= read -r line; do
         if [[ -n "$current_name" ]]; then
             if ! $first; then echo ","; fi
             printf '  {"name": "%s", "artifact": "%s", "worker_focus": "%s", "verify": "%s"}' \
-                "$current_name" "$current_artifact" "$current_focus" "$current_verify"
+                "$(json_escape "$current_name")" "$(json_escape "$current_artifact")" "$(json_escape "$current_focus")" "$(json_escape "$current_verify")"
             first=false
         fi
         flushed=true
@@ -79,7 +84,7 @@ while IFS= read -r line; do
         if [[ -n "$current_name" ]]; then
             if ! $first; then echo ","; fi
             printf '  {"name": "%s", "artifact": "%s", "worker_focus": "%s", "verify": "%s"}' \
-                "$current_name" "$current_artifact" "$current_focus" "$current_verify"
+                "$(json_escape "$current_name")" "$(json_escape "$current_artifact")" "$(json_escape "$current_focus")" "$(json_escape "$current_verify")"
             first=false
         fi
         current_name=$(echo "$line" | sed 's/^### //')
