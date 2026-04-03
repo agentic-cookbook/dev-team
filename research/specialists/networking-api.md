@@ -5,6 +5,7 @@ REST conventions, HTTP semantics, offline-first, caching, retry/resilience, time
 
 ## Cookbook Sources
 - `guidelines/networking/` (10+ guidelines)
+- `principles/principle-of-least-astonishment.md`
 - `compliance/access-patterns.md`
 
 ## Structured Questions

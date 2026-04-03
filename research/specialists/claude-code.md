@@ -23,6 +23,7 @@ Claude Code plugin architecture, skill/rule/agent/hook authoring, MCP server des
 - `principles/design-for-deletion.md`
 - `principles/simplicity.md`
 - `principles/yagni.md`
+- `principles/support-automation.md`
 
 ### Recipes
 - `recipes/developer-tools/claude/claude-rule-optimization-pipeline.md`

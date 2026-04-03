@@ -5,6 +5,7 @@ Layout, color, typography, animation, forms, visual hierarchy, feedback patterns
 
 ## Cookbook Sources
 - `guidelines/ui/` (15 guidelines)
+- `principles/principle-of-least-astonishment.md`
 - `compliance/platform-compliance.md`
 
 ## Structured Questions
