@@ -104,6 +104,6 @@ During structured checklist coverage, batching is okay because the user is confi
 ## Sources
 
 - `skills/plan-cookbook-recipe/SKILL.md`
-- `cookbook/workflow/code-planning.md`
-- `cookbook/workflow/guideline-checklist.md`
-- `cookbook/recipes/ui/component/ai-chat-control.md`
+- `workflows/code-planning.md`
+- `workflows/guideline-checklist.md`
+- `recipes/ui/components/ai-chat-control.md`

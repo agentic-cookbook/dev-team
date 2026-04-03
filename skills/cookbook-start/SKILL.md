@@ -69,7 +69,7 @@ If the user says no, stop. If yes, continue.
 
 ## Step 3: Load Concern Count
 
-Read `../agentic-cookbook/cookbook/workflow/pipeline-concerns.json`. If the file does not exist, print: "Pipeline concerns file not found at ../agentic-cookbook/cookbook/workflow/pipeline-concerns.json. Is the cookbook repo available?" and stop.
+Read `../agentic-cookbook/workflows/pipeline-concerns.json`. If the file does not exist, print: "Pipeline concerns file not found at ../agentic-cookbook/workflows/pipeline-concerns.json. Is the cookbook repo available?" and stop.
 
 Count the total number of entries.
 

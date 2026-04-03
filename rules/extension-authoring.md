@@ -4,7 +4,7 @@ Prerequisite: Read and follow `authoring-ground-rules.md` before applying this r
 
 Optional guidance for creating Claude Code skills, agents, and rules in your project. This rule applies the agentic cookbook's authoring best practices. It is not mandatory -- adopt what fits your workflow.
 
-For full details, read: `../agentic-cookbook/cookbook/guidelines/skills-and-agents/authoring-skills-and-rules.md`
+For full details, read: `../agentic-cookbook/guidelines/skills-and-agents/authoring-skills-and-rules.md`
 
 ---
 
@@ -36,4 +36,4 @@ For full details, read: `../agentic-cookbook/cookbook/guidelines/skills-and-agen
 
 ## This Rule is Optional
 
-These are recommendations, not strict requirements. Your project may have different conventions. Adopt what helps, ignore what doesn't. The full guideline at `../agentic-cookbook/cookbook/guidelines/skills-and-agents/authoring-skills-and-rules.md` explains the reasoning behind each recommendation.
+These are recommendations, not strict requirements. Your project may have different conventions. Adopt what helps, ignore what doesn't. The full guideline at `../agentic-cookbook/guidelines/skills-and-agents/authoring-skills-and-rules.md` explains the reasoning behind each recommendation.

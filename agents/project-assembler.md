@@ -21,7 +21,7 @@ You will receive:
 2. **Architecture map path** — path to `architecture-map.md`
 3. **Scope report path** — path to `scope-report.md`
 4. **Cookbook repo path** — path to the agentic-cookbook (for schema reference)
-5. **Schema path** — path to `cookbook/reference/cookbook-project.schema.json`
+5. **Schema path** — path to `reference/cookbook-project.schema.json`
 6. **Project name** — human-readable name for the project
 7. **Author** — from config
 

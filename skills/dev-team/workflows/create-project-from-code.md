@@ -90,7 +90,7 @@ Spawn the **scope-matcher** agent (`agents/scope-matcher.md`) using the Agent to
 Provide:
 - **Architecture map path** — the file just written
 - **Cookbook repo path** from config
-- **Recipe INDEX path** — `<cookbook_repo>/cookbook/recipes/INDEX.md`
+- **Recipe INDEX path** — `<cookbook_repo>/recipes/INDEX.md`
 
 The matcher returns the scope report.
 
@@ -117,8 +117,8 @@ For each approved scope, spawn a **recipe-writer** agent (`agents/recipe-writer.
 Provide:
 - **Scope identifier**
 - **Source file paths** — from the scope report's evidence/source paths
-- **Recipe template path** — `<cookbook_repo>/cookbook/recipes/_template.md`
-- **Matching cookbook recipe path** — if the scope matches a cookbook recipe, provide its path (derive from the scope: `recipe.ui.panel.file-tree-browser` → `<cookbook_repo>/cookbook/recipes/ui/panel/file-tree-browser.md`)
+- **Recipe template path** — `<cookbook_repo>/recipes/_template.md`
+- **Matching cookbook recipe path** — if the scope matches a cookbook recipe, provide its path (derive from the scope: `recipe.ui.panel.file-tree-browser` → `<cookbook_repo>/recipes/ui/panels/file-tree-browser.md`)
 - **Architecture map path**
 - **Output path** — derive from the scope and component hierarchy:
   - `recipe.ui.panel.file-tree-browser` → `<output>/app/<parent>/file-tree-browser.md`
@@ -144,7 +144,7 @@ Provide:
 - **Architecture map path**
 - **Scope report path**
 - **Cookbook repo path** from config
-- **Schema path** — `<cookbook_repo>/cookbook/reference/cookbook-project.schema.json`
+- **Schema path** — `<cookbook_repo>/reference/cookbook-project.schema.json`
 - **Project name** — derived from the repo name
 - **Author** — `user_name` from config
 

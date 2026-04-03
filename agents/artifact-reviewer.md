@@ -31,11 +31,11 @@ Each artifact type uses a different checklist and check series:
 
 | Artifact Type | Checklist Source | Check Series |
 |--------------|-----------------|-------------|
-| **skill** | `cookbook/guidelines/skills-and-agents/skill-checklist.md` | S (Structure), C (Content), B (Best Practices) |
-| **rule** | `cookbook/guidelines/skills-and-agents/rule-checklist.md` | C (Content), B (Best Practices), R (Rule-Specific), O (Optimization) |
-| **agent** | `cookbook/guidelines/skills-and-agents/agent-checklist.md` | S (Structure), C (Content), B (Best Practices), A (Agent-Specific) |
-| **recipe** | Recipe template + `cookbook/conventions.md` | F (Frontmatter), S (Sections), R (Requirements), T (Test Vectors), K (Completeness) |
-| **implementation** | `cookbook/guidelines/skills-and-agents/` guideline checklist + recipe requirements | Guideline checks + recipe requirement conformance |
+| **skill** | `guidelines/skills-and-agents/skill-checklist.md` | S (Structure), C (Content), B (Best Practices) |
+| **rule** | `guidelines/skills-and-agents/rule-checklist.md` | C (Content), B (Best Practices), R (Rule-Specific), O (Optimization) |
+| **agent** | `guidelines/skills-and-agents/agent-checklist.md` | S (Structure), C (Content), B (Best Practices), A (Agent-Specific) |
+| **recipe** | Recipe template + `introduction/conventions.md` | F (Frontmatter), S (Sections), R (Requirements), T (Test Vectors), K (Completeness) |
+| **implementation** | `guidelines/skills-and-agents/` guideline checklist + recipe requirements | Guideline checks + recipe requirement conformance |
 
 ## Your Job
 

@@ -49,9 +49,9 @@ Before doing anything else:
    > `gh` is installed but not authenticated. Run `gh auth login` first.
 
 3. **Detect cookbook repo.** Check in order:
-   - If `cookbook/conventions.md` exists in the current directory, the current directory is the cookbook. Set `$COOKBOOK_REPO` to `.`.
-   - Else if `../agentic-cookbook/cookbook/conventions.md` exists, set `$COOKBOOK_REPO` to `../agentic-cookbook`.
-   - Else stop with: "Cannot locate the cookbook repo. Expected `cookbook/` here or `../agentic-cookbook/`."
+   - If `introduction/conventions.md` exists in the current directory, the current directory is the cookbook. Set `$COOKBOOK_REPO` to `.`.
+   - Else if `../agentic-cookbook/introduction/conventions.md` exists, set `$COOKBOOK_REPO` to `../agentic-cookbook`.
+   - Else stop with: "Cannot locate the cookbook repo. Expected `introduction/conventions.md` here or `../agentic-cookbook/`."
 
 4. **Detect GitHub repo identifier.** Run `git -C $COOKBOOK_REPO remote get-url origin` and extract the `owner/repo` slug (strip `.git` suffix and any `https://` or `git@` prefix). Store as `$GH_REPO`.
 
@@ -79,7 +79,7 @@ What kind of suggestion is this?
 Based on the type selected:
 
 - **New recipe/guideline/principle**: Ask "What should it be called? (brief name, e.g., 'dark-mode-toggle', 'error-recovery')"
-- **Enhance existing**: Ask "Which existing content should be improved?" Then search `$COOKBOOK_REPO/cookbook/` for matching files and confirm with the user. If no match, note the user's description and move on.
+- **Enhance existing**: Ask "Which existing content should be improved?" Then search `$COOKBOOK_REPO/` for matching files and confirm with the user. If no match, note the user's description and move on.
 - **Tooling/Other**: Ask "Which part of the tooling? (skills, rules, validation, workflow, or describe)"
 
 ### 1c. Description

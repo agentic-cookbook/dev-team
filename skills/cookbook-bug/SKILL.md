@@ -49,9 +49,9 @@ Before doing anything else:
    > `gh` is installed but not authenticated. Run `gh auth login` first.
 
 3. **Detect cookbook repo.** Check in order:
-   - If `cookbook/conventions.md` exists in the current directory, the current directory is the cookbook. Set `$COOKBOOK_REPO` to `.`.
-   - Else if `../agentic-cookbook/cookbook/conventions.md` exists, set `$COOKBOOK_REPO` to `../agentic-cookbook`.
-   - Else stop with: "Cannot locate the cookbook repo. Expected `cookbook/` here or `../agentic-cookbook/`."
+   - If `introduction/conventions.md` exists in the current directory, the current directory is the cookbook. Set `$COOKBOOK_REPO` to `.`.
+   - Else if `../agentic-cookbook/introduction/conventions.md` exists, set `$COOKBOOK_REPO` to `../agentic-cookbook`.
+   - Else stop with: "Cannot locate the cookbook repo. Expected `introduction/conventions.md` here or `../agentic-cookbook/`."
 
 4. **Detect GitHub repo identifier.** Run `git -C $COOKBOOK_REPO remote get-url origin` and extract the `owner/repo` slug (strip `.git` suffix and any `https://` or `git@` prefix). Store as `$GH_REPO`.
 

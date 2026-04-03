@@ -73,7 +73,7 @@ Stop after printing the summary.
 
 ## Step 3: Load Current Concern
 
-Read `../agentic-cookbook/cookbook/workflow/pipeline-concerns.json`. Find the entry whose `step` field matches the current step number from the `steps` array.
+Read `../agentic-cookbook/workflows/pipeline-concerns.json`. Find the entry whose `step` field matches the current step number from the `steps` array.
 
 If the file does not exist, print: "Pipeline concerns file not found." and stop.
 

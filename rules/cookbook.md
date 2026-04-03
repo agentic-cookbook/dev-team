@@ -26,24 +26,24 @@ Print `[Planning 1/5] Reading principles...` before starting. Then before each f
 Before making any design decision, you MUST read ALL of the following files:
 
 ```
-../agentic-cookbook/cookbook/principles/simplicity.md
-../agentic-cookbook/cookbook/principles/make-it-work-make-it-right-make-it-fast.md
-../agentic-cookbook/cookbook/principles/yagni.md
-../agentic-cookbook/cookbook/principles/fail-fast.md
-../agentic-cookbook/cookbook/principles/dependency-injection.md
-../agentic-cookbook/cookbook/principles/immutability-by-default.md
-../agentic-cookbook/cookbook/principles/composition-over-inheritance.md
-../agentic-cookbook/cookbook/principles/separation-of-concerns.md
-../agentic-cookbook/cookbook/principles/design-for-deletion.md
-../agentic-cookbook/cookbook/principles/explicit-over-implicit.md
-../agentic-cookbook/cookbook/principles/small-reversible-decisions.md
-../agentic-cookbook/cookbook/principles/tight-feedback-loops.md
-../agentic-cookbook/cookbook/principles/manage-complexity-through-boundaries.md
-../agentic-cookbook/cookbook/principles/principle-of-least-astonishment.md
-../agentic-cookbook/cookbook/principles/idempotency.md
-../agentic-cookbook/cookbook/principles/native-controls.md
-../agentic-cookbook/cookbook/principles/open-source-preference.md
-../agentic-cookbook/cookbook/principles/meta-principle-optimize-for-change.md
+../agentic-cookbook/principles/simplicity.md
+../agentic-cookbook/principles/make-it-work-make-it-right-make-it-fast.md
+../agentic-cookbook/principles/yagni.md
+../agentic-cookbook/principles/fail-fast.md
+../agentic-cookbook/principles/dependency-injection.md
+../agentic-cookbook/principles/immutability-by-default.md
+../agentic-cookbook/principles/composition-over-inheritance.md
+../agentic-cookbook/principles/separation-of-concerns.md
+../agentic-cookbook/principles/design-for-deletion.md
+../agentic-cookbook/principles/explicit-over-implicit.md
+../agentic-cookbook/principles/small-reversible-decisions.md
+../agentic-cookbook/principles/tight-feedback-loops.md
+../agentic-cookbook/principles/manage-complexity-through-boundaries.md
+../agentic-cookbook/principles/principle-of-least-astonishment.md
+../agentic-cookbook/principles/idempotency.md
+../agentic-cookbook/principles/native-controls.md
+../agentic-cookbook/principles/open-source-preference.md
+../agentic-cookbook/principles/meta-principle-optimize-for-change.md
 ```
 
 You MUST NOT produce a plan without reading these files first.
@@ -55,9 +55,9 @@ Print `[Planning 2/5] Running guideline checklist...` before starting.
 Read these files in order:
 
 ```
-../agentic-cookbook/cookbook/guidelines/general.md
-../agentic-cookbook/cookbook/guidelines/INDEX.md
-../agentic-cookbook/cookbook/workflow/guideline-checklist.md
+../agentic-cookbook/guidelines/general.md
+../agentic-cookbook/guidelines/INDEX.md
+../agentic-cookbook/workflows/guideline-checklist.md
 ```
 
 Walk through every item in the checklist with the user:
@@ -84,11 +84,11 @@ Print `[Planning 3/5] Searching for matching recipes...` before starting.
 
 **Check preferences first**: Read `.cookbook/preferences.json` in the project root. If `show_recipe_prompts` is `false`, skip this step entirely.
 
-Search `../agentic-cookbook/cookbook/recipes/` recursively for any recipe that matches or partially matches the feature being planned. Check all subdirectories:
+Search `../agentic-cookbook/recipes/` recursively for any recipe that matches or partially matches the feature being planned. Check all subdirectories:
 
-- `ui/component/` — UI building blocks
-- `ui/panel/` — content panes
-- `ui/window/` — top-level layouts
+- `ui/components/` — UI building blocks
+- `ui/panels/` — content panes
+- `ui/windows/` — top-level layouts
 - `infrastructure/` — non-visual patterns
 - `app/` — application lifecycle patterns
 - `autonomous-dev-bots/` — long-running agent processes
@@ -217,7 +217,7 @@ Do not improvise. Do not skip sections. Do not substitute your judgment for the 
 
 ## Verification
 
-After implementation is complete, read `../agentic-cookbook/cookbook/workflow/code-verification.md` and run each check, printing progress before each:
+After implementation is complete, read `../agentic-cookbook/workflows/code-verification.md` and run each check, printing progress before each:
 
 1. Print `[Verification 1/7] Build...` — **Build** passes with no errors.
 2. Print `[Verification 2/7] Tests...` — **Tests** pass — unit, integration, and any E2E tests.
@@ -286,14 +286,14 @@ If no reusable pattern was identified, record: "No contribution opportunities id
 
 | Resource | Path |
 |----------|------|
-| Principles | `../agentic-cookbook/cookbook/principles/` (18 files) |
-| Core guidelines | `../agentic-cookbook/cookbook/guidelines/general.md` |
-| Full guideline index | `../agentic-cookbook/cookbook/guidelines/INDEX.md` |
-| Guideline checklist | `../agentic-cookbook/cookbook/workflow/guideline-checklist.md` |
-| Recipes | `../agentic-cookbook/cookbook/recipes/` (all subdirectories) |
-| Conventions | `../agentic-cookbook/cookbook/conventions.md` |
-| Authoring guide | `../agentic-cookbook/contributing/AUTHORING.md` |
-| Verification workflow | `../agentic-cookbook/cookbook/workflow/code-verification.md` |
-| Planning workflow | `../agentic-cookbook/cookbook/workflow/code-planning.md` |
-| Implementation workflow | `../agentic-cookbook/cookbook/workflow/code-implementation.md` |
+| Principles | `../agentic-cookbook/principles/` (18 files) |
+| Core guidelines | `../agentic-cookbook/guidelines/general.md` |
+| Full guideline index | `../agentic-cookbook/guidelines/INDEX.md` |
+| Guideline checklist | `../agentic-cookbook/workflows/guideline-checklist.md` |
+| Recipes | `../agentic-cookbook/recipes/` (all subdirectories) |
+| Conventions | `../agentic-cookbook/introduction/conventions.md` |
+| Authoring guide | `../agentic-cookbook/appendix/contributing/AUTHORING.md` |
+| Verification workflow | `../agentic-cookbook/workflows/code-verification.md` |
+| Planning workflow | `../agentic-cookbook/workflows/code-planning.md` |
+| Implementation workflow | `../agentic-cookbook/workflows/code-implementation.md` |
 | Preferences file | `.cookbook/preferences.json` |

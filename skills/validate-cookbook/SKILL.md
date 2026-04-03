@@ -50,8 +50,8 @@ Validate the cookbook's integrity — frontmatter, cross-references, indexes, sk
 
 Determine the operating mode:
 
-1. If `../agentic-cookbook/cookbook/` exists AND the current working directory is NOT inside the agentic-cookbook repo, set mode to **consumer**.
-2. If `cookbook/` exists in the current working directory, set mode to **cookbook**.
+1. If `../agentic-cookbook/` exists AND the current working directory is NOT inside the agentic-cookbook repo, set mode to **consumer**.
+2. If `principles/` and `guidelines/` exist in the current working directory, set mode to **cookbook**.
 3. Otherwise, print an error and **STOP**:
    ```
    ERROR: Cannot detect cookbook. Run from the cookbook repo or a consuming project with ../agentic-cookbook/ adjacent.
@@ -83,7 +83,7 @@ If in consumer mode and no `--category` is specified, run only category 7 (Consu
 
 Read the full checklist from `${CLAUDE_SKILL_DIR}/references/validation-checks.md`.
 
-Count the total number of `.md` files under `$COOKBOOK_ROOT/cookbook/` using Glob.
+Count the total number of `.md` files under `$COOKBOOK_ROOT/` (excluding `rules/`, `skills/`, `agents/`) using Glob.
 
 Launch up to 3 agents in parallel. Each agent reads `${CLAUDE_SKILL_DIR}/references/validation-checks.md`, receives the `$COOKBOOK_ROOT` path, and runs its assigned categories.
 
@@ -183,7 +183,7 @@ If `--fix` was specified and there are fixable issues:
 
 | Fixable issue | Auto-fix action |
 |---------------|-----------------|
-| Missing index entry | Add the file to `cookbook/index.md` in the correct section |
+| Missing index entry | Add the file to `index.md` in the correct section |
 | Domain mismatch | Update the `domain:` field in frontmatter to match the file path |
 | Stale version in heading | Update the `# Title vX.Y.Z` heading to match frontmatter `version:` |
 | Missing Change History section | Append a Change History template to the file |

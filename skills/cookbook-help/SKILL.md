@@ -39,7 +39,7 @@ With no argument, present the topic menu. With a topic name, jump directly to th
 
 Before presenting anything, silently gather context:
 
-1. **Cookbook location**: Check if `cookbook/` exists (running from within cookbook repo) or `../agentic-cookbook/` exists (running from a consuming project). Set `$COOKBOOK_PATH` accordingly. If neither, set `$COOKBOOK_PATH` to `(not found)`.
+1. **Cookbook location**: Check if `introduction/conventions.md` exists (running from within cookbook repo) or `../agentic-cookbook/` exists (running from a consuming project). Set `$COOKBOOK_PATH` accordingly. If neither, set `$COOKBOOK_PATH` to `(not found)`.
 
 2. **Installation detection**: Check `.claude/rules/` for `cookbook.md`. If present: installed. If absent but old tier files exist (`principles.md`, etc.): legacy installation, suggest `/configure-cookbook` to migrate. If none: not installed.
 
@@ -140,17 +140,17 @@ Each recipe includes:
   • Edge cases and accessibility requirements
 
 Categories:
-  cookbook/recipes/ui/component/   — buttons, indicators, status bars
-  cookbook/recipes/ui/panel/       — file browsers, inspectors, terminals
-  cookbook/recipes/ui/window/      — project windows, settings windows
-  cookbook/recipes/infrastructure/ — logging, sync, persistence
-  cookbook/recipes/app/            — lifecycle, menus
+  recipes/ui/components/   — buttons, indicators, status bars
+  recipes/ui/panels/       — file browsers, inspectors, terminals
+  recipes/ui/windows/      — project windows, settings windows
+  recipes/infrastructure/ — logging, sync, persistence
+  recipes/app/            — lifecycle, menus
 
-Browse all: cookbook/index.md → Recipes section
+Browse all: index.md → Recipes section
 ```
 
 Then count and list the recipe files:
-- Use Glob to find `$COOKBOOK_PATH/cookbook/recipes/**/*.md` (exclude `_template.md`)
+- Use Glob to find `$COOKBOOK_PATH/recipes/**/*.md` (exclude `_template.md`)
 - Print: `<count> recipes available`
 - List them grouped by category (component, panel, window, infrastructure, app)
 
@@ -170,7 +170,7 @@ Usage examples:
 Guidelines are topic-organized rules for how to build well. They cover
 testing, security, UI, accessibility, logging, feature management, and more.
 
-The main file is cookbook/guidelines/general.md — it covers:
+The main file is guidelines/general.md — it covers:
   • Unit testing, atomic commits, verification
   • Accessibility, localization, RTL
   • Logging, feature flags, analytics
@@ -178,26 +178,26 @@ The main file is cookbook/guidelines/general.md — it covers:
   • Deep linking, scriptability
 
 Topic-specific guidelines are in subdirectories:
-  cookbook/guidelines/testing/        — test pyramid, patterns, mutation testing
-  cookbook/guidelines/security/       — auth, tokens, CORS, secure storage
-  cookbook/guidelines/ui/             — typography, spacing, color, layout
-  cookbook/guidelines/accessibility/  — screen readers, keyboard, Dynamic Type
-  cookbook/guidelines/i18n/           — localization, RTL support
-  cookbook/guidelines/concurrency/    — background work, main thread safety
-  cookbook/guidelines/logging/        — structured logging
-  cookbook/guidelines/features/       — feature flags, A/B testing, debug mode
-  cookbook/guidelines/quality/        — linting, code quality
+  guidelines/testing/        — test pyramid, patterns, mutation testing
+  guidelines/security/       — auth, tokens, CORS, secure storage
+  guidelines/ui/             — typography, spacing, color, layout
+  guidelines/accessibility/  — screen readers, keyboard, Dynamic Type
+  guidelines/i18n/           — localization, RTL support
+  guidelines/concurrency/    — background work, main thread safety
+  guidelines/logging/        — structured logging
+  guidelines/features/       — feature flags, A/B testing, debug mode
+  guidelines/quality/        — linting, code quality
 
-Browse all: cookbook/guidelines/INDEX.md
+Browse all: guidelines/INDEX.md
 ```
 
 Then count guidelines:
-- Use Glob to find `$COOKBOOK_PATH/cookbook/guidelines/**/*.md` (exclude INDEX.md)
+- Use Glob to find `$COOKBOOK_PATH/guidelines/**/*.md` (exclude INDEX.md)
 - Print: `<count> guidelines available`
 
 ```
 Usage examples:
-  /lint-project-with-cookbook guidelines cookbook/recipes/ui/component/empty-state.md ./Sources/EmptyState/
+  /lint-project-with-cookbook guidelines recipes/ui/components/empty-state.md ./Sources/EmptyState/
 ```
 
 ---
@@ -208,11 +208,11 @@ Usage examples:
 === Engineering Principles ===
 
 18 foundational principles that guide all technical decisions.
-Located in cookbook/principles/.
+Located in principles/.
 
 ```
 
-Read `$COOKBOOK_PATH/cookbook/principles/` and list each principle file with its title (extracted from the `# Title` heading or `title:` frontmatter):
+Read `$COOKBOOK_PATH/principles/` and list each principle file with its title (extracted from the `# Title` heading or `title:` frontmatter):
 
 ```
   1. Simplicity
@@ -235,7 +235,7 @@ Read `$COOKBOOK_PATH/cookbook/principles/` and list each principle file with its
  18. Optimize for Change
 ```
 
-Print: `Read any principle: ask me about a specific one, or read cookbook/principles/<name>.md`
+Print: `Read any principle: ask me about a specific one, or read principles/<name>.md`
 
 ---
 
@@ -325,25 +325,25 @@ Feedback:
 Finding specific content in the cookbook:
 
 By index:
-  cookbook/index.md              — master table of contents
-  cookbook/guidelines/INDEX.md   — guideline index by topic
+  index.md              — master table of contents
+  guidelines/INDEX.md   — guideline index by topic
 
 By keyword (from your project):
-  Search guidelines:  grep -r "keyword" ../agentic-cookbook/cookbook/guidelines/
-  Search recipes:     grep -r "keyword" ../agentic-cookbook/cookbook/recipes/
-  Search principles:  grep -r "keyword" ../agentic-cookbook/cookbook/principles/
+  Search guidelines:  grep -r "keyword" ../agentic-cookbook/guidelines/
+  Search recipes:     grep -r "keyword" ../agentic-cookbook/recipes/
+  Search principles:  grep -r "keyword" ../agentic-cookbook/principles/
 
 By domain URL:
   Every cookbook file has a domain identifier like:
     agentic-cookbook://guidelines/testing/test-pyramid
-    agentic-cookbook://recipes/ui/component/empty-state
+    agentic-cookbook://recipes/ui/components/empty-state
 
-  Search by domain: grep -r "agentic-cookbook://recipes/ui" ../agentic-cookbook/cookbook/
+  Search by domain: grep -r "agentic-cookbook://recipes/ui" ../agentic-cookbook/
 
 By file pattern:
-  All recipes:     ls ../agentic-cookbook/cookbook/recipes/**/*.md
-  All guidelines:  ls ../agentic-cookbook/cookbook/guidelines/**/*.md
-  All principles:  ls ../agentic-cookbook/cookbook/principles/*.md
+  All recipes:     ls ../agentic-cookbook/recipes/**/*.md
+  All guidelines:  ls ../agentic-cookbook/guidelines/**/*.md
+  All principles:  ls ../agentic-cookbook/principles/*.md
 ```
 
 If `$COOKBOOK_PATH` is available, replace `../agentic-cookbook/` with the actual path in the output.
@@ -367,14 +367,14 @@ The contribute skill handles the full workflow:
   • Creates a worktree branch (feature/<name> or revise/<name>)
   • Invokes the recipe planner
   • Verifies completeness
-  • Updates cookbook/index.md
+  • Updates index.md
   • Commits, pushes, creates PR
 
 Guidelines:
-  • Read cookbook/conventions.md for format rules
-  • Read contributing/AUTHORING.md for authoring guidance
+  • Read introduction/conventions.md for format rules
+  • Read appendix/contributing/AUTHORING.md for authoring guidance
   • Every recipe needs all 17 sections — no empty sections
-  • Start from cookbook/recipes/_template.md
+  • Start from recipes/_template.md
 ```
 
 ---
@@ -394,7 +394,7 @@ with a sidebar navigation mirroring the cookbook directory structure.
 Status: Under construction — some sections may be incomplete.
 
 The canonical source of truth is always the markdown files in the
-cookbook/ directory. The website is generated from these files.
+cookbook repository. The website is generated from these files.
 ```
 
 ---

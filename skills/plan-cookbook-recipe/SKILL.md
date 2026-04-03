@@ -39,9 +39,9 @@ Starts an interactive conversation to design a new `status-bar` recipe. The skil
 ## Before starting
 
 1. Read `${CLAUDE_SKILL_DIR}/references/section-guide.md` for authoring guidance
-2. Read the recipe template at `cookbook/recipes/_template.md`
-3. Read `CLAUDE.md` and `cookbook/conventions.md` for format rules
-4. Scan existing recipes: recursively list `cookbook/recipes/`
+2. Read the recipe template at `recipes/_template.md`
+3. Read `CLAUDE.md` and `introduction/conventions.md` for format rules
+4. Scan existing recipes: recursively list `recipes/`
 
 If any of these files are missing (template, conventions, or cookbook directory), inform the user and stop. Do not proceed with incomplete references.
 
@@ -63,9 +63,9 @@ Search existing recipes for anything similar:
 
 #### 3a. Discover existing categories
 
-Scan `cookbook/recipes/` to build the list of existing categories dynamically. Walk the directory tree and collect every leaf directory that contains `.md` files (excluding `_template.md` and `INDEX.md`). Each unique directory path relative to `cookbook/recipes/` is a category.
+Scan `recipes/` to build the list of existing categories dynamically. Walk the directory tree and collect every leaf directory that contains `.md` files (excluding `_template.md` and `INDEX.md`). Each unique directory path relative to `recipes/` is a category.
 
-Also read `cookbook/recipes/INDEX.md` to get the description of each category section.
+Also read `recipes/INDEX.md` to get the description of each category section.
 
 Present the discovered categories to the user with their descriptions and example recipes. For example:
 
@@ -79,21 +79,21 @@ Present the discovered categories to the user with their descriptions and exampl
 
 #### 3b. If an existing category fits
 
-Use it. Set the recipe path to `cookbook/recipes/{category}/{kebab-case-name}.md`.
+Use it. Set the recipe path to `recipes/{category}/{kebab-case-name}.md`.
 
 #### 3c. If no existing category fits
 
 Walk the user through creating a new category:
 
 1. **Name the category.** Ask: "What should this category be called? Use kebab-case (e.g., `tooling`, `claude`, `testing`)."
-   - Categories can be top-level (`cookbook/recipes/{name}/`) or nested (`cookbook/recipes/{parent}/{name}/`).
+   - Categories can be top-level (`recipes/{name}/`) or nested (`recipes/{parent}/{name}/`).
    - Propose a name based on the recipe being designed and explain your reasoning.
 
 2. **Describe the category.** Ask: "In one sentence, what kinds of recipes belong in this category?" This description will be used in INDEX.md.
 
 3. **Create the directory.** The directory will be created when the recipe file is written (in Phase 2). Note the new path for later.
 
-4. **Plan INDEX.md update.** A new section must be added to `cookbook/recipes/INDEX.md` following the existing pattern:
+4. **Plan INDEX.md update.** A new section must be added to `recipes/INDEX.md` following the existing pattern:
    - A `## {category}` heading (using dot notation matching the directory path, e.g., `## tooling` or `## claude`)
    - A one-line description paragraph
    - A markdown table with columns: Domain, File, Version, Description
@@ -124,7 +124,7 @@ For each recipe section, have a brief focused discussion. Don't try to cover eve
 **Platforms** — "Which platforms does this target?"
 - Default to all platforms unless the user specifies otherwise
 - For each platform, ask if there are platform-specific considerations
-- Propose native control equivalents where they exist (see cookbook/principles/native-controls.md)
+- Propose native control equivalents where they exist (see principles/native-controls.md)
 
 **Dependencies** — "Does this compose or depend on other cookbook recipes?"
 - Check the existing recipe inventory
@@ -134,11 +134,11 @@ For each recipe section, have a brief focused discussion. Don't try to cover eve
 - Propose edge cases based on the requirements (empty data, very long text, RTL, rapid interaction)
 
 **Accessibility** — "How should this work with VoiceOver/TalkBack/keyboard?"
-- Propose accessibility requirements based on the component type (see cookbook/guidelines/general.md — Accessibility from day one)
+- Propose accessibility requirements based on the component type (see guidelines/general.md — Accessibility from day one)
 - Include: roles, labels, keyboard navigation, Dynamic Type support
 
 **Logging** — "What events should be logged?"
-- Propose log events based on the requirements and state transitions (see cookbook/guidelines/general.md — Instrumented logging)
+- Propose log events based on the requirements and state transitions (see guidelines/general.md — Instrumented logging)
 - Use the standard format: subsystem `{{bundle_id}}`, category matching component name
 
 **All remaining sections** — For Deep Linking, Localization, Accessibility Options, Feature Flags, Analytics, Privacy: propose sensible defaults and ask if the user wants to customize. Many components will use the template defaults.
@@ -160,7 +160,7 @@ Before writing any files, present this prompt to the user:
 
 This skill will:
 - Write <recipe-path> — the new recipe file
-- Edit cookbook/index.md — add the new recipe to the index (if applicable)
+- Edit index.md — add the new recipe to the index (if applicable)
 - Run git add/commit — commit the new recipe
 
 Approve all? (yes / no)
@@ -187,7 +187,7 @@ Proceed with the inline compliance evaluation as described below.
 
 #### Inline compliance evaluation (fallback)
 
-1. Read the compliance categories from `cookbook/compliance/INDEX.md`.
+1. Read the compliance categories from `compliance/INDEX.md`.
 2. For each of the 10 categories, read the compliance file and determine which checks apply to this recipe based on the discussion so far.
 3. For each applicable check, briefly explain what it requires and ask whether the recipe addresses it:
 
@@ -204,7 +204,7 @@ Proceed with the inline compliance evaluation as described below.
 
 Once the discussion is complete:
 
-1. Determine the filename from the category chosen in Step 3: `cookbook/recipes/{category}/{kebab-case-name}.md`
+1. Determine the filename from the category chosen in Step 3: `recipes/{category}/{kebab-case-name}.md`
    - If this is a new category (Step 3c), create the directory with `mkdir -p`.
 
 2. Write the complete recipe file with ALL 17 sections:
@@ -213,7 +213,7 @@ Once the discussion is complete:
    - No empty sections — if a section doesn't apply, include it with "Not applicable — {reason}"
    - All requirements with unique kebab-case names
    - Conformance test vectors linked to requirement names
-   - Logging messages per instrumented logging guidelines (see cookbook/guidelines/general.md)
+   - Logging messages per instrumented logging guidelines (see guidelines/general.md)
    - `{{placeholder}}` tokens for app-specific values
 
 3. Read the file back to verify completeness.
@@ -224,7 +224,7 @@ Once the discussion is complete:
 2. **Requirement count**: Summarize: "This recipe has N requirements (X MUST, Y SHOULD, Z MAY), N test vectors, N log events."
 3. **Dependency check**: Verify all referenced recipes exist in the cookbook repo.
 4. **Format check**: Verify frontmatter is valid YAML, requirement numbering is sequential, test vector IDs are unique.
-5. **INDEX.md update**: If a new category was created in Step 3c, add the new section to `cookbook/recipes/INDEX.md` following the pattern described in Step 3c. Also add the new recipe entry to the appropriate table (new or existing category). Update the INDEX.md `related` frontmatter list to include the new recipe's domain.
+5. **INDEX.md update**: If a new category was created in Step 3c, add the new section to `recipes/INDEX.md` following the pattern described in Step 3c. Also add the new recipe entry to the appropriate table (new or existing category). Update the INDEX.md `related` frontmatter list to include the new recipe's domain.
 6. **Present summary**: Show the user a brief overview of what was created. If a new category was added, highlight it.
 7. **Commit**: Commit the new recipe with message: "Add {name} recipe\n\n{one-line description}"
 
@@ -232,6 +232,6 @@ Once the discussion is complete:
 
 - **This is a conversation, not a form.** Don't dump all questions at once. Go section by section, propose drafts, and refine.
 - **Propose, then refine.** For each section, offer your best draft based on what you've learned, then let the user adjust.
-- **Check the native controls principle (cookbook/principles/native-controls.md).** If the component maps to a native platform control, note it. The recipe should say "use the native control" and document the configuration, not reinvent it.
+- **Check the native controls principle (principles/native-controls.md).** If the component maps to a native platform control, note it. The recipe should say "use the native control" and document the configuration, not reinvent it.
 - **Recipes are for LLMs.** The primary consumer is an LLM implementing the recipe. Be precise, concrete, and unambiguous. Use exact values, not vague descriptions.
 - **Design Decisions are first-class.** Every subjective choice needs to be surfaced, approved, and recorded. This ensures cross-platform consistency.

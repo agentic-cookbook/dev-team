@@ -52,12 +52,12 @@ Run this entire step before doing anything else. It sets variables used througho
 
 ### 0a. Locate the cookbook (`$COOKBOOK_DIR`)
 
-1. Check if cwd contains `cookbook/conventions.md`. If yes, set `$COOKBOOK_DIR` to `.` (cwd is the cookbook).
-2. If not, check if `../agentic-cookbook/cookbook/conventions.md` exists. If yes, set `$COOKBOOK_DIR` to `../agentic-cookbook`.
+1. Check if cwd contains `introduction/conventions.md`. If yes, set `$COOKBOOK_DIR` to `.` (cwd is the cookbook).
+2. If not, check if `../agentic-cookbook/introduction/conventions.md` exists. If yes, set `$COOKBOOK_DIR` to `../agentic-cookbook`.
 3. If neither, stop with:
 
 ```
-Cookbook repo not found. Expected cookbook/conventions.md in the current directory or ../agentic-cookbook/.
+Cookbook repo not found. Expected introduction/conventions.md in the current directory or ../agentic-cookbook/.
 Clone it: git clone https://github.com/agentic-cookbook/cookbook.git ../agentic-cookbook
 ```
 
@@ -65,8 +65,8 @@ Clone it: git clone https://github.com/agentic-cookbook/cookbook.git ../agentic-
 
 ### 0b. Read required files
 
-1. Read `$COOKBOOK_DIR/cookbook/conventions.md` for format rules.
-2. Read `$COOKBOOK_DIR/contributing/AUTHORING.md` for contribution guidelines.
+1. Read `$COOKBOOK_DIR/introduction/conventions.md` for format rules.
+2. Read `$COOKBOOK_DIR/appendix/contributing/AUTHORING.md` for contribution guidelines.
 
 If either file is missing, stop and inform the user.
 
@@ -217,12 +217,12 @@ Contributor path: external (fork: $GITHUB_USER/agentic-cookbook → agentic-cook
 Parse `$ARGUMENTS`:
 
 - **Starts with `new`**: Creating a new recipe. The rest of the argument is the recipe name (kebab-case).
-- **Starts with `enhance`**: Enhancing an existing recipe. Search `$COOKBOOK_DIR/cookbook/recipes/` for a file matching the name.
+- **Starts with `enhance`**: Enhancing an existing recipe. Search `$COOKBOOK_DIR/recipes/` for a file matching the name.
 - **Empty**: Ask the user: "New recipe or enhance an existing one? And what's the recipe name?"
 
 ## Step 2: New Recipe Flow
 
-1. **Check for duplicates.** Search filenames in `$COOKBOOK_DIR/cookbook/recipes/` for files containing the recipe name in their filename. Do not read file contents for duplicate detection. If a match exists, tell the user and ask whether to enhance it instead or proceed with a new recipe.
+1. **Check for duplicates.** Search filenames in `$COOKBOOK_DIR/recipes/` for files containing the recipe name in their filename. Do not read file contents for duplicate detection. If a match exists, tell the user and ask whether to enhance it instead or proceed with a new recipe.
 
 2. **Create a branch and worktree** in the cookbook repo:
    ```
@@ -230,7 +230,7 @@ Parse `$ARGUMENTS`:
    ```
    If the worktree creation fails (branch already exists, unclean state), ask the user whether to reuse the existing branch or pick a new name.
 
-3. **Design the recipe.** Invoke `/plan-cookbook-recipe <recipe-name>` to walk through the interactive recipe design. If that skill is not available, do the recipe planning inline — go section by section following `cookbook/recipes/_template.md`, asking the user about each section.
+3. **Design the recipe.** Invoke `/plan-cookbook-recipe <recipe-name>` to walk through the interactive recipe design. If that skill is not available, do the recipe planning inline — go section by section following `recipes/_template.md`, asking the user about each section.
 
 4. **Verify completeness.** Check every item from the Recipe Completeness Checklist:
    - [ ] YAML frontmatter with UUID, domain matching file path, title, version, all required fields
@@ -246,9 +246,9 @@ Parse `$ARGUMENTS`:
 
    Do not proceed until every item passes.
 
-   **Compliance evaluation**: Read the compliance categories from `cookbook/compliance/INDEX.md`. For each applicable category, evaluate the recipe against the checks and populate the `## Compliance` section. If the recipe was authored with `/plan-cookbook-recipe` (v2.2.0+), the compliance section should already be present — verify it's complete. If missing, run the evaluation inline following the same process as `/lint-compliance`.
+   **Compliance evaluation**: Read the compliance categories from `compliance/INDEX.md`. For each applicable category, evaluate the recipe against the checks and populate the `## Compliance` section. If the recipe was authored with `/plan-cookbook-recipe` (v2.2.0+), the compliance section should already be present — verify it's complete. If missing, run the evaluation inline following the same process as `/lint-compliance`.
 
-5. **Update the index.** Add the new recipe to `cookbook/index.md` in the worktree.
+5. **Update the index.** Add the new recipe to `index.md` in the worktree.
 
 6. **Ask fix preference.** Before creating the PR, ask the contributor:
 
@@ -306,7 +306,7 @@ Parse `$ARGUMENTS`:
 
 ## Step 3: Enhancement Flow
 
-1. **Find the recipe.** Search `$COOKBOOK_DIR/cookbook/recipes/` for the named recipe. If not found, list available recipes and ask the user to pick one.
+1. **Find the recipe.** Search `$COOKBOOK_DIR/recipes/` for the named recipe. If not found, list available recipes and ask the user to pick one.
 
 2. **Read the existing recipe** and present a brief summary to the user.
 
@@ -374,7 +374,7 @@ After PR creation, verify:
 
 1. The worktree has no uncommitted changes (`git -C $WORKTREE_BASE/<branch-name> status` shows clean).
 2. If `gh` is available, verify the PR exists: `gh pr view <branch-name> --repo agentic-cookbook/cookbook`.
-3. `cookbook/index.md` was updated if adding new content.
+3. `index.md` was updated if adding new content.
 4. **External path only**: confirm the branch was pushed to `origin` (the fork), not to `upstream`.
 
 If any check fails, fix the issue before proceeding.

@@ -25,5 +25,5 @@ When planning or implementing features, use /cookbook-start.
 
 - **Per-turn cost**: ~500 bytes (down from 17,689 bytes in the original 3-file installation)
 - **No mandatory file reads**: The rule itself does not trigger any file reads. File reads happen on-demand when `/cookbook-start` or `/cookbook-next` is invoked.
-- **Pipeline skills**: `/cookbook-start` initializes a pipeline session (planning or implementation). `/cookbook-next` advances one step, loading one concern from `../agentic-cookbook/cookbook/workflow/pipeline-concerns.json`.
+- **Pipeline skills**: `/cookbook-start` initializes a pipeline session (planning or implementation). `/cookbook-next` advances one step, loading one concern from `../agentic-cookbook/workflows/pipeline-concerns.json`.
 - **Conditional content**: Previously included conditional sections (auto-lint, committing, recipes, contributions) are now handled as pipeline concerns or preferences — they do not appear in the always-on rule.
