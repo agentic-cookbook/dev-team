@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workflow Run — Dev-Team Dashboard</title>
+<style>
+:root {
+    --bg: #0d1117; --surface: #161b22; --border: #30363d;
+    --text: #e6edf3; --text-muted: #8b949e; --accent: #58a6ff;
+    --green: #3fb950; --yellow: #d29922; --red: #f85149;
+    --purple: #bc8cff;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.5;
+    height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Header */
+.header {
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 12px 20px 0 20px; flex-shrink: 0;
+}
+.header-row { display: flex; align-items: center; gap: 12px; }
+.header-row-1 { margin-bottom: 4px; }
+.header-row-2 { margin-bottom: 8px; }
+.back-btn {
+    color: var(--text-muted); cursor: pointer; font-size: 14px;
+    display: flex; align-items: center; gap: 4px; background: none;
+    border: none; font-family: inherit;
+}
+.back-btn:hover { color: var(--text); }
+.back-btn svg { width: 16px; height: 16px; }
+.run-title { font-size: 18px; font-weight: 600; flex: 1; }
+.elapsed { color: var(--text-muted); font-size: 14px; font-variant-numeric: tabular-nums; }
+.meta-left { flex: 1; color: var(--text-muted); font-size: 13px; }
+.meta-right { color: var(--text-muted); font-size: 13px; }
+
+/* Status badges */
+.badge {
+    display: inline-block; padding: 2px 10px; border-radius: 12px;
+    font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.3px;
+}
+.badge.running { background: rgba(210,153,34,0.15); color: var(--yellow); animation: pulse 2s ease-in-out infinite; }
+.badge.completed { background: rgba(63,185,80,0.15); color: var(--green); }
+.badge.failed { background: rgba(248,81,73,0.15); color: var(--red); }
+.badge.interrupted { background: rgba(139,148,158,0.15); color: var(--text-muted); }
+.badge.pending { background: rgba(139,148,158,0.15); color: var(--text-muted); }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+/* Progress bar */
+.progress-bar-track {
+    width: 100%; height: 4px; background: var(--border); border-radius: 2px;
+    margin-bottom: 0; overflow: hidden;
+}
+.progress-bar-fill {
+    height: 100%; background: var(--accent); border-radius: 2px;
+    transition: width 0.4s ease;
+}
+
+/* Main layout */
+.main {
+    flex: 1; display: flex; overflow: hidden;
+}
+.pane-left {
+    width: 35%; min-width: 280px; border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; overflow: hidden;
+}
+.pane-right {
+    flex: 1; display: flex; flex-direction: column; overflow: hidden;
+}
+.pane-header {
+    padding: 12px 16px; font-size: 13px; font-weight: 600;
+    color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: space-between;
+}
+.pane-header .count {
+    font-weight: 400; color: var(--text-muted); font-size: 12px;
+    background: var(--border); padding: 1px 7px; border-radius: 10px;
+    margin-left: 8px;
+}
+
+/* Agent cards */
+.agents-list {
+    flex: 1; overflow-y: auto; padding: 8px;
+}
+.agent-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 12px; margin-bottom: 6px;
+    display: flex; align-items: flex-start; gap: 10px;
+}
+.agent-card:last-child { margin-bottom: 0; }
+.agent-status-icon {
+    flex-shrink: 0; width: 18px; height: 18px;
+    display: flex; align-items: center; justify-content: center; margin-top: 1px;
+}
+.agent-info { flex: 1; min-width: 0; }
+.agent-type {
+    font-size: 13px; font-weight: 500; color: var(--text);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.agent-meta { display: flex; align-items: center; gap: 6px; margin-top: 3px; flex-wrap: wrap; }
+.agent-duration { font-size: 12px; color: var(--text-muted); }
+
+/* Domain pills */
+.domain-pill {
+    display: inline-block; padding: 1px 8px; border-radius: 10px;
+    font-size: 11px; font-weight: 500;
+}
+.domain-pill.design { background: rgba(188,140,255,0.15); color: var(--purple); }
+.domain-pill.security { background: rgba(248,81,73,0.12); color: var(--red); }
+.domain-pill.architecture { background: rgba(88,166,255,0.15); color: var(--accent); }
+.domain-pill.data { background: rgba(63,185,80,0.12); color: var(--green); }
+.domain-pill.default { background: rgba(139,148,158,0.15); color: var(--text-muted); }
+
+/* Spinner */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner {
+    width: 14px; height: 14px; border: 2px solid var(--border);
+    border-top-color: var(--yellow); border-radius: 50%;
+    animation: spin 0.8s linear infinite; display: inline-block;
+}
+
+/* Findings section */
+.findings-section {
+    border-top: 1px solid var(--border); flex-shrink: 0;
+}
+.findings-toggle {
+    display: flex; align-items: center; gap: 6px; padding: 10px 16px;
+    cursor: pointer; font-size: 13px; font-weight: 600;
+    color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;
+    background: none; border: none; width: 100%; text-align: left;
+    font-family: inherit;
+}
+.findings-toggle:hover { color: var(--text); }
+.findings-toggle .chevron {
+    transition: transform 0.2s; font-size: 10px;
+}
+.findings-toggle.open .chevron { transform: rotate(90deg); }
+.findings-list {
+    padding: 0 12px 8px 12px; display: none;
+    max-height: 200px; overflow-y: auto;
+}
+.findings-list.open { display: block; }
+.finding-item {
+    padding: 6px 8px; margin-bottom: 4px; border-radius: 6px;
+    background: var(--bg); font-size: 12px; display: flex; gap: 8px; align-items: flex-start;
+}
+.severity-badge {
+    display: inline-block; padding: 1px 6px; border-radius: 4px;
+    font-size: 10px; font-weight: 600; text-transform: uppercase;
+    flex-shrink: 0; margin-top: 1px;
+}
+.severity-badge.critical { background: rgba(248,81,73,0.2); color: var(--red); }
+.severity-badge.important { background: rgba(210,153,34,0.2); color: var(--yellow); }
+.severity-badge.minor { background: rgba(139,148,158,0.2); color: var(--text-muted); }
+.severity-badge.suggestion { background: rgba(88,166,255,0.15); color: var(--accent); }
+.finding-text { color: var(--text); line-height: 1.4; }
+.finding-source { color: var(--text-muted); font-size: 11px; margin-top: 2px; }
+.no-findings { color: var(--text-muted); font-size: 13px; padding: 0 16px 12px 16px; }
+
+/* Transcript */
+.transcript-list {
+    flex: 1; overflow-y: auto; padding: 8px 12px;
+}
+.message-item {
+    padding: 8px 10px; margin-bottom: 6px; border-radius: 6px;
+    background: var(--surface); border: 1px solid var(--border);
+}
+.message-header {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap;
+}
+.message-time {
+    font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums;
+    font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+}
+.message-agent { font-size: 12px; color: var(--text-muted); }
+.message-text {
+    color: var(--text); line-height: 1.5;
+    background: var(--bg); border-radius: 4px; padding: 6px 10px;
+    font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 12px; white-space: pre-wrap; word-break: break-word;
+}
+.transcript-footer {
+    padding: 6px 16px; border-top: 1px solid var(--border);
+    display: flex; justify-content: flex-end; align-items: center; flex-shrink: 0;
+}
+.auto-scroll-label {
+    font-size: 12px; color: var(--text-muted); display: flex;
+    align-items: center; gap: 6px; cursor: pointer; user-select: none;
+}
+.auto-scroll-label input { accent-color: var(--accent); }
+
+/* Empty / error states */
+.empty-state {
+    display: flex; align-items: center; justify-content: center;
+    height: 100%; color: var(--text-muted); font-size: 14px;
+}
+.error-state {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; height: 100vh; color: var(--text-muted);
+    gap: 12px;
+}
+.error-state .error-title { font-size: 18px; color: var(--text); font-weight: 600; }
+
+/* Scrollbar styling */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<!-- SVG icon templates (hidden, cloned via DOM) -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+    <symbol id="icon-back" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M7.78 12.53a.75.75 0 01-1.06 0L2.47 8.28a.75.75 0 010-1.06l4.25-4.25a.75.75 0 011.06 1.06L4.81 7h7.44a.75.75 0 010 1.5H4.81l2.97 2.97a.75.75 0 010 1.06z" fill="currentColor"/>
+    </symbol>
+    <symbol id="icon-check" viewBox="0 0 16 16">
+        <path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z" fill="currentColor"/>
+    </symbol>
+    <symbol id="icon-x" viewBox="0 0 16 16">
+        <path d="M3.72 3.72a.75.75 0 011.06 0L8 6.94l3.22-3.22a.75.75 0 111.06 1.06L9.06 8l3.22 3.22a.75.75 0 11-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 01-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 010-1.06z" fill="currentColor"/>
+    </symbol>
+    <symbol id="icon-circle" viewBox="0 0 16 16">
+        <circle cx="8" cy="8" r="5" stroke="currentColor" stroke-width="1.5" fill="none"/>
+    </symbol>
+</svg>
+
+<script>
+(function() {
+    "use strict";
+
+    // --- Helpers ---
+
+    function el(tag, attrs, children) {
+        var e = document.createElement(tag);
+        if (attrs) Object.entries(attrs).forEach(function(pair) {
+            var k = pair[0], v = pair[1];
+            if (k === 'className') e.className = v;
+            else if (k === 'onclick') e.onclick = v;
+            else if (k === 'oninput') e.oninput = v;
+            else if (k === 'onchange') e.onchange = v;
+            else if (k === 'type') e.setAttribute('type', v);
+            else if (k === 'checked') { if (v) e.checked = true; }
+            else if (k === 'title') e.title = v;
+            else if (k === 'value') e.value = v;
+            else if (k === 'placeholder') e.placeholder = v;
+            else e.setAttribute(k, v);
+        });
+        if (children !== undefined && children !== null) {
+            if (typeof children === 'string') e.textContent = children;
+            else if (Array.isArray(children)) children.forEach(function(c) { if (c) e.appendChild(c); });
+            else e.appendChild(children);
+        }
+        return e;
+    }
+
+    function svgIcon(symbolId, size) {
+        var sz = size || 14;
+        var ns = 'http://www.w3.org/2000/svg';
+        var svg = document.createElementNS(ns, 'svg');
+        svg.setAttribute('width', String(sz));
+        svg.setAttribute('height', String(sz));
+        var use = document.createElementNS(ns, 'use');
+        use.setAttributeNS('http://www.w3.org/1999/xlink', 'href', '#' + symbolId);
+        svg.appendChild(use);
+        return svg;
+    }
+
+    function formatDuration(seconds) {
+        if (seconds < 0) seconds = 0;
+        var m = Math.floor(seconds / 60);
+        var s = Math.floor(seconds % 60);
+        return m + 'm ' + (s < 10 ? '0' : '') + s + 's';
+    }
+
+    function formatTime(timestamp) {
+        if (!timestamp) return '--:--:--';
+        var d = parseTimestamp(timestamp);
+        if (!d) return '--:--:--';
+        var h = d.getHours(), m = d.getMinutes(), s = d.getSeconds();
+        return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+    }
+
+    function parseTimestamp(ts) {
+        if (!ts) return null;
+        var normalized = ts.replace(' ', 'T');
+        if (normalized.indexOf('Z') === -1 && normalized.indexOf('+') === -1 && normalized.indexOf('-', 10) === -1) {
+            normalized += 'Z';
+        }
+        return new Date(normalized);
+    }
+
+    function elapsedSeconds(started, completed) {
+        var start = parseTimestamp(started);
+        if (!start) return 0;
+        var end = completed ? parseTimestamp(completed) : new Date();
+        return Math.max(0, (end - start) / 1000);
+    }
+
+    function domainCategory(domain) {
+        if (!domain) return 'default';
+        var d = domain.toLowerCase();
+        if (d.indexOf('ui') !== -1 || d.indexOf('ux') !== -1 || d.indexOf('design') !== -1) return 'design';
+        if (d.indexOf('security') !== -1) return 'security';
+        if (d.indexOf('architect') !== -1 || d.indexOf('structure') !== -1) return 'architecture';
+        if (d.indexOf('data') !== -1 || d.indexOf('persist') !== -1 || d.indexOf('storage') !== -1) return 'data';
+        return 'default';
+    }
+
+    function makeDomainPill(domain) {
+        if (!domain) return null;
+        var cat = domainCategory(domain);
+        return el('span', { className: 'domain-pill ' + cat }, domain);
+    }
+
+    function makeStatusBadge(status) {
+        var s = (status || 'pending').toLowerCase();
+        return el('span', { className: 'badge ' + s }, s);
+    }
+
+    function makeAgentStatusIcon(status) {
+        var wrapper = el('span', { className: 'agent-status-icon' });
+        var s = (status || '').toLowerCase();
+        if (s === 'running') {
+            wrapper.appendChild(el('span', { className: 'spinner' }));
+        } else if (s === 'completed') {
+            var icon = svgIcon('icon-check', 14);
+            wrapper.style.color = 'var(--green)';
+            wrapper.appendChild(icon);
+        } else if (s === 'failed') {
+            var iconX = svgIcon('icon-x', 14);
+            wrapper.style.color = 'var(--red)';
+            wrapper.appendChild(iconX);
+        } else {
+            var iconC = svgIcon('icon-circle', 14);
+            wrapper.style.color = 'var(--text-muted)';
+            wrapper.appendChild(iconC);
+        }
+        return wrapper;
+    }
+
+    function severityClass(severity) {
+        var s = (severity || '').toLowerCase();
+        if (s === 'critical') return 'critical';
+        if (s === 'important' || s === 'high') return 'important';
+        if (s === 'minor' || s === 'low') return 'minor';
+        return 'suggestion';
+    }
+
+    // --- State ---
+
+    var runId = parseInt(window.location.pathname.split('/').pop(), 10);
+    var lastMessageId = 0;
+    var autoScroll = true;
+    var findingsOpen = false;
+    var messageInterval = null;
+    var statusInterval = null;
+    var clockInterval = null;
+    var currentRun = null;
+    var messageCount = 0;
+    var stopped = false;
+
+    // --- DOM refs (set after initial render) ---
+    var headerEl, agentsListEl, transcriptListEl, messageCountEl;
+    var elapsedEl, progressFillEl, agentCountEl, statusBadgeEl;
+    var findingsListEl, findingsToggleEl, findingsCountEl;
+    var autoScrollCheckbox;
+
+    // --- API ---
+
+    function fetchJSON(url, cb) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', url);
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                try { cb(null, JSON.parse(xhr.responseText)); }
+                catch (e) { cb(e, null); }
+            } else if (xhr.status === 404) {
+                cb({ notFound: true }, null);
+            } else {
+                cb(new Error('HTTP ' + xhr.status), null);
+            }
+        };
+        xhr.onerror = function() { cb(new Error('Network error'), null); };
+        xhr.send();
+    }
+
+    // --- Rendering ---
+
+    function buildPage() {
+        var app = document.getElementById('app');
+        while (app.firstChild) app.removeChild(app.firstChild);
+
+        // Build back button icon via SVG clone
+        var backIcon = svgIcon('icon-back', 16);
+
+        statusBadgeEl = el('span');
+        elapsedEl = el('span', { className: 'elapsed' }, '--');
+        var metaLeftEl = el('span', { className: 'meta-left' }, 'Project: ...');
+        agentCountEl = el('span', { className: 'meta-right' });
+        progressFillEl = el('div', { className: 'progress-bar-fill' });
+        progressFillEl.style.width = '0%';
+
+        // Header
+        headerEl = el('div', { className: 'header' }, [
+            el('div', { className: 'header-row header-row-1' }, [
+                el('button', { className: 'back-btn', onclick: function() { window.location.href = '/'; } }, [
+                    backIcon,
+                    el('span', null, 'Back')
+                ]),
+                el('span', { className: 'run-title' }, 'Loading...'),
+                statusBadgeEl,
+                elapsedEl
+            ]),
+            el('div', { className: 'header-row header-row-2' }, [
+                metaLeftEl,
+                agentCountEl
+            ]),
+            el('div', { className: 'progress-bar-track' }, [progressFillEl])
+        ]);
+
+        // Store metaLeft ref on header for updates
+        headerEl._metaLeft = metaLeftEl;
+
+        // Agents pane
+        agentsListEl = el('div', { className: 'agents-list' });
+        var findingsSection = buildFindingsSection();
+
+        // Transcript pane
+        transcriptListEl = el('div', { className: 'transcript-list' });
+        messageCountEl = el('span', { className: 'count' }, '0');
+
+        autoScrollCheckbox = el('input', { type: 'checkbox', checked: true, onchange: function() {
+            autoScroll = autoScrollCheckbox.checked;
+            if (autoScroll) scrollToBottom();
+        }});
+
+        var main = el('div', { className: 'main' }, [
+            el('div', { className: 'pane-left' }, [
+                el('div', { className: 'pane-header' }, [
+                    el('span', null, 'Agents')
+                ]),
+                agentsListEl,
+                findingsSection
+            ]),
+            el('div', { className: 'pane-right' }, [
+                el('div', { className: 'pane-header' }, [
+                    el('span', null, [
+                        el('span', null, 'Transcript'),
+                        messageCountEl
+                    ])
+                ]),
+                transcriptListEl,
+                el('div', { className: 'transcript-footer' }, [
+                    el('label', { className: 'auto-scroll-label' }, [
+                        autoScrollCheckbox,
+                        el('span', null, 'Auto-scroll')
+                    ])
+                ])
+            ])
+        ]);
+
+        app.appendChild(headerEl);
+        app.appendChild(main);
+
+        // Detect manual scroll in transcript
+        transcriptListEl.addEventListener('scroll', function() {
+            var t = transcriptListEl;
+            var atBottom = t.scrollHeight - t.scrollTop - t.clientHeight < 40;
+            if (!atBottom && autoScroll) {
+                autoScroll = false;
+                autoScrollCheckbox.checked = false;
+            }
+        });
+    }
+
+    function buildFindingsSection() {
+        var section = el('div', { className: 'findings-section' });
+        findingsCountEl = el('span', { className: 'count' }, '0');
+
+        findingsToggleEl = el('button', { className: 'findings-toggle', onclick: function() {
+            findingsOpen = !findingsOpen;
+            findingsToggleEl.className = 'findings-toggle' + (findingsOpen ? ' open' : '');
+            findingsListEl.className = 'findings-list' + (findingsOpen ? ' open' : '');
+        }}, [
+            el('span', { className: 'chevron' }, '\u25B6'),
+            el('span', null, 'Findings'),
+            findingsCountEl
+        ]);
+
+        findingsListEl = el('div', { className: 'findings-list' });
+        section.appendChild(findingsToggleEl);
+        section.appendChild(findingsListEl);
+        return section;
+    }
+
+    function renderHeader(run) {
+        var titleEl = headerEl.querySelector('.run-title');
+        titleEl.textContent = run.workflow + ' #' + run.id;
+
+        while (statusBadgeEl.firstChild) statusBadgeEl.removeChild(statusBadgeEl.firstChild);
+        statusBadgeEl.appendChild(makeStatusBadge(run.status));
+
+        headerEl._metaLeft.textContent = 'Project: ' + (run.project_name || run.project_id);
+
+        var agents = run.agents || [];
+        var done = 0;
+        agents.forEach(function(a) { if (a.status === 'completed') done++; });
+        agentCountEl.textContent = done + '/' + agents.length + ' agents';
+
+        var pct = agents.length > 0 ? Math.round((done / agents.length) * 100) : 0;
+        progressFillEl.style.width = pct + '%';
+    }
+
+    function updateElapsed() {
+        if (!currentRun) return;
+        var secs = elapsedSeconds(currentRun.started, currentRun.completed);
+        elapsedEl.textContent = formatDuration(secs);
+    }
+
+    function renderAgents(agents) {
+        while (agentsListEl.firstChild) agentsListEl.removeChild(agentsListEl.firstChild);
+        if (!agents || agents.length === 0) {
+            agentsListEl.appendChild(el('div', { className: 'empty-state' }, 'No agents yet'));
+            return;
+        }
+        agents.forEach(function(agent) {
+            var status = (agent.status || 'pending').toLowerCase();
+            var secs = elapsedSeconds(agent.started, agent.completed);
+            var durationText = '';
+            if (status === 'completed') durationText = 'Completed ' + formatDuration(secs);
+            else if (status === 'running') durationText = 'Running ' + formatDuration(secs);
+            else if (status === 'failed') durationText = 'Failed ' + formatDuration(secs);
+            else durationText = 'Pending';
+
+            var metaChildren = [];
+            if (agent.specialist_domain) {
+                metaChildren.push(makeDomainPill(agent.specialist_domain));
+            }
+            metaChildren.push(el('span', { className: 'agent-duration' }, durationText));
+
+            var card = el('div', { className: 'agent-card' }, [
+                makeAgentStatusIcon(status),
+                el('div', { className: 'agent-info' }, [
+                    el('div', { className: 'agent-type' }, agent.agent_type || 'unknown'),
+                    el('div', { className: 'agent-meta' }, metaChildren)
+                ])
+            ]);
+            agentsListEl.appendChild(card);
+        });
+    }
+
+    function renderFindings(findings) {
+        while (findingsListEl.firstChild) findingsListEl.removeChild(findingsListEl.firstChild);
+        var count = findings ? findings.length : 0;
+        findingsCountEl.textContent = String(count);
+
+        if (count === 0) {
+            findingsListEl.appendChild(el('div', { className: 'no-findings' }, 'No findings'));
+            return;
+        }
+
+        findings.forEach(function(f) {
+            var sevClass = severityClass(f.severity);
+            var source = '';
+            if (f.agent_type) {
+                source = f.agent_type;
+                if (f.agent_specialist) source += ' / ' + f.agent_specialist;
+            }
+            var textChildren = [el('div', { className: 'finding-text' }, f.description || '')];
+            if (source) textChildren.push(el('div', { className: 'finding-source' }, source));
+
+            var item = el('div', { className: 'finding-item' }, [
+                el('span', { className: 'severity-badge ' + sevClass }, f.severity || 'info'),
+                el('div', null, textChildren)
+            ]);
+            findingsListEl.appendChild(item);
+        });
+    }
+
+    function appendMessages(messages) {
+        if (!messages || messages.length === 0) return;
+        messages.forEach(function(msg) {
+            if (msg.id > lastMessageId) lastMessageId = msg.id;
+            messageCount++;
+
+            var headerChildren = [
+                el('span', { className: 'message-time' }, formatTime(msg.timestamp))
+            ];
+            if (msg.specialist_domain) {
+                headerChildren.push(makeDomainPill(msg.specialist_domain));
+            }
+            headerChildren.push(el('span', { className: 'message-agent' }, msg.agent_type || ''));
+
+            var item = el('div', { className: 'message-item' }, [
+                el('div', { className: 'message-header' }, headerChildren),
+                el('div', { className: 'message-text' }, msg.message || '')
+            ]);
+            transcriptListEl.appendChild(item);
+        });
+        messageCountEl.textContent = String(messageCount);
+        if (autoScroll) scrollToBottom();
+    }
+
+    function scrollToBottom() {
+        transcriptListEl.scrollTop = transcriptListEl.scrollHeight;
+    }
+
+    function showError(title, detail) {
+        var app = document.getElementById('app');
+        while (app.firstChild) app.removeChild(app.firstChild);
+        app.appendChild(el('div', { className: 'error-state' }, [
+            el('div', { className: 'error-title' }, title),
+            el('div', null, detail || ''),
+            el('a', { href: '/' }, 'Back to dashboard')
+        ]));
+    }
+
+    function isTerminal(status) {
+        var s = (status || '').toLowerCase();
+        return s === 'completed' || s === 'failed' || s === 'interrupted';
+    }
+
+    function stopPolling() {
+        if (stopped) return;
+        stopped = true;
+        if (messageInterval) { clearInterval(messageInterval); messageInterval = null; }
+        if (statusInterval) { clearInterval(statusInterval); statusInterval = null; }
+        if (clockInterval) { clearInterval(clockInterval); clockInterval = null; }
+    }
+
+    // --- Polling ---
+
+    function pollStatus() {
+        fetchJSON('/api/v1/workflows/' + runId, function(err, data) {
+            if (err) {
+                if (err.notFound) { stopPolling(); showError('Run not found', 'Workflow run #' + runId + ' does not exist.'); }
+                return;
+            }
+            currentRun = data;
+            renderHeader(data);
+            renderAgents(data.agents || []);
+            renderFindings(data.findings || []);
+            updateElapsed();
+
+            if (isTerminal(data.status)) {
+                stopPolling();
+                updateElapsed();
+            }
+        });
+    }
+
+    function pollMessages() {
+        fetchJSON('/api/v1/workflows/' + runId + '/messages?since=' + lastMessageId, function(err, data) {
+            if (err) return;
+            appendMessages(data);
+        });
+    }
+
+    // --- Init ---
+
+    function init() {
+        if (isNaN(runId)) {
+            showError('Invalid URL', 'Could not determine workflow run ID from the URL.');
+            return;
+        }
+
+        buildPage();
+
+        // Initial fetch
+        fetchJSON('/api/v1/workflows/' + runId, function(err, data) {
+            if (err) {
+                if (err.notFound) { showError('Run not found', 'Workflow run #' + runId + ' does not exist.'); }
+                else { showError('Error', 'Failed to load workflow run.'); }
+                return;
+            }
+            currentRun = data;
+            renderHeader(data);
+            renderAgents(data.agents || []);
+            renderFindings(data.findings || []);
+            updateElapsed();
+            document.title = data.workflow + ' #' + data.id + ' \u2014 Dev-Team Dashboard';
+
+            // Fetch initial messages
+            pollMessages();
+
+            if (!isTerminal(data.status)) {
+                messageInterval = setInterval(pollMessages, 2000);
+                statusInterval = setInterval(pollStatus, 5000);
+                clockInterval = setInterval(updateElapsed, 1000);
+            }
+        });
+    }
+
+    init();
+})();
+</script>
+</body>
+</html>

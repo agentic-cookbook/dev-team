@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dev-Team Workflows</title>
+<style>
+:root {
+    --bg: #0d1117; --surface: #161b22; --border: #30363d;
+    --text: #e6edf3; --text-muted: #8b949e; --accent: #58a6ff;
+    --green: #3fb950; --yellow: #d29922; --red: #f85149;
+    --purple: #bc8cff;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.5;
+    min-height: 100vh; display: flex; flex-direction: column;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Header */
+.header {
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 20px 24px 16px;
+}
+.header-top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 4px;
+}
+.header-title { font-size: 22px; font-weight: 600; }
+.header-count { font-size: 14px; color: var(--text-muted); }
+.btn-refresh {
+    background: var(--surface); color: var(--text); border: 1px solid var(--border);
+    border-radius: 6px; padding: 6px 14px; font-size: 13px; cursor: pointer;
+    font-family: inherit; transition: border-color 0.15s;
+}
+.btn-refresh:hover { border-color: var(--text-muted); }
+
+/* Filters */
+.filters {
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 12px 24px; display: flex; flex-direction: column; gap: 10px;
+}
+.filter-row {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
+}
+.checkbox-group { display: flex; align-items: center; gap: 14px; }
+.checkbox-label {
+    display: flex; align-items: center; gap: 5px; font-size: 13px;
+    cursor: pointer; user-select: none; color: var(--text-muted);
+}
+.checkbox-label input[type="checkbox"] {
+    appearance: none; -webkit-appearance: none; width: 14px; height: 14px;
+    border: 1px solid var(--border); border-radius: 3px; background: var(--bg);
+    cursor: pointer; position: relative; flex-shrink: 0;
+}
+.checkbox-label input[type="checkbox"]:checked { background: var(--accent); border-color: var(--accent); }
+.checkbox-label input[type="checkbox"]:checked::after {
+    content: ''; position: absolute; left: 4px; top: 1px;
+    width: 4px; height: 8px; border: solid var(--bg); border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+.checkbox-label .dot {
+    width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0;
+}
+.dot-running { background: var(--yellow); }
+.dot-completed { background: var(--green); }
+.dot-failed { background: var(--red); }
+.dot-interrupted { background: var(--text-muted); }
+
+select, .search-input {
+    background: var(--bg); color: var(--text); border: 1px solid var(--border);
+    border-radius: 6px; padding: 5px 10px; font-size: 13px;
+    font-family: inherit; outline: none;
+}
+select:focus, .search-input:focus { border-color: var(--accent); }
+.search-input { flex: 1; min-width: 180px; }
+.search-input::placeholder { color: var(--text-muted); }
+.filter-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* Card list */
+.card-list {
+    flex: 1; padding: 16px 24px; display: flex; flex-direction: column; gap: 8px;
+}
+.card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px 16px; cursor: pointer; transition: border-color 0.15s;
+    border-left: 3px solid var(--border); display: flex; flex-direction: column; gap: 8px;
+}
+.card:hover { border-color: var(--text-muted); }
+.card.status-running { border-left-color: var(--yellow); }
+.card.status-completed { border-left-color: var(--green); }
+.card.status-failed { border-left-color: var(--red); }
+.card.status-interrupted { border-left-color: var(--text-muted); }
+
+.card-top {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.card-id { font-size: 13px; color: var(--text-muted); font-family: monospace; }
+.card-workflow { font-size: 15px; font-weight: 600; }
+.card-elapsed { font-size: 13px; color: var(--text-muted); margin-left: auto; font-family: monospace; white-space: nowrap; }
+
+.badge {
+    font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px;
+    text-transform: uppercase; letter-spacing: 0.3px; display: inline-block;
+}
+.badge.running { background: rgba(210, 153, 34, 0.15); color: var(--yellow); animation: badge-pulse 2s ease-in-out infinite; }
+.badge.completed { background: rgba(63, 185, 80, 0.15); color: var(--green); }
+.badge.failed { background: rgba(248, 81, 73, 0.15); color: var(--red); }
+.badge.interrupted { background: rgba(139, 148, 158, 0.15); color: var(--text-muted); }
+
+@keyframes badge-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+.card-bottom {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.card-project { font-size: 13px; color: var(--accent); }
+.agent-progress { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); }
+.agent-dots { display: flex; align-items: center; gap: 3px; }
+.agent-dot {
+    width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid var(--text-muted);
+    background: transparent; flex-shrink: 0;
+}
+.agent-dot.done { background: var(--green); border-color: var(--green); }
+.agent-dot.active { background: var(--yellow); border-color: var(--yellow); animation: dot-pulse 1.2s ease-in-out infinite; }
+.agent-dot.fail { background: var(--red); border-color: var(--red); }
+
+@keyframes dot-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* Empty state */
+.empty-state {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    padding: 60px 24px; color: var(--text-muted); font-size: 15px; text-align: center;
+}
+
+/* Footer */
+.footer {
+    background: var(--surface); border-top: 1px solid var(--border);
+    padding: 10px 24px; display: flex; align-items: center; justify-content: space-between;
+    font-size: 12px; color: var(--text-muted);
+}
+.poll-status { display: flex; align-items: center; gap: 6px; }
+.poll-dot {
+    width: 7px; height: 7px; border-radius: 50%; background: var(--green);
+}
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script>
+(function() {
+    "use strict";
+
+    /* ── DOM builder ── */
+
+    function el(tag, attrs, children) {
+        var e = document.createElement(tag);
+        if (attrs) Object.entries(attrs).forEach(function(pair) {
+            var k = pair[0], v = pair[1];
+            if (k === 'className') e.className = v;
+            else if (k === 'onclick') e.onclick = v;
+            else if (k === 'oninput') e.oninput = v;
+            else if (k === 'onchange') e.onchange = v;
+            else if (k === 'type') e.setAttribute('type', v);
+            else if (k === 'checked') { if (v) e.checked = true; }
+            else if (k === 'title') e.title = v;
+            else if (k === 'value') e.value = v;
+            else if (k === 'placeholder') e.placeholder = v;
+            else if (k === 'selected') { if (v) e.selected = true; }
+            else if (k === 'disabled') { if (v) e.disabled = true; }
+            else if (k === 'htmlFor') e.setAttribute('for', v);
+            else e.setAttribute(k, v);
+        });
+        if (children !== undefined && children !== null) {
+            if (typeof children === 'string') e.textContent = children;
+            else if (Array.isArray(children)) children.forEach(function(c) { if (c) e.appendChild(c); });
+            else e.appendChild(children);
+        }
+        return e;
+    }
+
+    /* ── State ── */
+
+    var workflows = [];
+    var filterStatus = { running: true, completed: true, failed: true, interrupted: false };
+    var filterWorkflow = '';
+    var filterProject = '';
+    var sortMode = 'newest';
+    var searchQuery = '';
+    var clockIntervals = [];
+    var pollTimer = null;
+
+    /* ── Polling config ── */
+
+    var params = new URLSearchParams(window.location.search);
+    var pollMs = parseInt(params.get('poll'), 10) || 5000;
+
+    /* ── API ── */
+
+    function fetchWorkflows() {
+        return fetch('/api/v1/workflows')
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                workflows = Array.isArray(data) ? data : [];
+                render();
+            })
+            .catch(function(err) {
+                console.error('Failed to fetch workflows:', err);
+            });
+    }
+
+    /* ── Utilities ── */
+
+    function parseTime(str) {
+        if (!str) return null;
+        var d = new Date(str.replace(' ', 'T') + (str.indexOf('Z') === -1 && str.indexOf('+') === -1 ? 'Z' : ''));
+        return isNaN(d.getTime()) ? null : d;
+    }
+
+    function formatElapsed(ms) {
+        var totalSec = Math.floor(ms / 1000);
+        if (totalSec < 0) totalSec = 0;
+        var h = Math.floor(totalSec / 3600);
+        var m = Math.floor((totalSec % 3600) / 60);
+        var s = totalSec % 60;
+        if (h > 0) return h + 'h ' + m + 'm';
+        if (m > 0) return m + 'm ' + s + 's';
+        return s + 's';
+    }
+
+    function elapsedMs(w) {
+        var start = parseTime(w.started);
+        if (!start) return 0;
+        var end = w.completed ? parseTime(w.completed) : new Date();
+        return (end || new Date()) - start;
+    }
+
+    /* ── Filtering & Sorting ── */
+
+    function filtered() {
+        var result = workflows.filter(function(w) {
+            if (!filterStatus[w.status]) return false;
+            if (filterWorkflow && w.workflow !== filterWorkflow) return false;
+            if (filterProject && w.project_name !== filterProject) return false;
+            if (searchQuery) {
+                var q = searchQuery.toLowerCase();
+                var match = (w.project_name || '').toLowerCase().indexOf(q) !== -1 ||
+                            (w.workflow || '').toLowerCase().indexOf(q) !== -1;
+                if (!match) return false;
+            }
+            return true;
+        });
+
+        result.sort(function(a, b) {
+            if (sortMode === 'newest') return (parseTime(b.started) || 0) - (parseTime(a.started) || 0);
+            if (sortMode === 'oldest') return (parseTime(a.started) || 0) - (parseTime(b.started) || 0);
+            if (sortMode === 'alpha') return (a.workflow || '').localeCompare(b.workflow || '');
+            return 0;
+        });
+
+        return result;
+    }
+
+    function uniqueValues(key) {
+        var seen = {};
+        var result = [];
+        workflows.forEach(function(w) {
+            var v = w[key];
+            if (v && !seen[v]) { seen[v] = true; result.push(v); }
+        });
+        return result.sort();
+    }
+
+    /* ── Clock management ── */
+
+    function clearClocks() {
+        clockIntervals.forEach(function(id) { clearInterval(id); });
+        clockIntervals = [];
+    }
+
+    /* ── Build components ── */
+
+    function buildHeader() {
+        var count = workflows.length;
+        var label = count === 1 ? '1 workflow run' : count + ' workflow runs';
+
+        return el('div', { className: 'header' }, [
+            el('div', { className: 'header-top' }, [
+                el('div', { className: 'header-title' }, 'Dev-Team Workflows'),
+                el('button', { className: 'btn-refresh', onclick: function() { fetchWorkflows(); } }, 'Refresh')
+            ]),
+            el('div', { className: 'header-count' }, label)
+        ]);
+    }
+
+    function buildStatusCheckbox(status, label) {
+        return el('label', { className: 'checkbox-label' }, [
+            el('input', {
+                type: 'checkbox',
+                checked: filterStatus[status],
+                onchange: function(e) { filterStatus[status] = e.target.checked; render(); }
+            }),
+            el('span', { className: 'dot dot-' + status }),
+            el('span', null, label)
+        ]);
+    }
+
+    function buildSelect(labelText, value, options, onChange) {
+        var optEls = [el('option', { value: '' }, 'All')];
+        options.forEach(function(o) {
+            optEls.push(el('option', { value: o, selected: value === o }, o));
+        });
+        var sel = el('select', { onchange: function(e) { onChange(e.target.value); render(); } }, optEls);
+        if (value) sel.value = value;
+        return el('span', null, [
+            el('span', { className: 'filter-label' }, labelText + ' '),
+            sel
+        ]);
+    }
+
+    function buildFilters() {
+        return el('div', { className: 'filters' }, [
+            el('div', { className: 'filter-row' }, [
+                el('div', { className: 'checkbox-group' }, [
+                    buildStatusCheckbox('running', 'Running'),
+                    buildStatusCheckbox('completed', 'Completed'),
+                    buildStatusCheckbox('failed', 'Failed'),
+                    buildStatusCheckbox('interrupted', 'Interrupted')
+                ])
+            ]),
+            el('div', { className: 'filter-row' }, [
+                buildSelect('Workflow', filterWorkflow, uniqueValues('workflow'), function(v) { filterWorkflow = v; }),
+                buildSelect('Project', filterProject, uniqueValues('project_name'), function(v) { filterProject = v; }),
+                (function() {
+                    var sortOpts = [
+                        el('option', { value: 'newest', selected: sortMode === 'newest' }, 'Newest First'),
+                        el('option', { value: 'oldest', selected: sortMode === 'oldest' }, 'Oldest First'),
+                        el('option', { value: 'alpha', selected: sortMode === 'alpha' }, 'Workflow A-Z')
+                    ];
+                    var s = el('select', { onchange: function(e) { sortMode = e.target.value; render(); } }, sortOpts);
+                    s.value = sortMode;
+                    return el('span', null, [
+                        el('span', { className: 'filter-label' }, 'Sort '),
+                        s
+                    ]);
+                })(),
+                el('input', {
+                    type: 'text',
+                    className: 'search-input',
+                    placeholder: 'Search by project or workflow...',
+                    value: searchQuery,
+                    oninput: function(e) { searchQuery = e.target.value; render(); }
+                })
+            ])
+        ]);
+    }
+
+    function buildAgentDots(w) {
+        var total = w.agent_total || 0;
+        var done = w.agents_done || 0;
+        var active = w.agents_active || 0;
+        var failed = w.agents_failed || 0;
+
+        if (total === 0) return null;
+
+        var dots = [];
+        var i;
+        for (i = 0; i < done; i++) dots.push(el('span', { className: 'agent-dot done', title: 'Completed' }));
+        for (i = 0; i < active; i++) dots.push(el('span', { className: 'agent-dot active', title: 'Running' }));
+        for (i = 0; i < failed; i++) dots.push(el('span', { className: 'agent-dot fail', title: 'Failed' }));
+        var pending = total - done - active - failed;
+        for (i = 0; i < pending; i++) dots.push(el('span', { className: 'agent-dot', title: 'Pending' }));
+
+        var text = done + ' of ' + total + ' agents';
+
+        return el('div', { className: 'agent-progress' }, [
+            el('span', null, text),
+            el('div', { className: 'agent-dots' }, dots)
+        ]);
+    }
+
+    function buildCard(w) {
+        var elapsedSpan = el('span', { className: 'card-elapsed' }, formatElapsed(elapsedMs(w)));
+
+        if (w.status === 'running' && parseTime(w.started)) {
+            var startTime = parseTime(w.started);
+            var intervalId = setInterval(function() {
+                var now = new Date();
+                elapsedSpan.textContent = formatElapsed(now - startTime);
+            }, 1000);
+            clockIntervals.push(intervalId);
+        }
+
+        return el('div', {
+            className: 'card status-' + w.status,
+            onclick: function() { window.location.href = '/workflow/' + w.id; }
+        }, [
+            el('div', { className: 'card-top' }, [
+                el('span', { className: 'card-id' }, '#' + w.id),
+                el('span', { className: 'card-workflow' }, w.workflow),
+                el('span', { className: 'badge ' + w.status }, w.status),
+                elapsedSpan
+            ]),
+            el('div', { className: 'card-bottom' }, [
+                el('span', { className: 'card-project' }, w.project_name || 'No project'),
+                buildAgentDots(w)
+            ])
+        ]);
+    }
+
+    function buildCardList() {
+        var items = filtered();
+
+        if (workflows.length === 0) {
+            return el('div', { className: 'empty-state' },
+                'No workflow runs yet. Start a workflow with /dev-team to see it here.');
+        }
+
+        if (items.length === 0) {
+            return el('div', { className: 'empty-state' },
+                'No workflows match the current filters.');
+        }
+
+        var cards = items.map(buildCard);
+        return el('div', { className: 'card-list' }, cards);
+    }
+
+    function buildFooter() {
+        var pollSec = (pollMs / 1000);
+        var pollLabel = pollSec >= 1 ? pollSec + 's' : pollMs + 'ms';
+
+        return el('div', { className: 'footer' }, [
+            el('div', { className: 'poll-status' }, [
+                el('span', { className: 'poll-dot' }),
+                el('span', null, 'Polling every ' + pollLabel)
+            ]),
+            el('span', null, 'Dev-Team Dashboard v1.0')
+        ]);
+    }
+
+    /* ── Render ── */
+
+    function render() {
+        clearClocks();
+
+        var app = document.getElementById('app');
+        while (app.firstChild) app.removeChild(app.firstChild);
+
+        app.appendChild(buildHeader());
+        app.appendChild(buildFilters());
+        app.appendChild(buildCardList());
+        app.appendChild(buildFooter());
+    }
+
+    /* ── Init ── */
+
+    function startPolling() {
+        fetchWorkflows();
+        pollTimer = setInterval(fetchWorkflows, pollMs);
+    }
+
+    startPolling();
+
+})();
+</script>
+</body>
+</html>

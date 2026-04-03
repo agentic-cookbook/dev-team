@@ -106,27 +106,76 @@ After each batch completes, print:
 Completed: <list of specialists in this batch> (<completed>/<total>)
 ```
 
-## Phase 4 — Mapping Validation
+## Phase 4 — Coverage Maps
 
-After all specialist-aligner agents complete, perform a cross-cutting check on the mapping file. Do this directly — no subagent needed.
+After all specialist-aligner agents complete, build file-level coverage maps. Do this directly — no subagent needed. This is the most important output of the skill.
 
-### 4a. Guideline Topic Coverage
+### 4a. Principles Coverage Map
 
-For each guideline topic directory that exists in `guidelines/`:
-- Check whether it appears in the mapping file's "Guideline Topics → Specialist Domains" table
-- If missing, flag: `"Guideline topic '<topic>' has no specialist assigned in the mapping"`
+For each `.md` file in `<cookbook_repo>/principles/` (excluding INDEX.md):
+1. Derive the relative path (e.g., `principles/simplicity.md`)
+2. Search every specialist's Cookbook Sources for this path
+3. Record which specialist(s) reference it
 
-### 4b. Principle Coverage
+Present as a table:
 
-For each principle file in `principles/`:
-- Check whether it appears in the mapping file's "Principles → Specialist Domains" table
-- If missing, flag: `"Principle '<name>' has no specialist assigned in the mapping"`
+```
+PRINCIPLES COVERAGE (N/N covered)
 
-### 4c. Compliance Coverage
+| Principle | Specialist(s) |
+|-----------|--------------|
+| simplicity | code-quality, claude-code |
+| fail-fast | reliability |
+| native-controls | — NONE — |
+```
 
-For each compliance file in `compliance/`:
-- Check whether it appears in the mapping file's "Compliance Categories → Specialist Domains" table
-- If missing, flag: `"Compliance category '<name>' has no specialist assigned in the mapping"`
+Flag any principle with **zero** specialist owners. These are gaps that may require a new specialist or an existing specialist to expand scope.
+
+### 4b. Guidelines Coverage Map
+
+For each `.md` file in `<cookbook_repo>/guidelines/` recursively (excluding INDEX.md):
+1. Derive the relative path (e.g., `guidelines/security/authentication.md`)
+2. A specialist covers this file if:
+   - They list the exact file path in Cookbook Sources, OR
+   - They list the parent directory with a trailing `/` (e.g., `guidelines/security/` covers all files in that directory)
+3. Record which specialist(s) cover it
+
+Present as a table grouped by topic directory:
+
+```
+GUIDELINES COVERAGE (N/N covered)
+
+accessibility/
+  accessibility.md              → accessibility, platform-web-frontend
+
+code-quality/
+  atomic-commits.md             → code-quality
+  bulk-operation-verification.md→ code-quality
+  linting.md                    → code-quality
+  scope-discipline.md           → code-quality
+
+...
+
+| — NONE — |
+  some-orphan.md                → (no specialist)
+```
+
+Flag any guideline file with **zero** specialist owners. Group orphans at the bottom under a `UNCOVERED` heading.
+
+### 4c. Coverage Summary
+
+```
+COVERAGE SUMMARY
+  Principles: <covered>/<total> (<gaps> uncovered)
+  Guidelines: <covered>/<total> (<gaps> uncovered)
+
+  Specialists with most coverage: <top 3 by file count>
+  Specialists with least coverage: <bottom 3 by file count>
+```
+
+If there are uncovered files, recommend whether to:
+- Assign them to an existing specialist (if the topic is adjacent)
+- Create a new specialist (if the uncovered files form a coherent new domain)
 
 ### 4d. Ghost Specialists
 
