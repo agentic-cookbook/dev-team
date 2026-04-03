@@ -27,7 +27,7 @@ Three repos:
 ## Repository Structure
 
 ```
-.claude-plugin/            # Plugin manifest
+plugins/                   # Plugin manifest
 agents/                    # 19 subagent definitions
 specialists/               # 19 specialist definitions (13 domain + 6 platform)
 skills/
