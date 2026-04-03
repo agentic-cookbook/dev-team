@@ -1,7 +1,10 @@
 # Software Architecture Specialist
 
-## Domain Coverage
-Composition, dependency injection, boundaries, separation of concerns, modularity, testability, optimize for change.
+## Role
+Composition, dependency injection, boundaries, separation of concerns, modularity, testability, optimize for change, open-source preference, concurrency.
+
+## Persona
+(coming)
 
 ## Cookbook Sources
 - `principles/composition-over-inheritance.md`
@@ -10,39 +13,50 @@ Composition, dependency injection, boundaries, separation of concerns, modularit
 - `principles/separation-of-concerns.md`
 - `principles/meta-principle-optimize-for-change.md`
 - `principles/open-source-preference.md`
-- `guidelines/concurrency/`
+- `guidelines/concurrency/concurrency.md`
+- `guidelines/concurrency/immutability.md`
 
-## Structured Questions
+## Specialty Teams
 
-1. Walk me through the major subsystems of your app. Where's the boundary between UI, business logic, and data access?
+### composition-over-inheritance
+- **Artifact**: `principles/composition-over-inheritance.md`
+- **Worker focus**: Default to composing behaviors from small, focused pieces; use inheritance only for genuine "is-a" relationships and even then sparingly; prefer protocols/interfaces over base classes; wrap rather than subclass when extending behavior
+- **Verify**: No inheritance hierarchies more than 1 level deep except for genuine is-a relationships; shared behavior achieved via protocol/interface composition not base classes; no subclassing to extend behavior where wrapping is possible
 
-2. If you needed to swap your database tomorrow, what code would change? Is business logic coupled to queries, or behind an abstraction?
+### dependency-injection
+- **Artifact**: `principles/dependency-injection.md`
+- **Worker focus**: Components receive dependencies from outside, not constructed internally; pass services via constructor/initializer parameters or protocol properties; use protocol/interface types not concrete types; avoid service locator pattern (hidden global lookup)
+- **Verify**: No `new ConcreteService()` inside a component that uses it; dependencies declared as protocol/interface types in constructor signatures; no service locator or static factory lookups inside components; all dependencies injectable for testing
 
-3. How do you pass dependencies into components and services? Constructor injection, service locator, or something else?
+### manage-complexity-through-boundaries
+- **Artifact**: `principles/manage-complexity-through-boundaries.md`
+- **Worker focus**: Define ports (interfaces) describing what the application needs; use adapters to translate between external technologies and ports; test core application without databases, UIs, or networks; subsystems evolve independently behind their boundary
+- **Verify**: Core business logic has no imports of UI, database, or network frameworks; adapters implement port interfaces; core can be unit-tested without infrastructure; at least one integration test verifies adapter-to-port wiring
 
-4. Your app has a feature involving UI, business logic, and a third-party API. Walk me through data flow from API through layers to screen. Where's validation? Transformation?
+### separation-of-concerns
+- **Artifact**: `principles/separation-of-concerns.md`
+- **Worker focus**: Each module has one reason to change; if describing what a module does requires "and," consider splitting; applies at every scale (functions, modules, services); presentation, domain, and data access are distinct layers
+- **Verify**: No module that fetches and transforms and renders in the same class; UI layer contains no business logic; data layer contains no presentation logic; each module's purpose describable in a single clause without "and"
 
-5. Describe a piece of business logic. Can you test it without a database? Without rendering UI? How?
+### optimize-for-change
+- **Artifact**: `principles/meta-principle-optimize-for-change.md`
+- **Worker focus**: Every architectural decision evaluated by whether it makes future change easier or harder; all other principles (composition, DI, boundaries, SoC) are strategies for reducing change cost; use this as the meta-question when tradeoffs arise
+- **Verify**: Architectural decisions can be articulated in terms of change cost; no "easier now, harder later" shortcuts taken without explicit acknowledgment; key extension points (swappable backends, injectable services) present where change is anticipated
 
-6. Two features share 70% of code. Inheritance, composition, or something else?
+### open-source-preference
+- **Artifact**: `principles/open-source-preference.md`
+- **Worker focus**: When no native solution exists, research battle-tested open-source libraries and present options before building custom; custom implementation is a deliberate choice not a default; evaluate options on maintenance health, license, and fit
+- **Verify**: Custom implementations of solved problems (parsers, serializers, HTTP clients, caches) are justified; open-source alternatives were evaluated; chosen library has an active maintenance history and compatible license
 
-7. Your app uses a third-party library. How do you isolate your code from changes to that API? Adapter, or direct calls from multiple places?
+### concurrency
+- **Artifact**: `guidelines/concurrency/concurrency.md`
+- **Worker focus**: All lengthy work on background threads using platform async primitives (Swift Concurrency, Kotlin Coroutines, Promise/async, asyncio, async/await on .NET); never block the main/UI thread; show progress when UI is waiting on an async task; C# specifics: ConfigureAwait(false) in library code, no .Result/.Wait(), CancellationToken in all async APIs
+- **Verify**: No synchronous I/O or network calls on main/UI thread; async/await used throughout (no .Result/.Wait() in C#); CancellationToken accepted by async APIs; progress shown in UI while awaiting background work
 
-8. A developer adds a feature and modifies 8 modules. How would you know that signals a problem?
-
-9. If I look at your codebase in six months, what changes will be easy? What will be painful? Did you design for the easy ones intentionally?
-
-10. Your app needs multiple data sources (local DB, remote API, cached files). How do you abstract so business logic doesn't care which one?
-
-11. How do errors propagate across layers? Does a database error bubble to UI as a raw exception, or transformed into a domain error?
-
-12. Can you inject a logging service, or is logging scattered? What would refactoring look like?
-
-13. A component fetches, processes, and renders data. Is that one thing or three? If you needed the processed data in a different UI, what would you do?
-
-14. How do you define a "module" — folder, class, package, service? What makes something cohesive?
-
-15. If business rules change, what's the blast radius? Would a pricing change affect the UI layer, data layer, or neither?
+### concurrency-immutability
+- **Artifact**: `guidelines/concurrency/immutability.md`
+- **Worker focus**: Default to immutable values; introduce mutability only where necessary; prefer value types over reference types; contain mutation behind clear boundaries; Kotlin: val/data class/StateFlow; TypeScript: const/useState; C#: readonly/record/ImmutableList
+- **Verify**: Shared data structures are immutable by default; mutable state contained behind StateFlow/ObservableObject/thread-safe wrappers; C# DTOs use record types; no mutable shared fields accessed from multiple concurrent contexts without synchronization
 
 ## Exploratory Prompts
 

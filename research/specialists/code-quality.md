@@ -1,40 +1,62 @@
 # Code Quality & Maintainability Specialist
 
-## Domain Coverage
-Simplicity, deletability, explicit code, scope discipline, linting, atomic commits, bulk operation verification, best practices compliance.
+## Role
+Simplicity, deletability, explicitness, scope discipline, linting, atomic commits, bulk operation verification, best practices compliance.
+
+## Persona
+(coming)
 
 ## Cookbook Sources
 - `principles/design-for-deletion.md`
 - `principles/explicit-over-implicit.md`
 - `principles/simplicity.md`
-- `guidelines/code-quality/`
+- `guidelines/code-quality/atomic-commits.md`
+- `guidelines/code-quality/bulk-operation-verification.md`
+- `guidelines/code-quality/linting.md`
+- `guidelines/code-quality/scope-discipline.md`
 - `compliance/best-practices.md`
 
-## Structured Questions
+## Specialty Teams
 
-1. How are you managing code as an asset vs. a liability? When you add a function or abstraction, do you consider maintenance cost? Strategy for knowing when to delete code rather than extend it?
+### design-for-deletion
+- **Artifact**: `principles/design-for-deletion.md`
+- **Worker focus**: Treat every line of code as a maintenance liability; build disposable units that can be thrown away without affecting the rest of the system; avoid premature abstraction for reuse; duplicate rather than couple when in doubt
+- **Verify**: No abstractions justified solely by anticipated future reuse; no shared coupling where duplication would be cheaper; modules can be removed without cascading changes
 
-2. What does "simple" mean in your codebase? Walk me through a module — how do you separate concerns? Places where you've mixed two concerns "for convenience"?
+### explicit-over-implicit
+- **Artifact**: `principles/explicit-over-implicit.md`
+- **Worker focus**: Make dependencies visible via injection rather than hidden globals; name things for what they do; prefer explicit parameter passing over ambient state; no magic or hidden behavior
+- **Verify**: No hidden global state accessed inside components; dependencies passed via constructor/initializer; no ambient context or service-locator lookups; names describe behavior not implementation
 
-3. Do you use globals, singletons, or ambient state? How do you surface hidden dependencies to developers reading the code?
+### simplicity
+- **Artifact**: `principles/simplicity.md`
+- **Worker focus**: Distinguish simple (no interleaving of concerns) from easy (convenient); resist adding abstractions that braid two concerns together; favor constructs that do one thing; treat complexity as permanent — resist it at introduction time
+- **Verify**: Each module or function has a single describable concern; no constructs that combine fetch + transform + render; no "convenient" abstractions that hide mixed responsibilities
 
-4. What's your commit strategy? Batch changes or commit as you go? Can you revert a single logical change without affecting other work?
+### atomic-commits
+- **Artifact**: `guidelines/code-quality/atomic-commits.md`
+- **Worker focus**: One logical change per commit; follow build-verify-commit loop (change → build → verify → commit → repeat); never stack uncommitted changes; one coherent unit of work per commit even if it touches multiple files
+- **Verify**: Each commit contains exactly one logical change; build passed before commit; no compound diffs mixing unrelated changes; commit message describes the change in isolation
 
-5. If you renamed a core entity across your codebase, how would you verify completeness? Process for catching stale references?
+### bulk-operation-verification
+- **Artifact**: `guidelines/code-quality/bulk-operation-verification.md`
+- **Worker focus**: After any operation touching 5+ files, run a verification pass; grep entire repo for stale references (old names, paths, identifiers); check source, docs, config, indexes, skills, rules, CI/CD, symlinks; verify cross-repo consistency for cross-repo operations
+- **Verify**: Zero stale references remaining after bulk operation; README/CLAUDE.md updated; import paths updated; CI/CD config updated; symlinks valid
 
-6. When was your linter/formatter last configured? Running on every build or only CI? Auto-fix with a single command?
+### linting
+- **Artifact**: `guidelines/code-quality/linting.md`
+- **Worker focus**: Linting configured from day one on every project; linter config committed to repo; linting runs as part of build or pre-commit; formatting must be auto-fixable via a single command (SwiftLint/swift-format, ktlint, ESLint/Prettier, Roslyn+dotnet format)
+- **Verify**: Linter config file present and committed; lint runs in CI; no lint errors suppressed inline without justification; formatter command documented in README or Makefile
 
-7. Do you have error handling standards? Are exceptions caught and silently swallowed anywhere? How do failures propagate?
+### scope-discipline
+- **Artifact**: `guidelines/code-quality/scope-discipline.md`
+- **Worker focus**: Only modify what was requested; state the goal before starting; note but do not fix adjacent issues; recognize scope creep signals (modifying unrelated files, adding unrequested functionality, refactoring working code)
+- **Verify**: Diff contains only files directly related to the stated goal; no unrequested refactors or additions; out-of-scope issues noted to the user rather than silently fixed
 
-8. How do you enforce consistency across the codebase? What rules do developers follow, and how?
-
-9. Walk me through a recent refactoring. Changed behavior, structure, or both? How did you verify no bugs introduced?
-
-10. What's your relationship with code review? How much time do reviewers spend understanding context vs. evaluating changes?
-
-11. Tell me about a time you built an abstraction "for future reuse" that never got reused. How does that shape your YAGNI thinking?
-
-12. If a new developer joined tomorrow, how long before they could make their first safe change? What would slow them down?
+### best-practices-compliance
+- **Artifact**: `compliance/best-practices.md`
+- **Worker focus**: 8 compliance checks — unit-test-coverage, test-pyramid, atomic-commits, code-linting, post-generation-verification, explicit-error-handling, separation-of-concerns, good-test-properties
+- **Verify**: Each compliance check has a status (passed/failed/partial/n-a) with evidence; no errors silently swallowed; business logic separated from presentation and infrastructure; AI-generated code passed build, test, lint, and log verification
 
 ## Exploratory Prompts
 
