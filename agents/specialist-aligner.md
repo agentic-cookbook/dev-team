@@ -41,7 +41,7 @@ For each path listed under the specialist's `## Cookbook Sources` section:
 Using the mapping file, determine which guideline topic directories, principles, and compliance files belong to this specialist's domain.
 
 1. Read the mapping file and find all entries that map to this specialist
-2. For each mapped guideline topic: glob the corresponding `cookbook/guidelines/<topic>/` directory and check whether the specialist's Cookbook Sources include that directory or its files
+2. For each mapped guideline topic: glob the corresponding `guidelines/<topic>/` directory and check whether the specialist's Cookbook Sources include that directory or its files
 3. For each mapped principle: check whether the specialist's Cookbook Sources reference it
 4. For each mapped compliance file: check whether the specialist's Cookbook Sources reference it
 5. Any mapped content that exists on disk but is NOT in the specialist's Cookbook Sources is **MISSING**
@@ -84,8 +84,8 @@ Return the review as structured markdown:
 
 | Path | Status | Note |
 |------|--------|------|
-| cookbook/guidelines/security/old-file.md | STALE | Not found on disk |
-| cookbook/guidelines/security/renamed.md | STALE | Possible rename: secure-storage.md |
+| guidelines/security/old-file.md | STALE | Not found on disk |
+| guidelines/security/renamed.md | STALE | Possible rename: secure-storage.md |
 
 _None found._ (if empty)
 
@@ -93,8 +93,8 @@ _None found._ (if empty)
 
 | Path | Severity | Note |
 |------|----------|------|
-| cookbook/guidelines/security/new-topic.md | HIGH | Entire topic directory not referenced |
-| cookbook/principles/fail-fast.md | LOW | Principle not in Cookbook Sources |
+| guidelines/security/new-topic.md | HIGH | Entire topic directory not referenced |
+| principles/fail-fast.md | LOW | Principle not in Cookbook Sources |
 
 _None found._ (if empty)
 

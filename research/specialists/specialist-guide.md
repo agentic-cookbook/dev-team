@@ -21,11 +21,11 @@ One to two sentences defining the specialist's scope. This is the quick filter f
 Explicit file paths to the cookbook content this specialist owns. These are the authoritative references the specialist reads during all three workflows. List every relevant directory or file — no implicit discovery.
 
 Categories:
-- **Guidelines** — `cookbook/guidelines/<topic>/` directories
-- **Principles** — individual `cookbook/principles/<name>.md` files
-- **Compliance** — `cookbook/compliance/<category>.md` files
+- **Guidelines** — `guidelines/<topic>/` directories
+- **Principles** — individual `principles/<name>.md` files
+- **Compliance** — `compliance/<category>.md` files
 - **Research** — `research/developer-tools/<area>/` files
-- **Recipes** — `cookbook/recipes/<area>/` files (for review and augmentation context)
+- **Recipes** — `recipes/<area>/` files (for review and augmentation context)
 - **Rules** — `rules/<name>.md` files (for authoring-focused specialists)
 
 ### Structured Questions

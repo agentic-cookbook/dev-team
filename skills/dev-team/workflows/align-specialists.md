@@ -32,9 +32,9 @@ Extract `cookbook_repo` and `workspace_repo` from the config passed by the route
 
 Run three Glob operations in parallel:
 
-1. `<cookbook_repo>/cookbook/guidelines/**/*.md` → collect all guideline paths, excluding any `INDEX.md` files
-2. `<cookbook_repo>/cookbook/principles/*.md` → collect all principle paths
-3. `<cookbook_repo>/cookbook/compliance/*.md` → collect all compliance paths, excluding `INDEX.md`
+1. `<cookbook_repo>/guidelines/**/*.md` → collect all guideline paths, excluding any `INDEX.md` files
+2. `<cookbook_repo>/principles/*.md` → collect all principle paths
+3. `<cookbook_repo>/compliance/*.md` → collect all compliance paths, excluding `INDEX.md`
 
 Store results as three lists of paths **relative to `<cookbook_repo>`** (strip the cookbook_repo prefix).
 
@@ -112,19 +112,19 @@ After all specialist-aligner agents complete, perform a cross-cutting check on t
 
 ### 4a. Guideline Topic Coverage
 
-For each guideline topic directory that exists in `cookbook/guidelines/`:
+For each guideline topic directory that exists in `guidelines/`:
 - Check whether it appears in the mapping file's "Guideline Topics → Specialist Domains" table
 - If missing, flag: `"Guideline topic '<topic>' has no specialist assigned in the mapping"`
 
 ### 4b. Principle Coverage
 
-For each principle file in `cookbook/principles/`:
+For each principle file in `principles/`:
 - Check whether it appears in the mapping file's "Principles → Specialist Domains" table
 - If missing, flag: `"Principle '<name>' has no specialist assigned in the mapping"`
 
 ### 4c. Compliance Coverage
 
-For each compliance file in `cookbook/compliance/`:
+For each compliance file in `compliance/`:
 - Check whether it appears in the mapping file's "Compliance Categories → Specialist Domains" table
 - If missing, flag: `"Compliance category '<name>' has no specialist assigned in the mapping"`
 

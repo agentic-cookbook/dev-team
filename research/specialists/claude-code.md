@@ -25,9 +25,9 @@ Claude Code plugin architecture, skill/rule/agent/hook authoring, MCP server des
 - `principles/yagni.md`
 
 ### Recipes
-- `cookbook/recipes/developer-tools/claude/claude-rule-optimization-pipeline.md`
-- `cookbook/recipes/developer-tools/claude/yolo-mode.md`
-- `cookbook/recipes/autonomous-dev-bots/pr-review-pipeline.md`
+- `recipes/developer-tools/claude/claude-rule-optimization-pipeline.md`
+- `recipes/developer-tools/claude/yolo-mode.md`
+- `recipes/autonomous-dev-bots/pr-review-pipeline.md`
 
 ### Research
 - `research/developer-tools/claude/claude-plugin-format.md`
