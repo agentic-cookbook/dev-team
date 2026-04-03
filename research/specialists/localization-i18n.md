@@ -1,37 +1,32 @@
 # Localization & I18n Specialist
 
-## Domain Coverage
+## Role
 String externalization, RTL support, locale-aware formatting, text expansion, Unicode, layout flexibility, plural rules, font fallback.
 
+## Persona
+(coming)
+
 ## Cookbook Sources
-- `guidelines/internationalization/`
+- `guidelines/internationalization/localization.md`
+- `guidelines/internationalization/rtl-support.md`
 - `compliance/internationalization.md`
 
-## Structured Questions
+## Specialty Teams
 
-1. How many languages do you currently support? Planning to support? Who decides which languages?
+### localization
+- **Artifact**: `guidelines/internationalization/localization.md`
+- **Worker focus**: All user-facing strings externalized into platform-standard resource files — `.xcstrings`/`.strings` (Swift), `strings.xml` (Kotlin), message catalogs via `react-intl`/`i18next` (TypeScript), `.resw` with `x:Uid` (Windows); no hardcoded strings; locale-aware APIs for dates, numbers, currencies; plural rules for all supported locales
+- **Verify**: No literal user-facing strings in source code; platform localization API used throughout; date/number formatting uses locale-aware APIs not hardcoded format strings; plural forms cover non-English rules where applicable
 
-2. Walk me through how a user-facing string gets added. Is there a process, or can developers add strings directly in code?
+### rtl-support
+- **Artifact**: `guidelines/internationalization/rtl-support.md`
+- **Worker focus**: Leading/trailing (not left/right) for all alignment and padding; directional icons mirrored; non-directional icons not mirrored; `android:supportsRtl="true"` on Android, CSS logical properties on web, `FlowDirection` on Windows; RTL locale tested
+- **Verify**: No `left`/`right` layout constraints or CSS properties — only leading/trailing/logical equivalents; `supportsRtl` manifest flag set on Android; directional icons have RTL variants; RTL locale tested in preview or emulator
 
-3. How do you manage translations? Vendor, community, or in-house? How often updated?
-
-4. Describe your experience with right-to-left languages. Tested with Hebrew or Arabic? What broke?
-
-5. How do you handle text expansion? "Save" → "Speichern" — does your UI still work?
-
-6. What's your approach to plural forms? Languages where pluralization differs from English (Polish, Russian)?
-
-7. How do you localize dates, times, and numbers? Hardcoded format strings or locale-aware APIs?
-
-8. Custom fonts — do they work in all supported languages? Font fallback for uncovered character sets?
-
-9. Emoji and special characters — hit any issues with rendering or filtering?
-
-10. How do you test localization? Every language or representative sample? On actual devices in those regions?
-
-11. Dynamic type / font scaling story? If user increases text size, does your app still work?
-
-12. How do layouts adapt for different text lengths? Constraint-based, or does text get truncated?
+### internationalization-compliance
+- **Artifact**: `compliance/internationalization.md`
+- **Worker focus**: 7 compliance checks — string-externalization, rtl-layout-support, locale-aware-formatting, plural-forms, text-expansion-tolerance (up to 200%), unicode-support (full Unicode including emoji), no-hardcoded-strings
+- **Verify**: Each compliance check has a status (passed/failed/partial/n-a) with evidence; text expansion tested at ≥150% string length; Unicode handling confirmed for emoji and multi-byte characters
 
 ## Exploratory Prompts
 

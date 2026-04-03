@@ -1,39 +1,50 @@
 # Development Process & Product Specialist
 
-## Domain Coverage
+## Role
 Feature development cycle, iterative delivery, technical debt, feature flags, A/B testing, debug mode, small reversible decisions, YAGNI, prioritization.
+
+## Persona
+(coming)
 
 ## Cookbook Sources
 - `principles/make-it-work-make-it-right-make-it-fast.md`
 - `principles/small-reversible-decisions.md`
 - `principles/yagni.md`
-- `guidelines/feature-management/`
+- `guidelines/feature-management/ab-testing.md`
+- `guidelines/feature-management/debug-mode.md`
+- `guidelines/feature-management/feature-flags.md`
 
-## Structured Questions
+## Specialty Teams
 
-1. Describe your typical feature development cycle. Idea to shipped — how long? How many decision points?
+### make-it-work
+- **Artifact**: `principles/make-it-work-make-it-right-make-it-fast.md`
+- **Worker focus**: Sequential phases — correctness first (common case working), then refactor for clarity and edge cases, then optimize only what measurement proves is slow; never skip phase 2 to jump directly to performance optimization
+- **Verify**: Code handles the common case correctly before refactoring; edge cases and error handling addressed in phase 2 before any performance work; performance optimizations are measurement-driven, not speculative
 
-2. How do you decide what to build? Requirements first, or build incrementally and gather feedback?
+### small-reversible-decisions
+- **Artifact**: `principles/small-reversible-decisions.md`
+- **Worker focus**: Fast decisions on cheap-to-reverse choices; invest in understanding before committing to expensive-to-reverse decisions; incremental delivery over phased releases; binding decisions deferred to last responsible moment; architecture treated as continuous activity
+- **Verify**: No large upfront architectural commitments without evidence; incremental delivery with feedback loops in place; reversibility considered when choosing between design options
 
-3. What's your relationship with technical debt? When do you refactor vs. move on?
+### yagni
+- **Artifact**: `principles/yagni.md`
+- **Worker focus**: Build only for today's known requirements; no speculative abstractions, hooks for future features, or generalization beyond current need; cost of premature abstraction (ongoing maintenance) exceeds cost of adding it later when needed
+- **Verify**: No unused abstraction layers, extension points, or generalization not required by current features; code complexity matches current requirements
 
-4. Tell me about a feature that took longer than expected. What caused the delay?
+### ab-testing
+- **Artifact**: `guidelines/feature-management/ab-testing.md`
+- **Worker focus**: Features that may need experimentation support variant assignment via `ExperimentProvider` interface (`variant(key) -> String`); local default implementation; debug panel override for manual variant selection
+- **Verify**: Experimentable features implement `ExperimentProvider` interface; local default variant returns a valid value; debug panel allows variant override without code changes
 
-5. How do you validate that a feature is valuable? Measure usage? Ask users? How do you know when to kill a feature?
+### debug-mode
+- **Artifact**: `guidelines/feature-management/debug-mode.md`
+- **Worker focus**: Debug-only configuration panel not included in release builds — contains feature flag overrides, analytics event log, A/B test variant picker, environment info; access guarded by `#if DEBUG` (Apple/Windows), `BuildConfig.DEBUG` (Android), `NODE_ENV === 'development'` (web)
+- **Verify**: Debug panel absent from release/production builds; build guard present on all debug panel entry points; panel includes feature flag overrides and variant picker
 
-6. If you shipped a feature that turns out wrong, how quickly can you iterate?
-
-7. Describe your feature flag strategy. Manual (config file) or automated (backend)? How long do flags stay after rollout?
-
-8. How do you run experiments? A/B test with a percentage of users? How long does an experiment run?
-
-9. What's the smallest thing you can ship that teaches you something valuable? How do you think about "done"?
-
-10. How do you handle prioritization conflicts? Engineering wants a refactor, product wants a feature — how resolved?
-
-11. What's your success metric for a shipped feature? Adoption, engagement, revenue, or something else?
-
-12. If you could change one thing about how you develop products, what would it be?
+### feature-flags
+- **Artifact**: `guidelines/feature-management/feature-flags.md`
+- **Worker focus**: All features gated behind feature flags from initial implementation; `FeatureFlagProvider` interface (`isEnabled(key) -> Bool`) with local default (UserDefaults/SharedPreferences/localStorage/JSON config); DI-swappable backend implementation; flag keys documented in spec
+- **Verify**: New features have a feature flag from day one; `FeatureFlagProvider` interface implemented with local default; no hardcoded feature enable/disable in business logic; flag keys listed in spec or documentation
 
 ## Exploratory Prompts
 
