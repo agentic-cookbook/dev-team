@@ -6,6 +6,7 @@ Kotlin, Material Design, font scaling, Play Store, Jetpack Compose, Android arch
 ## Cookbook Sources
 - `guidelines/language/kotlin/`
 - `principles/native-controls.md`
+- `guidelines/platform/`
 - `compliance/platform-compliance.md`
 
 ## Structured Questions

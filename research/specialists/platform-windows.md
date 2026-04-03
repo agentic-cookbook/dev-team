@@ -7,6 +7,7 @@ WinUI 3, Fluent Design, MSIX packaging, High DPI/display scaling, MVVM, theming 
 - `guidelines/platform/windows/`
 - `guidelines/language/csharp/`
 - `principles/native-controls.md`
+- `guidelines/platform/`
 
 ## Structured Questions
 

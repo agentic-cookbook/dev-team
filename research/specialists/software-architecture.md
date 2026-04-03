@@ -10,6 +10,7 @@ Composition, dependency injection, boundaries, separation of concerns, modularit
 - `principles/separation-of-concerns.md`
 - `principles/meta-principle-optimize-for-change.md`
 - `principles/open-source-preference.md`
+- `guidelines/concurrency/`
 
 ## Structured Questions
 

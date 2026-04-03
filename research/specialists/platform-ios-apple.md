@@ -6,6 +6,7 @@ UIKit, SwiftUI, App Store, Human Interface Guidelines, Dynamic Type, all Apple p
 ## Cookbook Sources
 - `guidelines/language/swift/`
 - `principles/native-controls.md`
+- `guidelines/platform/`
 - `compliance/platform-compliance.md`
 
 ## Structured Questions
