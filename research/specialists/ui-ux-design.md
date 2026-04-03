@@ -4,8 +4,8 @@
 Layout, color, typography, animation, forms, visual hierarchy, feedback patterns, state design (loading/empty/error/loaded), deep linking, platform design languages, progress indication.
 
 ## Cookbook Sources
-- `cookbook/guidelines/ui/` (15 guidelines)
-- `cookbook/compliance/platform-compliance.md`
+- `guidelines/ui/` (15 guidelines)
+- `compliance/platform-compliance.md`
 
 ## Structured Questions
 

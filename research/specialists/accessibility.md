@@ -4,8 +4,8 @@
 Screen reader support, keyboard navigation, dynamic type/font scaling, color contrast, reduced motion, touch/click targets, platform accessibility APIs, focus management, semantic markup, color independence.
 
 ## Cookbook Sources
-- `cookbook/guidelines/accessibility/`
-- `cookbook/compliance/accessibility.md`
+- `guidelines/accessibility/`
+- `compliance/accessibility.md`
 
 ## Structured Questions
 

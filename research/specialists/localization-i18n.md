@@ -4,8 +4,8 @@
 String externalization, RTL support, locale-aware formatting, text expansion, Unicode, layout flexibility, plural rules, font fallback.
 
 ## Cookbook Sources
-- `cookbook/guidelines/internationalization/`
-- `cookbook/compliance/internationalization.md`
+- `guidelines/internationalization/`
+- `compliance/internationalization.md`
 
 ## Structured Questions
 

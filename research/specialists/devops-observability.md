@@ -4,9 +4,9 @@
 Structured logging, analytics, tight feedback loops, performance compliance, debug mode, deploy process, feature flags (operational), monitoring.
 
 ## Cookbook Sources
-- `cookbook/guidelines/logging/`
-- `cookbook/principles/tight-feedback-loops.md`
-- `cookbook/compliance/performance.md`
+- `guidelines/logging/`
+- `principles/tight-feedback-loops.md`
+- `compliance/performance.md`
 
 ## Structured Questions
 

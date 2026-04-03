@@ -4,11 +4,11 @@
 Simplicity, deletability, explicit code, scope discipline, linting, atomic commits, bulk operation verification, best practices compliance.
 
 ## Cookbook Sources
-- `cookbook/principles/design-for-deletion.md`
-- `cookbook/principles/explicit-over-implicit.md`
-- `cookbook/principles/simplicity.md`
-- `cookbook/guidelines/code-quality/`
-- `cookbook/compliance/best-practices.md`
+- `principles/design-for-deletion.md`
+- `principles/explicit-over-implicit.md`
+- `principles/simplicity.md`
+- `guidelines/code-quality/`
+- `compliance/best-practices.md`
 
 ## Structured Questions
 

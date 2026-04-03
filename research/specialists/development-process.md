@@ -4,10 +4,10 @@
 Feature development cycle, iterative delivery, technical debt, feature flags, A/B testing, debug mode, small reversible decisions, YAGNI, prioritization.
 
 ## Cookbook Sources
-- `cookbook/principles/make-it-work-make-it-right-make-it-fast.md`
-- `cookbook/principles/small-reversible-decisions.md`
-- `cookbook/principles/yagni.md`
-- `cookbook/guidelines/feature-management/`
+- `principles/make-it-work-make-it-right-make-it-fast.md`
+- `principles/small-reversible-decisions.md`
+- `principles/yagni.md`
+- `guidelines/feature-management/`
 
 ## Structured Questions
 

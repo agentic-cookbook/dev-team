@@ -4,7 +4,7 @@
 Test pyramid, isolation, determinism, unit test patterns (AAA), behavioral testing, flaky prevention, test data construction, coverage strategy.
 
 ## Cookbook Sources
-- `cookbook/guidelines/testing/` (12+ guidelines)
+- `guidelines/testing/` (12+ guidelines)
 
 ## Structured Questions
 

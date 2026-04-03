@@ -4,8 +4,8 @@
 WinUI 3, Fluent Design, MSIX packaging, High DPI/display scaling, MVVM, theming (light/dark/high-contrast), .NET/C#, Narrator, UI Automation.
 
 ## Cookbook Sources
-- `cookbook/guidelines/platform/windows/`
-- `cookbook/guidelines/language/csharp/`
+- `guidelines/platform/windows/`
+- `guidelines/language/csharp/`
 
 ## Structured Questions
 

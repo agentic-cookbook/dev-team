@@ -4,10 +4,10 @@
 Storage, sync, conflict resolution, migration, offline data, consistency models, concurrency, transactions, idempotency, immutability, schema design.
 
 ## Cookbook Sources
-- `cookbook/principles/idempotency.md`
-- `cookbook/principles/immutability-by-default.md`
-- `cookbook/guidelines/networking/offline-and-connectivity.md`
-- `cookbook/compliance/reliability.md`
+- `principles/idempotency.md`
+- `principles/immutability-by-default.md`
+- `guidelines/networking/offline-and-connectivity.md`
+- `compliance/reliability.md`
 
 ## Structured Questions
 

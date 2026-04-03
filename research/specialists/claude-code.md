@@ -7,22 +7,22 @@ Claude Code plugin architecture, skill/rule/agent/hook authoring, MCP server des
 ## Cookbook Sources
 
 ### Guidelines
-- `cookbook/guidelines/skills-and-agents/authoring-skills-and-rules.md`
-- `cookbook/guidelines/skills-and-agents/performance.md`
-- `cookbook/guidelines/skills-and-agents/skill-checklist.md`
-- `cookbook/guidelines/skills-and-agents/rule-checklist.md`
-- `cookbook/guidelines/skills-and-agents/agent-checklist.md`
-- `cookbook/guidelines/skills-and-agents/skill-structure-reference.md`
-- `cookbook/guidelines/skills-and-agents/rule-structure-reference.md`
-- `cookbook/guidelines/skills-and-agents/agent-structure-reference.md`
+- `guidelines/skills-and-agents/authoring-skills-and-rules.md`
+- `guidelines/skills-and-agents/performance.md`
+- `guidelines/skills-and-agents/skill-checklist.md`
+- `guidelines/skills-and-agents/rule-checklist.md`
+- `guidelines/skills-and-agents/agent-checklist.md`
+- `guidelines/skills-and-agents/skill-structure-reference.md`
+- `guidelines/skills-and-agents/rule-structure-reference.md`
+- `guidelines/skills-and-agents/agent-structure-reference.md`
 
 ### Principles
-- `cookbook/principles/separation-of-concerns.md`
-- `cookbook/principles/manage-complexity-through-boundaries.md`
-- `cookbook/principles/explicit-over-implicit.md`
-- `cookbook/principles/design-for-deletion.md`
-- `cookbook/principles/simplicity.md`
-- `cookbook/principles/yagni.md`
+- `principles/separation-of-concerns.md`
+- `principles/manage-complexity-through-boundaries.md`
+- `principles/explicit-over-implicit.md`
+- `principles/design-for-deletion.md`
+- `principles/simplicity.md`
+- `principles/yagni.md`
 
 ### Recipes
 - `cookbook/recipes/developer-tools/claude/claude-rule-optimization-pipeline.md`

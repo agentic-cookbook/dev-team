@@ -4,8 +4,8 @@
 REST conventions, HTTP semantics, offline-first, caching, retry/resilience, timeouts, pagination, real-time communication, error response format, rate limiting.
 
 ## Cookbook Sources
-- `cookbook/guidelines/networking/` (10+ guidelines)
-- `cookbook/compliance/access-patterns.md`
+- `guidelines/networking/` (10+ guidelines)
+- `compliance/access-patterns.md`
 
 ## Structured Questions
 

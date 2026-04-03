@@ -4,9 +4,9 @@
 Fail fast, idempotency, error categorization, retry strategies, timeout handling, graceful degradation, state recovery, data integrity, circuit breakers, monitoring.
 
 ## Cookbook Sources
-- `cookbook/principles/fail-fast.md`
-- `cookbook/principles/idempotency.md`
-- `cookbook/compliance/reliability.md`
+- `principles/fail-fast.md`
+- `principles/idempotency.md`
+- `compliance/reliability.md`
 
 ## Structured Questions
 

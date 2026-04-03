@@ -4,10 +4,10 @@
 Auth, transport security, token handling, input validation, secure storage, sensitive data, privacy, dependency security, CORS, CSP, user safety.
 
 ## Cookbook Sources
-- `cookbook/guidelines/security/` (12+ guidelines)
-- `cookbook/compliance/security.md`
-- `cookbook/compliance/privacy-and-data.md`
-- `cookbook/compliance/user-safety.md`
+- `guidelines/security/` (12+ guidelines)
+- `compliance/security.md`
+- `compliance/privacy-and-data.md`
+- `compliance/user-safety.md`
 
 ## Structured Questions
 
