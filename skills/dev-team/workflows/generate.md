@@ -54,7 +54,7 @@ If findings exist, inform the user: "Lint previously found <N> open FAILs. Speci
 
 ## Phase 2 — Specialist Assignment
 
-Read the specialist assignment rules at `${CLAUDE_PLUGIN_ROOT}/research/specialist-assignment.md`.
+Read the specialist assignment rules at `${CLAUDE_PLUGIN_ROOT}/docs/research/specialist-assignment.md`.
 
 For each recipe, determine relevant specialists. You can use the shell script for quick assignment:
 
@@ -62,7 +62,7 @@ For each recipe, determine relevant specialists. You can use the shell script fo
 ${CLAUDE_PLUGIN_ROOT}/scripts/assign-specialists.sh <recipe-path> --platforms '<platforms-json>'
 ```
 
-Or read `${CLAUDE_PLUGIN_ROOT}/research/specialist-assignment.json` directly and apply the category, content, and platform mappings.
+Or read `${CLAUDE_PLUGIN_ROOT}/docs/research/specialist-assignment.json` directly and apply the category, content, and platform mappings.
 
 Limit to 3-4 specialists per recipe. Present the assignment matrix to the user and wait for approval.
 

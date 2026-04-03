@@ -40,7 +40,7 @@ Store results as three lists of paths **relative to `<cookbook_repo>`** (strip t
 
 ### 1c. Read the Mapping File
 
-Read `${CLAUDE_PLUGIN_ROOT}/research/cookbook-specialist-mapping.md` in full. You'll pass it to each subagent and use it in Phase 4.
+Read `${CLAUDE_PLUGIN_ROOT}/docs/research/cookbook-specialist-mapping.md` in full. You'll pass it to each subagent and use it in Phase 4.
 
 ### 1d. Present Summary
 
@@ -79,7 +79,7 @@ Provide each aligner:
 3. **Canonical guideline paths** — the newline-delimited list from Phase 1b
 4. **Canonical principle paths** — from Phase 1b
 5. **Canonical compliance paths** — from Phase 1b
-6. **Mapping file path** — `${CLAUDE_PLUGIN_ROOT}/research/cookbook-specialist-mapping.md`
+6. **Mapping file path** — `${CLAUDE_PLUGIN_ROOT}/docs/research/cookbook-specialist-mapping.md`
 
 ### Parallel Execution
 
@@ -236,7 +236,7 @@ Group by severity. Present each category in order:
 **4. Mapping issues**
 ```
 [MAPPING] <description>
-  Fix: Update research/cookbook-specialist-mapping.md
+  Fix: Update docs/research/cookbook-specialist-mapping.md
 ```
 
 ### 5c. Approval Loop

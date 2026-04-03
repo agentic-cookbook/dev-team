@@ -1,11 +1,12 @@
 # Use Project Directories
 
-Never create generic directories like `docs/` or `docs/superpowers/specs/`. This project has its own directory structure:
+This project has its own directory structure:
 
-- **Design specs and planning documents** go in `planning/`
 - **Agent definitions** go in `agents/`
+- **Specialist definitions** go in `specialists/`
 - **Skills** go in `skills/<skill-name>/`
-- **Research and specialist data** go in `research/`
+- **Design specs and planning documents** go in `docs/planning/`
+- **Research and specialist data** go in `docs/research/`
 - **Tests** go in `tests/`
 
 Always use the project's existing directories. Do not invent new top-level directories without asking.

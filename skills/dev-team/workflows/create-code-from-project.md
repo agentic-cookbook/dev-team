@@ -88,7 +88,7 @@ If the output directory already exists with generated code, ask: "I see code alr
 
 ## Phase 2 — Specialist Assignment & Ordering
 
-Read the specialist assignment rules at `${CLAUDE_PLUGIN_ROOT}/research/specialist-assignment.md`.
+Read the specialist assignment rules at `${CLAUDE_PLUGIN_ROOT}/docs/research/specialist-assignment.md`.
 
 For each recipe, determine and order specialists by tier:
 

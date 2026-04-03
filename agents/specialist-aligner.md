@@ -21,7 +21,7 @@ You will receive:
 3. **Canonical guideline paths** — newline-delimited list of all guideline files that exist on disk (relative to cookbook_repo)
 4. **Canonical principle paths** — same for principles
 5. **Canonical compliance paths** — same for compliance
-6. **Mapping file path** — path to `research/cookbook-specialist-mapping.md`
+6. **Mapping file path** — path to `docs/research/cookbook-specialist-mapping.md`
 
 ## Your Job
 

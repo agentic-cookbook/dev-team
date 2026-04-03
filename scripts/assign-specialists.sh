@@ -9,7 +9,7 @@ set -euo pipefail
 RECIPE_PATH="$1"; shift
 PLATFORMS_JSON="[]"
 TIER_ORDER=false
-MAPPING="${CLAUDE_PLUGIN_ROOT:-$(dirname "$0")/..}/research/specialist-assignment.json"
+MAPPING="${CLAUDE_PLUGIN_ROOT:-$(dirname "$0")/..}/docs/research/specialist-assignment.json"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in

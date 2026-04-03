@@ -28,18 +28,17 @@ Three repos:
 
 ```
 .claude-plugin/            # Plugin manifest
-agents/                    # 17 subagent definitions
+agents/                    # 19 subagent definitions
+specialists/               # 19 specialist definitions (13 domain + 6 platform)
 skills/
   dev-team/                # Single skill with subcommand routing
     SKILL.md               # Router
     workflows/             # One workflow file per subcommand
-specialists/               # 19 specialist definitions (13 domain + 6 platform)
-research/
-  cookbook-specialist-mapping.md
 scripts/                   # Shell scripts for deterministic operations
   db/                      # Database shell script API (db-init, db-project, db-run, etc.)
-planning/
-  design-spec.md           # Full design specification
+docs/
+  planning/                # Design specs and plans
+  research/                # Specialist mapping and assignment rules
 tests/                     # Test harness and personas
 ```
 

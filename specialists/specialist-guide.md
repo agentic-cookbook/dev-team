@@ -99,7 +99,7 @@ The iteration is deterministic — a script walking a list. The LLM cost is in t
 
 ## Specialist Assignment
 
-Unchanged. The rules in `research/specialist-assignment.md` and `research/specialist-assignment.json` determine which specialists are assigned to a recipe or codebase. The shell script `scripts/assign-specialists.sh` automates this.
+Unchanged. The rules in `docs/research/specialist-assignment.md` and `docs/research/specialist-assignment.json` determine which specialists are assigned to a recipe or codebase. The shell script `scripts/assign-specialists.sh` automates this.
 
 ## Cross-Domain Responsibilities
 
@@ -114,6 +114,6 @@ Flags go to the specialist's aggregation report under a "Cross-Domain Flags" sec
 
 1. Create `specialists/<domain>.md` following the format above
 2. Define specialty-teams — one per cookbook artifact the specialist owns
-3. Add the specialist to `research/cookbook-specialist-mapping.md`
+3. Add the specialist to `docs/research/cookbook-specialist-mapping.md`
 4. Test: run one specialty-team in each mode to verify the worker focus and verify criteria produce good results
 5. Run `align-specialists` to confirm coverage maps are clean
