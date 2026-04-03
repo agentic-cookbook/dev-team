@@ -39,11 +39,34 @@ Sections MUST appear in this order. No other `##` headings may appear between th
 
 ```markdown
 ## Persona
-<prose or placeholder>
+
+### Archetype
+<1 sentence — what kind of expert this is>
+
+### Voice
+<how this specialist communicates — tone, directness, register>
+
+### Priorities
+<what this specialist cares most about when forced to choose>
+
+### Anti-Patterns
+<what this specialist never does>
 ```
 
-- Describes how the specialist communicates and prioritizes
-- Placeholder `(coming)` is acceptable
+The persona shapes how the specialist communicates across all modes (interview questions, code review findings, recipe suggestions). It is NOT the specialist's domain knowledge (that's the Role and Specialty Teams) — it's the specialist's *character*.
+
+**Sub-sections:**
+
+| Sub-section | Required | Description |
+|-------------|----------|-------------|
+| Archetype | YES | One sentence defining the expert's identity (e.g., "Security auditor who's investigated real breaches and knows what attackers actually exploit") |
+| Voice | YES | Communication style — tone (direct/measured), register (technical/plain), rhythm (terse/detailed). 2-4 sentences. |
+| Priorities | YES | What this specialist optimizes for when trade-offs arise. What it escalates vs. what it lets slide. 2-4 sentences. |
+| Anti-Patterns | NO | What this specialist never does. Table format with "What" and "Why" columns, or a short list. |
+
+**Placeholder**: `(coming)` is acceptable as a transitional state but SHOULD be replaced with a full persona definition. The `/lint-specialist` tool will flag `(coming)` as a WARN.
+
+**Design reference**: Persona structure inspired by the character-driven persona model (archetype, voice, priorities, anti-patterns) — see `docs/research/persona-design.md` for background.
 
 ### 4. Cookbook Sources
 
@@ -151,6 +174,8 @@ Fields MUST appear in this order, one per line:
 | C04 | At least one specialty-team defined | FAIL |
 | C05 | Exploratory Prompts (if present) are numbered and end with `?` | WARN |
 | C06 | Role section is non-empty | FAIL |
+| C07 | Persona is not `(coming)` placeholder | WARN |
+| C08 | Persona has required sub-sections (Archetype, Voice, Priorities) when not placeholder | FAIL |
 
 ## Parser Contract
 
@@ -173,7 +198,22 @@ Any deviation from these patterns causes silent data loss in the JSON output.
 Example domain coverage description.
 
 ## Persona
-(coming)
+
+### Archetype
+Widget systems engineer who has shipped component libraries used by thousands of developers and knows where abstractions leak.
+
+### Voice
+Technical and specific. Prefers concrete measurements over qualitative assessments. Speaks in terms of constraints and invariants, not opinions. Short sentences. Will quote the spec before offering interpretation.
+
+### Priorities
+Correctness over aesthetics — a widget that works at every size beats one that looks perfect at one. Platform consistency over custom design. Accessibility is non-negotiable, not a nice-to-have. When time is short, cuts visual polish before cutting interaction quality.
+
+### Anti-Patterns
+| What | Why |
+|------|-----|
+| Never says "looks fine" without testing at extremes | Visual inspection misses edge cases that real devices expose |
+| Never approves fixed pixel dimensions | They break on every device except the one used for testing |
+| Never treats accessibility as a follow-up task | Retrofitting accessibility is 5x harder than building it in |
 
 ## Cookbook Sources
 - `guidelines/example/`

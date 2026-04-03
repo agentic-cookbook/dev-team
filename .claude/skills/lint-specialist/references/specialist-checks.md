@@ -81,3 +81,15 @@ Reference checklist for `/lint-specialist`. Each check has an ID, description, s
 - **Severity**: FAIL
 - **Rule**: Content between `## Role` and the next `##` heading must be non-empty (not just whitespace)
 - **Check**: Extract text between `## Role` and next heading, trim, verify non-empty
+
+### C07 — Persona is not placeholder
+- **Severity**: WARN
+- **Rule**: `## Persona` should not contain only `(coming)` — a full persona definition is preferred
+- **Check**: Extract text between `## Persona` and the next `##` heading. If it trims to `(coming)`, flag as WARN.
+- **Fix**: Define the persona with Archetype, Voice, Priorities, and optionally Anti-Patterns sub-sections
+
+### C08 — Persona has required sub-sections
+- **Severity**: FAIL
+- **Rule**: When the Persona section is NOT the `(coming)` placeholder, it MUST contain `### Archetype`, `### Voice`, and `### Priorities` sub-headings
+- **Check**: If Persona content is not `(coming)`, scan for the three required `### ` headings within the Persona section
+- **Fix**: Add missing sub-sections
