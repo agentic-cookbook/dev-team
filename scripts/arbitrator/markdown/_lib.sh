@@ -85,6 +85,9 @@ parse_flags() {
   PARSED_SORT_ORDER=""
   PARSED_REASON=""
   PARSED_STATUS=""
+  PARSED_TEAM=""
+  PARSED_ITERATION=""
+  PARSED_VERIFIER_FEEDBACK=""
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -114,6 +117,9 @@ parse_flags() {
       --sort-order) PARSED_SORT_ORDER="$2"; shift 2 ;;
       --reason) PARSED_REASON="$2"; shift 2 ;;
       --status) PARSED_STATUS="$2"; shift 2 ;;
+      --team) PARSED_TEAM="$2"; shift 2 ;;
+      --iteration) PARSED_ITERATION="$2"; shift 2 ;;
+      --verifier-feedback) PARSED_VERIFIER_FEEDBACK="$2"; shift 2 ;;
       *) shift ;;
     esac
   done
