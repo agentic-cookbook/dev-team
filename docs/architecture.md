@@ -98,7 +98,7 @@ Abstracted communication conduit between all participants. Single entry point: `
 - All commands output JSON to stdout, errors to stderr, exit 0/1
 - IDs are opaque strings
 
-**Resources**: session, state, message, gate-option, result, finding, interpretation, artifact, reference, retry, report
+**Resources**: session, state, message, gate-option, result, finding, interpretation, artifact, reference, retry, report, team-result
 
 **Markdown backend**: stores JSON files in `~/.agentic-cookbook/dev-team/sessions/<session-id>/`. 58 contract tests in `tests/arbitrator/`.
 

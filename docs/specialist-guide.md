@@ -108,6 +108,19 @@ The same specialty-team pipeline runs in all four modes. The worker's behavior c
    c. If FAIL and iterations < 3: feed failure back to worker, retry
    d. If PASS: record result
    e. If FAIL after 3: record escalation
+
+### Crash Recovery
+
+If a session crashes mid-specialist, the system can resume on the next run:
+
+1. At workflow startup, `scripts/resume-session.sh` checks for interrupted sessions
+2. If found, the team-lead presents a gate: "Resume or restart?"
+3. On resume, the orchestrator queries `team-result list` for the specialist
+4. Teams with `status: passed` or `status: escalated` are skipped
+5. Teams with `status: failed` resume at the next retry iteration with stored verifier feedback
+6. Teams with `status: running` (crashed mid-execution) re-run from scratch
+
+Team-results are recorded via the arbitrator (`arbitrator.sh team-result create/update`) as each team progresses through the worker-verifier loop.
 4. After all teams complete, the specialist aggregates results
 5. Specialist signs off (or reports escalations)
 
