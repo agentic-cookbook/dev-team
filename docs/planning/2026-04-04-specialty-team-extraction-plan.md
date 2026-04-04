@@ -1,5 +1,41 @@
 # Specialty-Team Extraction Plan
 
+**Status: COMPLETED** — 2026-04-04
+
+## Summary
+
+Extracted 206 specialty-teams from 19 specialist markdown files into independent files in a shared `specialty-teams/` pool. Each specialty-team is now a standalone markdown file with frontmatter (name, description, artifact, version) and body sections (Worker Focus, Verify). Specialists reference their teams via a `## Manifest` section listing file paths.
+
+### What Changed
+
+- **206 new files** created in `specialty-teams/<category>/<name>.md` across 19 category directories
+- **19 specialist files** updated: `## Specialty Teams` replaced with `## Manifest`
+- **`scripts/run-specialty-teams.sh`** rewritten to read manifests + individual files (same JSON output contract)
+- **`docs/specialist-spec.md`** and **`docs/specialist-guide.md`** updated for new format
+- **`lint-specialist`** and **`create-specialist`** skills updated for new validation/scaffolding
+- **`generate.md`** workflow updated with new script description
+- **2330 unit tests** added covering file structure, frontmatter, content, script output, and manifest integrity
+
+### What Did NOT Change
+
+- The JSON output contract of `run-specialty-teams.sh` (same 4 fields: name, artifact, worker_focus, verify)
+- Worker and verifier agents (they consume JSON, not the files directly)
+- Workflow orchestration logic
+- Specialist assignment rules
+
+### Why
+
+Specialty-teams were embedded as markdown subsections inside specialist files, then parsed back into JSON by a shell script. Breaking them into independent files:
+- Eliminates the need for a markdown parser script
+- Enables independent versioning and editing per team
+- Allows teams to be shared across specialists
+- Makes each team directly testable
+- Follows the same one-concept-per-file pattern as agents, specialists, and skills
+
+---
+
+## Original Plan
+
 Extract specialty-teams from embedded specialist markdown sections into independent files in a shared pool, with specialist manifests referencing them.
 
 ## Target Structure
