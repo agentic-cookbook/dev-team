@@ -29,7 +29,16 @@ Clarity of status over optimistic reporting. Every blocker must be visible. Ever
 
 ## Cookbook Sources
 
-This specialist does not map to cookbook artifacts. It manages project-level data through the project-storage-provider API.
+### Project Data
+- `.dev-team-project/schedule/`
+- `.dev-team-project/todos/`
+- `.dev-team-project/issues/`
+- `.dev-team-project/concerns/`
+- `.dev-team-project/dependencies/`
+- `.dev-team-project/decisions/`
+
+### Cookbook (TBD)
+Project management recipes and guidelines will be added to the cookbook. Specialty-teams will be updated to reference them when available.
 
 ## Specialty Teams
 
