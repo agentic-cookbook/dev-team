@@ -22,6 +22,16 @@ Log the report: `db-artifact.sh write --project $PROJECT_ID --run $RUN_ID --path
 
 At end: `db-run.sh complete --id $RUN_ID --status completed`
 
+### Resume Check
+
+Call `${CLAUDE_PLUGIN_ROOT}/scripts/resume-session.sh --playbook lint`. If the output has `"interrupted": true`:
+
+1. Present a gate to the user:
+   - Message: "Found interrupted lint session from `<creation_date>` with progress: `<specialist summaries>`. Resume or restart?"
+   - Options: "Resume" (reuse session), "Restart" (abandon old, create new)
+2. If user picks Resume: use the returned `session_id` for this run. Skip creating a new session.
+3. If user picks Restart: mark the old session as `abandoned` via `${CLAUDE_PLUGIN_ROOT}/scripts/arbitrator.sh state append --session <old-id> --changed-by team-lead --state abandoned --description "User chose restart"`. Create a new session normally.
+
 ### Trend Tracking
 
 After producing results, query previous findings:
@@ -87,6 +97,12 @@ In test mode, proceed immediately. Otherwise wait for user acknowledgment.
 
 ## Phase 3 — Review
 
+**Check for existing team-result**: If resuming, query `${CLAUDE_PLUGIN_ROOT}/scripts/arbitrator.sh team-result list --session $SESSION_ID --specialist <domain>`. For each team:
+- If `status: passed` or `status: escalated`: skip this team.
+- If `status: failed`: resume at iteration N+1 with the stored `verifier_feedback` as Previous feedback.
+- If `status: running`: re-run from iteration 1 (crashed mid-execution).
+- If not present: create a new team-result with `${CLAUDE_PLUGIN_ROOT}/scripts/arbitrator.sh team-result create --session $SESSION_ID --result $RESULT_ID --specialist <domain> --team <name>`.
+
 For each assigned specialist, spawn an **artifact-reviewer** agent at `${CLAUDE_PLUGIN_ROOT}/agents/artifact-reviewer.md` using the Agent tool.
 
 ### Agent Input
@@ -110,6 +126,11 @@ As each reviewer completes, write its report to:
 ```
 
 Use the artifact's base name (directory name for skills/implementations, filename without extension for files) as the artifact name. Use the specialist domain slug (lowercase, hyphens) as the domain suffix.
+
+**Record team outcome**:
+- On PASS: `${CLAUDE_PLUGIN_ROOT}/scripts/arbitrator.sh team-result update --session $SESSION_ID --specialist <domain> --team <name> --status passed --iteration <N>`
+- On FAIL (will retry): `${CLAUDE_PLUGIN_ROOT}/scripts/arbitrator.sh team-result update --session $SESSION_ID --specialist <domain> --team <name> --status failed --iteration <N> --verifier-feedback "<reasons>"`
+- On escalation: `${CLAUDE_PLUGIN_ROOT}/scripts/arbitrator.sh team-result update --session $SESSION_ID --specialist <domain> --team <name> --status escalated --iteration 3`
 
 ## Phase 4 — Present Results
 
