@@ -31,6 +31,16 @@ ${CLAUDE_PLUGIN_ROOT}/scripts/db/db-finding.sh --list --project $PROJECT_ID --ty
 ```
 If findings exist, inform the user: "Lint previously found <N> open FAILs. Specialists will be aware of these during review."
 
+### Resume Check
+
+Call `${CLAUDE_PLUGIN_ROOT}/scripts/resume-session.sh --playbook generate`. If the output has `"interrupted": true`:
+
+1. Present a gate to the user:
+   - Message: "Found interrupted generate session from `<creation_date>` with progress: `<specialist summaries>`. Resume or restart?"
+   - Options: "Resume" (reuse session), "Restart" (abandon old, create new)
+2. If user picks Resume: use the returned `session_id` for this run. Skip creating a new session via `db-run.sh`.
+3. If user picks Restart: mark the old session as `abandoned` via `${CLAUDE_PLUGIN_ROOT}/scripts/arbitrator.sh state append --session <old-id> --changed-by team-lead --state abandoned --description "User chose restart"`. Create a new session normally.
+
 ## Phase 1 — Load Project
 
 ### Resolve Project Path
@@ -99,6 +109,12 @@ Run `${CLAUDE_PLUGIN_ROOT}/scripts/run-specialty-teams.sh <specialist-file>` to 
 
 For each team in the manifest, run the worker-verifier loop:
 
+**Check for existing team-result**: If resuming, query `${CLAUDE_PLUGIN_ROOT}/scripts/arbitrator.sh team-result list --session $SESSION_ID --specialist <domain>`. For each team:
+- If `status: passed` or `status: escalated`: skip this team.
+- If `status: failed`: resume at iteration N+1 with the stored `verifier_feedback` as Previous feedback.
+- If `status: running`: re-run from iteration 1 (crashed mid-execution).
+- If not present: create a new team-result with `${CLAUDE_PLUGIN_ROOT}/scripts/arbitrator.sh team-result create --session $SESSION_ID --result $RESULT_ID --specialist <domain> --team <name>`.
+
 **Spawn worker** — use Agent tool with `subagent_type: "dev-team:specialist-code-pass"` (or any agent type with Read/Glob/Grep access):
 - **Prompt the agent** with the instructions from `${CLAUDE_PLUGIN_ROOT}/agents/specialty-team-worker.md`
 - **Mode**: `review`
@@ -117,6 +133,11 @@ For each team in the manifest, run the worker-verifier loop:
 - **Mode**: `review`
 
 **Loop**: If the verifier returns FAIL and this is iteration < 3, re-run the worker with the verifier's failure reasons. If PASS, record the result. If FAIL after 3 iterations, record as escalation.
+
+**Record team outcome** after each loop iteration:
+- On PASS: `${CLAUDE_PLUGIN_ROOT}/scripts/arbitrator.sh team-result update --session $SESSION_ID --specialist <domain> --team <name> --status passed --iteration <N>`
+- On FAIL (will retry): `${CLAUDE_PLUGIN_ROOT}/scripts/arbitrator.sh team-result update --session $SESSION_ID --specialist <domain> --team <name> --status failed --iteration <N> --verifier-feedback "<reasons>"`
+- On escalation: `${CLAUDE_PLUGIN_ROOT}/scripts/arbitrator.sh team-result update --session $SESSION_ID --specialist <domain> --team <name> --status escalated --iteration 3`
 
 #### Step 3: Aggregate
 
