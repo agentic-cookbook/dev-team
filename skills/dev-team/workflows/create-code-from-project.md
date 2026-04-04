@@ -45,13 +45,15 @@ Pass `$PROJECT_ID` and `$RUN_ID` to all spawned agents. Log agents with `db-agen
 
 At end: `db-run.sh complete --id $RUN_ID --status completed`
 
-### Resumability
+### Resume Check
 
-At workflow start, check for an interrupted run:
-```
-${CLAUDE_PLUGIN_ROOT}/scripts/db/db-run.sh --latest --project $PROJECT_ID --workflow create-code-from-project
-```
-If the latest run has `status: interrupted`, query its session_state to determine which phases and specialist passes completed. Skip completed work and resume.
+Call `${CLAUDE_PLUGIN_ROOT}/scripts/resume-session.sh --playbook create-code-from-project`. If the output has `"interrupted": true`:
+
+1. Present a gate to the user:
+   - Message: "Found interrupted create-code-from-project session from `<creation_date>` with progress: `<specialist summaries>`. Resume or restart?"
+   - Options: "Resume" (reuse session), "Restart" (abandon old, create new)
+2. If user picks Resume: use the returned `session_id` for this run. Skip creating a new session.
+3. If user picks Restart: mark the old session as `abandoned` via `${CLAUDE_PLUGIN_ROOT}/scripts/arbitrator.sh state append --session <old-id> --changed-by team-lead --state abandoned --description "User chose restart"`. Create a new session normally.
 
 ### Specialist Tracking
 
@@ -205,6 +207,12 @@ Brief status: "✓ Base code generated for `<scope>`"
 
 #### 4c. Sequential Specialist Passes
 
+**Check for existing team-result**: If resuming, query `${CLAUDE_PLUGIN_ROOT}/scripts/arbitrator.sh team-result list --session $SESSION_ID --specialist <domain>`. For each team:
+- If `status: passed` or `status: escalated`: skip this team.
+- If `status: failed`: resume at iteration N+1 with the stored `verifier_feedback` as Previous feedback.
+- If `status: running`: re-run from iteration 1 (crashed mid-execution).
+- If not present: create a new team-result with `${CLAUDE_PLUGIN_ROOT}/scripts/arbitrator.sh team-result create --session $SESSION_ID --result $RESULT_ID --specialist <domain> --team <name>`.
+
 For each assigned specialist (in tier order), spawn a **specialist-code-pass** agent (`agents/specialist-code-pass.md`) using the Agent tool with `subagent_type: "specialist-code-pass"`:
 
 Provide:
@@ -222,6 +230,11 @@ Provide:
 **Immediately persist** after each pass.
 
 Brief status after each: "✓ <specialist> pass complete for `<scope>`"
+
+**Record team outcome**:
+- On PASS: `${CLAUDE_PLUGIN_ROOT}/scripts/arbitrator.sh team-result update --session $SESSION_ID --specialist <domain> --team <name> --status passed --iteration <N>`
+- On FAIL (will retry): `${CLAUDE_PLUGIN_ROOT}/scripts/arbitrator.sh team-result update --session $SESSION_ID --specialist <domain> --team <name> --status failed --iteration <N> --verifier-feedback "<reasons>"`
+- On escalation: `${CLAUDE_PLUGIN_ROOT}/scripts/arbitrator.sh team-result update --session $SESSION_ID --specialist <domain> --team <name> --status escalated --iteration 3`
 
 #### 4d. Persist Generation Log
 
