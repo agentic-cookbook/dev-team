@@ -101,3 +101,123 @@ These are complementary, not competitive. The worker-verifier loop is an orchest
 
 ### Where ralph-loop could fit in dev-team
 Best suited for a different layer — wrapping a top-level `/dev-team generate` invocation for unattended iterative improvement of an entire project. But user approval gates in the generate workflow make unattended loops impractical today.
+
+---
+
+## Narrowing the Gap: Crash Recovery
+
+Ralph-loop's one genuine advantage over the current system is **crash recovery** — the ability to resume work after a session dies. This section analyzes the current vulnerability and what it would take to close the gap without adopting ralph-loop.
+
+### What ralph-loop provides
+
+Ralph-loop persists state in `.claude/ralph-loop.local.md` (iteration count, prompt, completion promise). When a session crashes and restarts, the stop hook reads this file and feeds the same prompt back. Claude then reads file state and git history to understand where it left off.
+
+This is a **coarse-grained** recovery: it re-runs the entire prompt from scratch, relying on Claude to infer what's already done from files. It doesn't know which team was in progress, what the verifier said, or what retry iteration it was on — it just knows "keep going."
+
+### What the current system has
+
+The DB already has infrastructure that partially supports recovery:
+
+| Table | What it tracks | Granularity |
+|-------|---------------|-------------|
+| `sessions` | Workflow run (project, workflow type, start/end) | Per `/dev-team generate` invocation |
+| `session_state` | Agent dispatch (agent_type, specialist_domain, status, output_path) | Per specialist agent |
+| `findings` | Individual findings (type, severity, status) | Per finding |
+| `artifacts` | Output files (category, path, content) | Per file written |
+| `messages` | Agent activity log | Per message |
+
+The `session_state` table tracks `status = running | completed | failed` per specialist. So after a crash, you can query: "which specialists were running when we died?"
+
+**The gap**: There's no tracking at the **specialty-team** level within a specialist. The DB knows "security specialist was running" but not "security specialist was on team 7 of 15, retry iteration 2, verifier returned FAIL with these reasons."
+
+### The aggressive persistence mitigation
+
+The `generate.md` workflow writes reviews to disk immediately after each specialist completes (line 248-251). So crash recovery at the specialist level already works informally:
+
+1. Run `/dev-team generate`
+2. Specialists A, B complete — reviews written to disk
+3. Crash during specialist C
+4. Re-run `/dev-team generate`
+5. Orchestrator could check which reviews already exist and skip those specialists
+
+But this is **not implemented** — the orchestrator doesn't check for existing reviews. It re-runs everything.
+
+### What would close the gap
+
+Three levels of crash recovery, from simplest to most complete:
+
+#### Level 1: Specialist-level resume (low effort)
+
+At the start of the specialist loop in `generate.md`, check if a review file already exists at `<project>/context/reviews/<scope-slug>-<specialist-domain>.md`. If it does and looks complete (has the expected sections), skip that specialist.
+
+**What this covers**: Crash after specialist A completes but before specialist B starts. No work is re-done for A.
+
+**What it misses**: Crash mid-specialist (during the team loop). The entire specialist re-runs.
+
+**Implementation**: ~5 lines in `generate.md` workflow instructions. No DB changes. No new scripts.
+
+#### Level 2: Team-level checkpointing (moderate effort)
+
+Add a `team_progress` table to the DB:
+
+```sql
+CREATE TABLE team_progress (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  session_state_id INTEGER REFERENCES session_state(id),
+  team_name TEXT NOT NULL,
+  specialist_domain TEXT NOT NULL,
+  status TEXT DEFAULT 'pending',  -- pending | running | passed | failed | escalated
+  iteration INTEGER DEFAULT 0,
+  verifier_feedback TEXT,
+  worker_output_path TEXT,
+  started TIMESTAMP,
+  completed TIMESTAMP
+);
+```
+
+The orchestrator records each team's status as it progresses through the loop. On resume, it queries `team_progress` for the current session and skips teams that already passed.
+
+**What this covers**: Crash mid-specialist. Only the in-progress team re-runs from scratch; completed teams are skipped.
+
+**What it misses**: Crash mid-retry (during iteration 2 of 3). The team restarts from iteration 1.
+
+**Implementation**: New table + `db-team-progress.sh` script. Workflow changes to record progress and check on resume. ~50-100 lines total.
+
+#### Level 3: Retry-level checkpointing (higher effort)
+
+Extend `team_progress` to track the current retry iteration and persist the verifier's feedback between retries:
+
+```sql
+-- Same table as Level 2, but the orchestrator also:
+-- 1. Updates 'iteration' after each retry
+-- 2. Stores verifier_feedback so the worker can receive it on resume
+-- 3. Stores worker_output_path so the verifier can re-verify on resume
+```
+
+On resume, the orchestrator can pick up mid-retry: "team 7 was on iteration 2, verifier said X. Re-run worker with that feedback."
+
+**What this covers**: Full recovery to the exact point of failure. No work is re-done.
+
+**What it misses**: Nothing — this is equivalent to ralph-loop's recovery, but with structured state instead of "re-read files and infer."
+
+**Implementation**: Same DB schema as Level 2, but more workflow logic to read/write retry state. ~100-150 lines total.
+
+### Comparison: ralph-loop recovery vs DB-based recovery
+
+| Aspect | Ralph-loop | DB-based (Level 2-3) |
+|--------|-----------|---------------------|
+| **Recovery granularity** | Coarse (restart entire prompt) | Fine (resume at exact team/iteration) |
+| **State format** | Unstructured (Claude infers from files) | Structured (SQL query returns exact state) |
+| **Token cost on resume** | High (re-reads everything, re-infers progress) | Low (queries DB, skips completed work) |
+| **Reliability** | Depends on Claude correctly inferring state | Deterministic (DB state is authoritative) |
+| **Implementation effort** | Zero (ralph-loop already exists) | Moderate (new table, scripts, workflow changes) |
+| **Parallelism** | Breaks it (single state file) | Preserves it (each specialist has its own DB rows) |
+| **Observability** | Iteration count only | Full: which teams passed, which failed, what feedback, what iteration |
+
+### Recommendation
+
+**Level 2 (team-level checkpointing) is the sweet spot.** It closes the main crash recovery gap — resuming mid-specialist instead of restarting from scratch — without the complexity of tracking individual retry iterations. It uses the existing DB infrastructure, preserves parallelism, and provides structured observability that ralph-loop cannot match.
+
+Level 1 is worth implementing immediately as a quick win (check for existing review files before re-running a specialist). Level 3 is only worth the effort if specialists routinely crash mid-retry, which in practice is rare.
+
+Neither requires ralph-loop. The DB-based approach is more reliable (deterministic state vs. inference), more observable (structured queries vs. file scanning), and architecturally compatible (preserves parallelism and independence).
