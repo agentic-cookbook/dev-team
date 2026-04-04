@@ -69,40 +69,60 @@ header {
   text-transform: uppercase;
 }
 
-header .super-title {
+.site-title-prefix {
   font-family: var(--serif);
-  font-size: 1.5rem; font-weight: 400;
-  font-style: italic;
-  color: var(--accent);
-  opacity: 0.7;
-  margin-bottom: 4px;
+  font-size: 1.4rem; font-weight: 400;
+  text-align: center;
+  letter-spacing: 0.04em;
+  color: #5a5a6a;
+  margin-bottom: 0.4rem;
 }
 
 header h1 {
   font-family: var(--serif);
   font-size: 4rem; font-weight: 400;
+  text-align: center;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-bottom: 12px;
+  color: #c4a35a;
   font-style: italic;
-  letter-spacing: -0.02em; color: var(--accent);
-  margin-bottom: 16px;
 }
 
-header .tagline {
+.family-note {
   font-family: var(--mono);
-  font-size: 0.7rem; color: var(--text-muted);
-  letter-spacing: 0.15em; text-transform: uppercase;
+  font-size: 0.8rem;
+  color: #8a8a9a;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 1.5rem;
 }
 
-header .version {
-  margin-top: 20px;
+.family-links {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
   font-family: var(--mono);
-  font-size: 0.85rem; letter-spacing: 0.04em;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
 }
 
-header .version a {
-  color: var(--accent) !important;
-  opacity: 0.6; transition: opacity 0.2s; text-decoration: none;
+.family-links a {
+  color: #c4a35a;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+  text-decoration: none;
 }
-header .version a:hover { opacity: 1; }
+.family-links a:hover { opacity: 1; }
+
+.site-title-rule {
+  width: 80px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #c4a35a, transparent);
+  margin: 0 auto 2rem;
+}
 
 /* Sidebar nav */
 .hamburger-btn {
@@ -327,10 +347,14 @@ footer {
 
 <header>
   <div class="dev-stamp">In Development</div>
-  <div class="super-title">The Agentic Cookbook's</div>
+  <div class="site-title-prefix">The Agentic Cookbook's</div>
   <h1>Dev Team</h1>
-  <div class="tagline">Part of the Agentic Cookbook Family</div>
-  <div class="version">&#128214; <a href="http://agentic-cookbook.com">The Cookbook</a> &middot; &#128218; <a href="../official-agent-registry">Agent Registry</a></div>
+  <div class="family-note">Part of the Agentic Cookbook family</div>
+  <div class="family-links">
+    <a href="https://agentic-cookbook.com" target="_blank">&#128214; The Cookbook</a>
+    <a href="../official-agent-registry">&#128218; Agent Registry</a>
+  </div>
+  <div class="site-title-rule"></div>
 </header>
 
 <nav>
