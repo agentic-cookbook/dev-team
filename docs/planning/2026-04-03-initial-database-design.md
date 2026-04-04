@@ -92,15 +92,45 @@ A choice within a gate message. One-to-many from message.
 - **is_default**: whether this is the pre-selected option
 - **sort_order**: display order
 
-## Join Tables Needed
+### Reference
+A cookbook source consulted by a specialist during analysis. Links a result to a path.
+- **result**: which specialist result
+- **path**: which cookbook source was consulted
+- **type**: guideline, principle, compliance-check
+
+### Playbook
+Static definition of a workflow. Declares what must happen and what must be verified.
+- **name**: identifier (e.g., interview, generate, lint)
+- **team_lead**: which team-lead runs this
+- **description**: what this workflow does
+
+### Playbook Phase
+A step in a playbook.
+- **playbook**: which playbook
+- **name**: phase identifier
+- **description**: what this phase does
+- **order**: sequence
+
+### Playbook Expectation
+What must be true for a phase to be considered complete. The playbook declares what, not how — the system is responsible for proving it.
+- **playbook_phase**: which phase
+- **expectation**: what must be true (e.g., "output is a valid agentic-cookbook-project", "all specialist findings are addressed")
+
+### Playbook Specialist
+Specialist assignment to a phase.
+- **playbook_phase**: which phase
+- **specialist**: which specialist
+- **required**: whether this specialist must run or can be skipped
+
+## Relationships
 
 - Finding ↔ Artifact (many-to-many)
 - Session State ↔ Artifact (many-to-many)
+- Result ↔ Path (many-to-many, via Reference)
 
-## Still To Design
+## Not a Stored Type
 
-- **Report**: final user-facing output from team-lead to user
-- **Playbook**: static workflow definition — which team-lead, which specialists, phases, inputs, outputs
+- **Report**: not a table — it's query patterns against the existing data given a session_id. Supports progressive disclosure (overview → specialists → findings → process trace). Designed for LLM consumption with as much data as available.
 
 ## Open Questions
 
