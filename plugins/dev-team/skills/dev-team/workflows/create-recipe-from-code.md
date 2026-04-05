@@ -1,4 +1,4 @@
-<!-- Workflow: create-project-from-code — loaded by /dev-team router -->
+<!-- Workflow: create-recipe-from-code — loaded by /dev-team router -->
 
 # Create Project From Code
 
@@ -25,7 +25,7 @@ The router passes the execution mode: **one-shot** or **incremental**.
 
 At workflow start:
 - `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/db/db_project.py --name <project-name> --path <project-path>`
-- `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/db/db_run.py start --project $PROJECT_ID --workflow create-project-from-code`
+- `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/db/db_run.py start --project $PROJECT_ID --workflow create-recipe-from-code`
 
 Pass `$PROJECT_ID` and `$RUN_ID` to all spawned agents. Log agents with `db_agent.py`, artifacts with `db_artifact.py` (categories: `recipe`, `report`), activity with `db_message.py`.
 
@@ -35,7 +35,7 @@ At end: `db_run.py complete --id $RUN_ID --status completed`
 
 At workflow start, check for an interrupted run:
 ```
-python3 ${CLAUDE_PLUGIN_ROOT}/scripts/db/db_run.py --latest --project $PROJECT_ID --workflow create-project-from-code
+python3 ${CLAUDE_PLUGIN_ROOT}/scripts/db/db_run.py --latest --project $PROJECT_ID --workflow create-recipe-from-code
 ```
 If the latest run has `status: interrupted`, query its session_state to determine which phases completed. Skip completed phases and resume from the next one.
 
@@ -161,7 +161,7 @@ title: "Generation Summary — <project-name>"
 type: research
 created: <ISO 8601 datetime>
 modified: <ISO 8601 datetime>
-author: create-project-from-code
+author: create-recipe-from-code
 summary: "Automated analysis of <repo-name> into a cookbook project"
 ---
 
@@ -209,7 +209,7 @@ Write to `<output>/context/research/analysis-transcript.md`:
 title: "Analysis Transcript — <project-name>"
 type: transcript
 created: <ISO 8601 datetime>
-author: create-project-from-code
+author: create-recipe-from-code
 session_id: <RUN_ID>
 ---
 

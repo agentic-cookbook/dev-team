@@ -1,4 +1,4 @@
-<!-- Workflow: view-project — loaded by /dev-team router -->
+<!-- Workflow: view-recipe — loaded by /dev-team router -->
 
 # View Project
 
@@ -160,7 +160,7 @@ Query sessions for this project to build a timeline:
 ```json
 [
   { "workflow": "interview", "status": "completed", "started": "...", "completed": "..." },
-  { "workflow": "create-project-from-code", "status": "completed", "started": "...", "completed": "..." }
+  { "workflow": "create-recipe-from-code", "status": "completed", "started": "...", "completed": "..." }
 ]
 ```
 

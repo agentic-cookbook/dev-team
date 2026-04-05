@@ -1,4 +1,4 @@
-<!-- Workflow: create-code-from-project — loaded by /dev-team router -->
+<!-- Workflow: create-code-from-recipe — loaded by /dev-team router -->
 
 # Build Project
 
@@ -39,7 +39,7 @@ Pass this preference to the **code-generator** and **specialist-code-pass** agen
 
 At workflow start:
 - `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/db/db_project.py --name <project-name> --path <project-path>`
-- `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/db/db_run.py start --project $PROJECT_ID --workflow create-code-from-project`
+- `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/db/db_run.py start --project $PROJECT_ID --workflow create-code-from-recipe`
 
 Pass `$PROJECT_ID` and `$RUN_ID` to all spawned agents. Log agents with `db_agent.py`, build logs with `db_artifact.py` (categories: `build-log`, `report`), activity with `db_message.py`.
 
@@ -47,10 +47,10 @@ At end: `db_run.py complete --id $RUN_ID --status completed`
 
 ### Resume Check
 
-Call `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/resume_session.py --playbook create-code-from-project`. If the output has `"interrupted": true`:
+Call `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/resume_session.py --playbook create-code-from-recipe`. If the output has `"interrupted": true`:
 
 1. Present a gate to the user:
-   - Message: "Found interrupted create-code-from-project session from `<creation_date>` with progress: `<specialist summaries>`. Resume or restart?"
+   - Message: "Found interrupted create-code-from-recipe session from `<creation_date>` with progress: `<specialist summaries>`. Resume or restart?"
    - Options: "Resume" (reuse session), "Restart" (abandon old, create new)
 2. If user picks Resume: use the returned `session_id` for this run. Skip creating a new session.
 3. If user picks Restart: mark the old session as `abandoned` via `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/arbitrator.py state append --session <old-id> --changed-by team-lead --state abandoned --description "User chose restart"`. Create a new session normally.
@@ -432,7 +432,7 @@ Write to `<output>/context/build-log/build-transcript.md`:
 title: "Build Transcript — <project-name>"
 type: transcript
 created: <ISO 8601 datetime>
-author: create-code-from-project
+author: create-code-from-recipe
 session_id: <RUN_ID>
 ---
 
@@ -494,7 +494,7 @@ If the session is interrupted at any point, everything up to the last completed 
 ## Error Handling
 
 - **No `cookbook-project.json` found**: Ask user for the correct path.
-- **Empty component tree**: "This project has no recipes. Run `/dev-team create-project-from-code` first."
+- **Empty component tree**: "This project has no recipes. Run `/dev-team create-recipe-from-code` first."
 - **Scaffolder fails**: Report the error and stop. Can't generate code without a project skeleton.
 - **Code generator fails for a recipe**: Skip that recipe, note in summary, continue with others.
 - **Specialist pass fails**: Log which specialist failed for which recipe, continue with next specialist. Code from the previous pass is still on disk.
