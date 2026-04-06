@@ -63,8 +63,8 @@ describe("specialty-teams directory structure", () => {
   });
 
   it("every category corresponds to a specialist", () => {
-    const categories = readdirSync(TEAMS_DIR).filter((f) =>
-      statSync(join(TEAMS_DIR, f)).isDirectory()
+    const categories = readdirSync(TEAMS_DIR).filter(
+      (f) => statSync(join(TEAMS_DIR, f)).isDirectory() && f !== "_example"
     );
     for (const category of categories) {
       const specialistFile = join(SPECIALISTS_DIR, `${category}.md`);
@@ -153,9 +153,9 @@ describe("run_specialty_teams.py", () => {
       [RUN_SCRIPT, join(SPECIALISTS_DIR, "accessibility.md")],
       { encoding: "utf-8" }
     );
-    const teams = JSON.parse(result);
-    expect(Array.isArray(teams)).toBe(true);
-    expect(teams.length).toBe(2);
+    const data = JSON.parse(result);
+    expect(data.specialty_teams).toBeInstanceOf(Array);
+    expect(data.specialty_teams.length).toBe(2);
   });
 
   it("each team has required fields", () => {
@@ -164,8 +164,8 @@ describe("run_specialty_teams.py", () => {
       [RUN_SCRIPT, join(SPECIALISTS_DIR, "accessibility.md")],
       { encoding: "utf-8" }
     );
-    const teams = JSON.parse(result);
-    for (const team of teams) {
+    const data = JSON.parse(result);
+    for (const team of data.specialty_teams) {
       expect(team).toHaveProperty("name");
       expect(team).toHaveProperty("artifact");
       expect(team).toHaveProperty("worker_focus");
@@ -179,8 +179,8 @@ describe("run_specialty_teams.py", () => {
       [RUN_SCRIPT, join(SPECIALISTS_DIR, "security.md")],
       { encoding: "utf-8" }
     );
-    const teams = JSON.parse(result);
-    expect(teams.length).toBe(15);
+    const data = JSON.parse(result);
+    expect(data.specialty_teams.length).toBe(15);
   });
 
   it("team fields match file content", () => {
@@ -189,14 +189,67 @@ describe("run_specialty_teams.py", () => {
       [RUN_SCRIPT, join(SPECIALISTS_DIR, "security.md")],
       { encoding: "utf-8" }
     );
-    const teams = JSON.parse(result);
-    const authTeam = teams.find(
+    const data = JSON.parse(result);
+    const authTeam = data.specialty_teams.find(
       (t: { name: string }) => t.name === "authentication"
     );
     expect(authTeam).toBeDefined();
     expect(authTeam.artifact).toBe("guidelines/security/authentication.md");
     expect(authTeam.worker_focus.length).toBeGreaterThan(0);
     expect(authTeam.verify.length).toBeGreaterThan(0);
+  });
+});
+
+describe("run_specialty_teams.py consulting teams", () => {
+  const RUN_SCRIPT = join(PLUGIN_ROOT, "scripts", "run_specialty_teams.py");
+
+  it("outputs consulting_teams for specialist with consulting teams", () => {
+    const result = execFileSync(
+      "python3",
+      [RUN_SCRIPT, join(SPECIALISTS_DIR, "_example.md")],
+      { encoding: "utf-8" }
+    );
+    const data = JSON.parse(result);
+    expect(data).toHaveProperty("consulting_teams");
+    expect(data.consulting_teams.length).toBe(1);
+    expect(data.consulting_teams[0].name).toBe("example-consulting-team");
+  });
+
+  it("outputs specialty_teams for specialist with consulting teams", () => {
+    const result = execFileSync(
+      "python3",
+      [RUN_SCRIPT, join(SPECIALISTS_DIR, "_example.md")],
+      { encoding: "utf-8" }
+    );
+    const data = JSON.parse(result);
+    expect(data).toHaveProperty("specialty_teams");
+    expect(data.specialty_teams.length).toBe(1);
+  });
+
+  it("consulting team has required fields", () => {
+    const result = execFileSync(
+      "python3",
+      [RUN_SCRIPT, join(SPECIALISTS_DIR, "_example.md")],
+      { encoding: "utf-8" }
+    );
+    const data = JSON.parse(result);
+    const ct = data.consulting_teams[0];
+    expect(ct).toHaveProperty("name");
+    expect(ct).toHaveProperty("source");
+    expect(ct).toHaveProperty("consulting_focus");
+    expect(ct).toHaveProperty("verify");
+    expect(ct).toHaveProperty("type", "consulting");
+  });
+
+  it("specialist without consulting teams has empty consulting_teams array", () => {
+    const result = execFileSync(
+      "python3",
+      [RUN_SCRIPT, join(SPECIALISTS_DIR, "accessibility.md")],
+      { encoding: "utf-8" }
+    );
+    const data = JSON.parse(result);
+    expect(data.specialty_teams.length).toBe(2);
+    expect(data.consulting_teams).toEqual([]);
   });
 });
 

@@ -1,81 +1,92 @@
 #!/usr/bin/env python3
-# run_specialty_teams.py — Read specialty-team definitions for a specialist
+# run_specialty_teams.py — Read specialty-team and consulting-team definitions for a specialist
 #
-# Reads the specialist's ## Manifest section, resolves each path to a
-# specialty-team file, parses its frontmatter and body sections, and
-# outputs a JSON array.
+# Reads the specialist's ## Manifest and ## Consulting Teams sections,
+# resolves each path, parses frontmatter and body sections, and outputs JSON.
 #
 # Usage:
-#   run_specialty_teams.py <specialist-file> [--mode <mode>]
+#   run_specialty_teams.py <specialist-file>
 #
-# Output: JSON array of specialty-team definitions
+# Output: JSON object with specialty_teams and consulting_teams arrays.
+# If no ## Consulting Teams section exists, consulting_teams is empty.
 
 import sys
 import json
-import argparse
 from pathlib import Path
 
 
-def parse_manifest_paths(specialist_file):
-    """Extract paths from the ## Manifest section of a specialist file."""
+def parse_section_paths(specialist_file, section_heading):
+    """Extract paths from a named ## section of a specialist file."""
     paths = []
-    in_manifest = False
+    in_section = False
 
     with open(specialist_file) as f:
         for line in f:
             line = line.rstrip("\n")
-            if line.startswith("## Manifest"):
-                in_manifest = True
+            if line.startswith(f"## {section_heading}"):
+                in_section = True
                 continue
-            if in_manifest and line.startswith("## "):
+            if in_section and line.startswith("## "):
                 break
-            if in_manifest and line.startswith("- "):
+            if in_section and line.startswith("- "):
                 paths.append(line[2:])
 
     return paths
 
 
-def parse_team_file(team_file):
-    """Parse a specialty-team file and return its fields."""
-    name = ""
-    artifact = ""
-    worker_focus = ""
-    verify = ""
-
-    # Parse frontmatter
+def parse_frontmatter(lines):
+    """Parse YAML frontmatter from lines, return (fields_dict, body_start_index)."""
+    fields = {}
     in_frontmatter = False
     front_count = 0
-    body_lines = []
+    body_start = 0
+    current_list_key = ""
 
-    with open(team_file) as f:
-        lines = f.readlines()
-
-    frontmatter_done = False
-    i = 0
-    while i < len(lines):
-        line = lines[i].rstrip("\n")
-        if line == "---" and not frontmatter_done:
+    for i, line in enumerate(lines):
+        stripped = line.rstrip("\n")
+        if stripped == "---":
             front_count += 1
             if front_count == 1:
                 in_frontmatter = True
-                i += 1
                 continue
             elif front_count == 2:
                 in_frontmatter = False
-                frontmatter_done = True
-                i += 1
-                continue
+                body_start = i + 1
+                break
         if in_frontmatter:
-            if line.startswith("name:"):
-                name = line[len("name:"):].strip()
-            elif line.startswith("artifact:"):
-                artifact = line[len("artifact:"):].strip()
-        else:
-            body_lines.append(line)
-        i += 1
+            if stripped.startswith("  - ") and current_list_key:
+                fields[current_list_key].append(stripped.strip().lstrip("- ").strip())
+                continue
+            current_list_key = ""
+            if stripped.startswith("name:"):
+                fields["name"] = stripped[len("name:"):].strip()
+            elif stripped.startswith("artifact:"):
+                fields["artifact"] = stripped[len("artifact:"):].strip()
+            elif stripped.startswith("type:"):
+                fields["type"] = stripped[len("type:"):].strip()
+            elif stripped.startswith("source:"):
+                value = stripped[len("source:"):].strip()
+                if value:
+                    fields["source"] = [value]
+                else:
+                    fields["source"] = []
+                    current_list_key = "source"
 
-    # Parse body sections — capture only first non-empty line per section
+    return fields, body_start
+
+
+def parse_team_file(team_file):
+    """Parse a specialty-team file and return its fields."""
+    with open(team_file) as f:
+        lines = f.readlines()
+
+    fields, body_start = parse_frontmatter(lines)
+    body_lines = [l.rstrip("\n") for l in lines[body_start:]]
+
+    worker_focus = ""
+    verify = ""
     current_section = ""
+
     for line in body_lines:
         if line == "## Worker Focus":
             current_section = "focus"
@@ -94,16 +105,54 @@ def parse_team_file(team_file):
             verify = line.strip()
 
     return {
-        "name": name,
-        "artifact": artifact,
+        "name": fields.get("name", ""),
+        "artifact": fields.get("artifact", ""),
         "worker_focus": worker_focus,
+        "verify": verify,
+    }
+
+
+def parse_consulting_team_file(team_file):
+    """Parse a consulting-team file and return its fields."""
+    with open(team_file) as f:
+        lines = f.readlines()
+
+    fields, body_start = parse_frontmatter(lines)
+    body_lines = [l.rstrip("\n") for l in lines[body_start:]]
+
+    consulting_focus = ""
+    verify = ""
+    current_section = ""
+
+    for line in body_lines:
+        if line == "## Consulting Focus":
+            current_section = "focus"
+            continue
+        if line == "## Verify":
+            current_section = "verify"
+            continue
+        if line.startswith("## "):
+            current_section = ""
+            continue
+        if not line.strip():
+            continue
+        if current_section == "focus" and not consulting_focus:
+            consulting_focus = line.strip()
+        elif current_section == "verify" and not verify:
+            verify = line.strip()
+
+    return {
+        "name": fields.get("name", ""),
+        "type": fields.get("type", ""),
+        "source": fields.get("source", []),
+        "consulting_focus": consulting_focus,
         "verify": verify,
     }
 
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: run_specialty_teams.py <specialist-file> [--mode <mode>]", file=sys.stderr)
+        print("Usage: run_specialty_teams.py <specialist-file>", file=sys.stderr)
         sys.exit(1)
 
     specialist_file = sys.argv[1]
@@ -115,21 +164,35 @@ def main():
     # Resolve repo root from specialist file location
     repo_root = Path(specialist_file).resolve().parent.parent
 
-    manifest_paths = parse_manifest_paths(specialist_file)
-
+    # Parse specialty teams
+    manifest_paths = parse_section_paths(specialist_file, "Manifest")
     if not manifest_paths:
         print(f"ERROR: No manifest entries found in {specialist_file}", file=sys.stderr)
         sys.exit(1)
 
-    teams = []
+    specialty_teams = []
     for team_path in manifest_paths:
         team_file = repo_root / team_path
         if not team_file.is_file():
             print(f"ERROR: Specialty-team file not found: {team_file}", file=sys.stderr)
             sys.exit(1)
-        teams.append(parse_team_file(team_file))
+        specialty_teams.append(parse_team_file(team_file))
 
-    print(json.dumps(teams, indent=2))
+    # Parse consulting teams (optional section)
+    consulting_paths = parse_section_paths(specialist_file, "Consulting Teams")
+    consulting_teams = []
+    for team_path in consulting_paths:
+        team_file = repo_root / team_path
+        if not team_file.is_file():
+            print(f"ERROR: Consulting-team file not found: {team_file}", file=sys.stderr)
+            sys.exit(1)
+        consulting_teams.append(parse_consulting_team_file(team_file))
+
+    output = {
+        "specialty_teams": specialty_teams,
+        "consulting_teams": consulting_teams,
+    }
+    print(json.dumps(output, indent=2))
 
 
 if __name__ == "__main__":
