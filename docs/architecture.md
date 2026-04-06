@@ -24,6 +24,9 @@ Entry point: `/dev-team <command>` — a single skill router that dispatches to 
 | **Specialty-Team** | Standalone file defining a worker-verifier pair focused on one cookbook artifact. 212 teams across 20 categories in `specialty-teams/`. |
 | **Specialty-Worker** | LLM agent. Reads one cookbook artifact, produces structured findings. Isolated — never sees verifier instructions. |
 | **Specialty-Verifier** | LLM agent. Checks specialty-worker output for completeness. Returns PASS/FAIL. Isolated — never sees worker instructions. Max 3 retries before escalation. |
+| **Consulting-Team** | Standalone file defining a consulting worker-verifier pair focused on one cross-cutting concern. Reviews every specialty-team's output within a specialist. Lives in `consulting-teams/`. |
+| **Consulting-Worker** | LLM agent. Reviews a specialty-team's passed output through a cross-cutting lens. Produces VERIFIED or NOT-APPLICABLE. |
+| **Consulting-Verifier** | LLM agent. Checks consulting-worker output for completeness. Returns PASS/FAIL. Max 3 retries before escalation. |
 | **Specialist-Persona** | LLM agent. Reads raw findings + persona definition, writes persona-voiced interpretations. Translation layer only — produces no new findings. |
 | **Result** | One specialist's output for a session. Parent of findings. |
 | **Finding** | An individual issue within a result — gap, recommendation, or concern with severity. |
@@ -42,6 +45,7 @@ User invokes /dev-team <command>
       → Team-lead dispatches specialists via arbitrator
         → Specialist script reads assignment
           → Specialty-teams run (worker-verifier loop, max 3 retries)
+          → Consulting-teams review (if any — worker-verifier loop per consultant)
           → Specialist-persona writes interpretations
         → Specialist returns result (result_id + pass/fail) via arbitrator
       → Team-lead aggregates results
@@ -83,7 +87,7 @@ Project management (1): project-manager
 Parsed by `scripts/run_specialty_teams.py` which reads a specialist's manifest and outputs JSON (name, artifact, worker_focus, verify).
 
 ### Agents
-18 agent definitions in `agents/`. Key agents:
+20 agent definitions in `agents/`. Key agents:
 - `specialty-team-worker.md` / `specialty-team-verifier.md` — the worker-verifier pair
 - `transcript-analyzer.md` — interview transcript analysis
 - `code-generator.md` — generates code from recipes
@@ -173,9 +177,10 @@ Notification severity: info, warning, error. Category: progress, result, briefin
 plugins/
   dev-team/                  # Self-enclosed plugin
     .claude-plugin/          # Plugin manifest
-    agents/                  # 18 agent definitions
+    agents/                  # 20 agent definitions
     specialists/             # 20 specialist definitions (13 domain + 6 platform + 1 PM)
     specialty-teams/         # 212 specialty-team files in 20 category dirs
+    consulting-teams/         # Consulting-team files (cross-cutting verification)
     skills/
       dev-team/              # Single skill with subcommand routing
         SKILL.md             # Router (v0.6.0)
