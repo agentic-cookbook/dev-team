@@ -95,6 +95,19 @@ The persona shapes how the specialist communicates across all modes (interview q
 - At least one entry required
 - See **Specialty-Team File Specification** below for the file format
 
+### 5b. Consulting Teams (optional)
+
+```markdown
+## Consulting Teams
+- consulting-teams/<category>/<team-name>.md
+- consulting-teams/<category>/<team-name>.md
+```
+
+- Markdown list of paths to consulting-team files, relative to the repo root
+- Each path MUST resolve to an existing file in `consulting-teams/`
+- If absent, the specialist has no consulting teams — pipeline runs as before
+- When present, every specialty-team's output passes through all listed consulting teams as a required verification gate
+
 ### 6. Exploratory Prompts (optional)
 
 ```markdown
@@ -165,6 +178,59 @@ version: <semver>
 | Worker Focus | What this team cares about (mode-independent). Guides the worker agent. |
 | Verify | Concrete acceptance criteria. The verifier uses this to determine PASS/FAIL. |
 
+## Consulting-Team File Specification
+
+Each consulting-team is a standalone markdown file in `consulting-teams/<category>/<name>.md`.
+
+### File Location
+
+`consulting-teams/<category>/<name>.md` where:
+- `<category>` matches a specialist filename in `specialists/` (e.g., `platform-database`)
+- `<name>` is lowercase kebab-case
+
+### Frontmatter
+
+```yaml
+---
+name: <kebab-case-name>
+description: <human-readable description of what this consultant checks>
+type: consulting
+source:
+  - <path to research doc>
+  - <path to research doc>
+version: <semver>
+---
+```
+
+| Field | Format | Description |
+|-------|--------|-------------|
+| name | `[a-z][a-z0-9]*(-[a-z0-9]+)*` | Unique within category, matches filename |
+| description | Free text, ~120 chars | Human-readable summary for discovery |
+| type | `consulting` | Must be exactly `consulting` |
+| source | YAML list of paths | Research documents this consultant draws from |
+| version | `N.N.N` semver | Tracks changes to this consulting-team definition |
+
+### Body Sections
+
+```markdown
+## Consulting Focus
+<text>
+
+## Verify
+<text>
+```
+
+| Section | Description |
+|---------|-------------|
+| Consulting Focus | What cross-cutting concern this consultant evaluates (mode-independent). Guides the consulting worker agent. |
+| Verify | Concrete acceptance criteria. The consulting verifier uses this to determine PASS/FAIL of the consultant's assessment. |
+
+### Verdict Types
+
+Consulting teams produce one of two verdicts:
+- **VERIFIED** — output was reviewed, findings within the consultant's focus were found and assessed
+- **NOT-APPLICABLE** — output was reviewed, nothing within the consultant's focus was found (with evidence of review)
+
 ## Validation Rules
 
 ### Structure (S-series)
@@ -177,6 +243,8 @@ version: <semver>
 | S04 | name field in each referenced team file matches `[a-z][a-z0-9]*(-[a-z0-9]+)*` and matches filename | FAIL |
 | S05 | artifact field in each referenced team file is non-empty and ends with `.md` | FAIL |
 | S06 | Worker Focus and Verify sections in each referenced team file are non-empty | WARN |
+| S07 | Each consulting-team path in `## Consulting Teams` resolves to a file with valid frontmatter (name, description, type, source, version) and body sections (Consulting Focus, Verify) | FAIL |
+| S08 | `type: consulting` present in every consulting-team file's frontmatter | FAIL |
 
 ### Content (C-series)
 
@@ -190,6 +258,7 @@ version: <semver>
 | C06 | Role section is non-empty | FAIL |
 | C07 | Persona is not `(coming)` placeholder | WARN |
 | C08 | Persona has required sub-sections (Archetype, Voice, Priorities) when not placeholder | FAIL |
+| C09 | `source` field is a non-empty list in every consulting-team file | WARN |
 
 ## Parser Contract
 
@@ -200,6 +269,8 @@ version: <semver>
 - Next `## ` heading or EOF to exit manifest reading
 - For each referenced file: YAML frontmatter for `name` and `artifact`, `## Worker Focus` and `## Verify` body sections for content
 - Outputs one JSON object per team with fields: name, artifact, worker_focus, verify
+
+`scripts/run_specialty_teams.py` also reads the `## Consulting Teams` heading (if present) using the same pattern. For each referenced consulting-team file: YAML frontmatter for `name`, `type`, and `source`, `## Consulting Focus` and `## Verify` body sections for content. Outputs one JSON object per consulting-team with fields: name, type, source, consulting_focus, verify.
 
 ## Example
 
