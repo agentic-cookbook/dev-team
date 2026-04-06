@@ -100,6 +100,7 @@ def parse_flags(argv: list[str]) -> dict[str, str]:
         "--team": "team",
         "--iteration": "iteration",
         "--verifier-feedback": "verifier_feedback",
+        "--add-consulting-annotation": "add_consulting_annotation",
     }
     i = 0
     while i < len(argv):

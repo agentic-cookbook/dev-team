@@ -31,6 +31,7 @@ def create(flags):
         "status": "running",
         "iteration": 0,
         "verifier_feedback": "",
+        "consulting_annotations": [],
         "creation_date": ts,
         "modification_date": ts,
     }
@@ -51,7 +52,10 @@ def get(flags):
         print(f"Team-result not found: {specialist}/{team}", file=sys.stderr)
         sys.exit(1)
 
-    print(team_file.read_text())
+    data = json.loads(team_file.read_text())
+    if "consulting_annotations" not in data:
+        data["consulting_annotations"] = []
+    print(json.dumps(data, ensure_ascii=False))
 
 
 def list_all(flags):
@@ -71,6 +75,8 @@ def list_all(flags):
         if not team_file.is_file():
             continue
         data = json.loads(team_file.read_text())
+        if "consulting_annotations" not in data:
+            data["consulting_annotations"] = []
         if specialist_filter and data.get("specialist") != specialist_filter:
             continue
         if status_filter and data.get("status") != status_filter:
@@ -105,6 +111,13 @@ def update(flags):
     verifier_feedback = flags.get("verifier_feedback", "")
     if verifier_feedback:
         data["verifier_feedback"] = verifier_feedback
+
+    add_annotation = flags.get("add_consulting_annotation", "")
+    if add_annotation:
+        annotation = json.loads(add_annotation)
+        if "consulting_annotations" not in data:
+            data["consulting_annotations"] = []
+        data["consulting_annotations"].append(annotation)
 
     data["modification_date"] = now_iso()
     team_file.write_text(json.dumps(data, ensure_ascii=False))
