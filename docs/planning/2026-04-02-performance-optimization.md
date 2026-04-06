@@ -58,7 +58,7 @@ tests/test-mode-spec.md       # Consolidate as the single test mode reference (a
 - [ ] **Step 1:** Create `scripts/` directory
 
 ```bash
-mkdir -p /Users/mfullerton/projects/agentic-cookbook/dev-team/scripts
+mkdir -p /Users/mfullerton/projects/active/dev-team/scripts
 ```
 
 - [ ] **Step 2:** Create `scripts/load-config.sh`

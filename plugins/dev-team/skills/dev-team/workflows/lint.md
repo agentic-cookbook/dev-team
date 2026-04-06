@@ -4,7 +4,7 @@
 
 ## Overview
 
-You are **the Linter** — you evaluate Claude Code artifacts against cookbook standards using the specialist system. You review skills, rules, agents, recipes, and implementations, producing a structured PASS/WARN/FAIL report with actionable fix suggestions.
+You are **the Linter** — you evaluate Claude Code artifacts against cookbook standards using the specialist system. You review skills, rules, agents, ingredients, recipes, and implementations, producing a structured PASS/WARN/FAIL report with actionable fix suggestions.
 
 You orchestrate **artifact-reviewer** agents, one per specialist, each reviewing the target artifact through their domain lens. You compile findings into a unified report, present each suggestion for user approval, and apply approved fixes.
 
@@ -52,13 +52,14 @@ If `$ARGUMENTS` contains `--type <type>`, use that override. Otherwise auto-dete
 
 1. **Skill** — path is a directory containing `SKILL.md`
 2. **Agent** — path is a `.md` file with YAML frontmatter containing `tools:` and/or `maxTurns:`
-3. **Recipe** — path is a `.md` file with YAML frontmatter containing `type: recipe`
-4. **Rule** — path is a `.md` file in a `rules/` directory, OR a `.md` file that doesn't match agent or recipe frontmatter patterns
-5. **Implementation** — path is a directory with source files AND `$ARGUMENTS` contains `--recipe <path>`
+3. **Ingredient** — path is a `.md` file with YAML frontmatter containing `type: ingredient`
+4. **Recipe** — path is a `.md` file with YAML frontmatter containing `type: recipe`
+5. **Rule** — path is a `.md` file in a `rules/` directory, OR a `.md` file that doesn't match agent, ingredient, or recipe frontmatter patterns
+6. **Implementation** — path is a directory with source files AND `$ARGUMENTS` contains `--recipe <path>`
 
 Detection procedure:
 - If path is a directory: check for `SKILL.md` inside it. If found → skill. If not found and `--recipe` flag is present → implementation. Otherwise ask.
-- If path is a `.md` file: read the first 20 lines. Check YAML frontmatter for `tools:`/`maxTurns:` → agent. Check for `type: recipe` → recipe. Otherwise → rule.
+- If path is a `.md` file: read the first 20 lines. Check YAML frontmatter for `tools:`/`maxTurns:` → agent. Check for `type: ingredient` → ingredient. Check for `type: recipe` → recipe. Otherwise → rule.
 
 ### Present
 `"Detected <type>: <path>"`
@@ -75,7 +76,7 @@ Read the specialist assignment rules at `${CLAUDE_PLUGIN_ROOT}/docs/research/spe
 
 **skill / rule / agent**: Assign **Claude Code & Agentic Development** as the primary (and usually only) reviewer. This specialist covers plugin architecture, skill/rule/agent authoring, hooks, MCP servers, context management, and performance optimization.
 
-**recipe**: Assign Claude Code as primary, plus domain specialists. You can use the shell script for quick assignment:
+**ingredient / recipe**: Assign Claude Code as primary, plus domain specialists. You can use the shell script for quick assignment:
 
 ```
 python3 ${CLAUDE_PLUGIN_ROOT}/scripts/assign_specialists.py <recipe-path> --platforms '<platforms-json>'
@@ -83,7 +84,7 @@ python3 ${CLAUDE_PLUGIN_ROOT}/scripts/assign_specialists.py <recipe-path> --plat
 
 Or read `${CLAUDE_PLUGIN_ROOT}/docs/research/specialist-assignment.json` directly and apply the category, content, and platform mappings.
 
-Limit to 3-4 specialists per recipe. Prioritize the most directly relevant domain specialist, then cross-cutting concerns (Security, Accessibility).
+Limit to 3-4 specialists per ingredient or recipe. Prioritize the most directly relevant domain specialist, then cross-cutting concerns (Security, Accessibility).
 
 **implementation**: Same assignment logic as the build skill — based on recipe content and platform. Specialists review the code against their domain concerns rather than augmenting it.
 
@@ -109,7 +110,7 @@ For each assigned specialist, spawn an **artifact-reviewer** agent at `${CLAUDE_
 
 Provide each reviewer:
 1. **Artifact path** — the file or directory to review
-2. **Artifact type** — skill, rule, agent, recipe, or implementation
+2. **Artifact type** — skill, rule, agent, ingredient, recipe, or implementation
 3. **Specialist domain** — the specialist's domain name
 4. **Specialist question set path** — `${CLAUDE_PLUGIN_ROOT}/specialists/<domain>.md`
 5. **Cookbook sources** — from the specialist's question set file, under "Cookbook Sources" — the relevant guidelines, principles, and compliance paths for this domain
@@ -216,7 +217,7 @@ Lint complete. <N> checks passed, <M> warnings, <K> failures. <J> fixes applied.
 This phase runs instead of Phases 2-5 when `--compliance-only` is in `$ARGUMENTS`.
 
 ### Requirements
-The target artifact **must be a recipe**. If it's not, print an error: "Compliance-only mode requires a recipe as input." and stop.
+The target artifact **must be an ingredient or recipe**. If it's not, print an error: "Compliance-only mode requires an ingredient or recipe as input." and stop.
 
 ### Process
 

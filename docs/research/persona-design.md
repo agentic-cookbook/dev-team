@@ -6,8 +6,8 @@ Background research for the specialist persona format.
 
 The specialist persona structure (Archetype, Voice, Priorities, Anti-Patterns) is derived from a character-driven persona model developed for the Temporal project's AI persona "Charlie." The full persona definition lives at:
 
-- Design: `/Users/mfullerton/projects/apps/temporal/docs/designs/personas/charlie.md`
-- Decision: `/Users/mfullerton/projects/apps/temporal/docs/personas/ai-persona-name-charlie.md`
+- Design: `/Users/mfullerton/projects/active/temporal/docs/designs/personas/charlie.md`
+- Decision: `/Users/mfullerton/projects/active/temporal/docs/personas/ai-persona-name-charlie.md`
 
 ## Key Insights
 

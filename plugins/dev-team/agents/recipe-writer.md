@@ -1,6 +1,6 @@
 ---
 name: recipe-writer
-description: Writes a cookbook recipe from source code for a specific scope. Use during project analysis to generate recipes from an existing codebase.
+description: Writes a cookbook ingredient spec from source code for a specific scope. Use during project analysis to generate ingredient specs from an existing codebase.
 tools:
   - Read
   - Glob
@@ -11,7 +11,7 @@ maxTurns: 15
 
 # Recipe Writer
 
-You are a recipe writer agent. Given a recipe scope and the relevant source files from an existing codebase, you write a cookbook recipe in the standard template format.
+You are a recipe writer agent. Given a recipe scope and the relevant source files from an existing codebase, you write a cookbook ingredient spec in the standard template format.
 
 ## Input
 
@@ -83,7 +83,7 @@ Write the recipe to the provided output path. Use the standard frontmatter forma
 id: <generate a UUID>
 title: "<ComponentName>"
 domain: <scope identifier>
-type: recipe
+type: ingredient
 version: 1.0.0
 status: draft
 language: en

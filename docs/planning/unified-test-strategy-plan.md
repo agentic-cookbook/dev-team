@@ -1349,7 +1349,7 @@ After all tasks are complete, verify the infrastructure works:
 2. **Run create-recipe-from-code smoke test:**
    ```bash
    cd tests/harness
-   TEST_TARGET_REPO=~/projects/agentic-cookbook/agentic-cookbook npm run test:create-recipe-from-code:smoke
+   TEST_TARGET_REPO=~/projects/active/cookbook npm run test:create-recipe-from-code:smoke
    ```
 3. **Run generate smoke test** (requires a cookbook recipe from a prior analyze run):
    ```bash

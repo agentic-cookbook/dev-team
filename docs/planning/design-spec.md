@@ -11,7 +11,7 @@ A multi-agent interview system that helps users scope and define products they w
 
 1. **agentic-cookbook** — principles, guidelines, recipes. Curated, versioned, stable. Specialists draw initial knowledge from here. Cloned locally as a peer repo.
 2. **dev-team** (this repo) — the interviewer system itself. Skill definitions, agent definitions, specialist roster, shared learnings that improve for everyone.
-3. **User's interview repo** (e.g., `~/projects/personal/my-agentic-interviews`) — per-user growth. User profiles, transcripts, analyses, per-user specialist maturation, user-specific knowledge base.
+3. **User's interview repo** (e.g., `~/projects/personal/my-agentic-interviews/`) — per-user growth. User profiles, transcripts, analyses, per-user specialist maturation, user-specific knowledge base.
 
 ## Skill vs. Agent
 
@@ -214,10 +214,10 @@ my-agentic-interviews/
 
 | Repo | Path | Purpose |
 |------|------|---------|
-| agentic-cookbook | `~/projects/agentic-cookbook/agentic-cookbook` | Upstream knowledge |
-| dev-team | `~/projects/agentic-cookbook/dev-team` | The system, test harness, personas |
+| agentic-cookbook | `~/projects/active/cookbook` | Upstream knowledge |
+| dev-team | `~/projects/active/dev-team` | The system, test harness, personas |
 | my-agentic-interviews | `~/projects/personal/my-agentic-interviews` | User's real interview data |
-| dev-team-tests | `~/projects/agentic-cookbook/dev-team-tests` | Test output destination |
+| dev-team-tests | `~/projects/tests/cookbook-tests` | Test output destination |
 
 ## Interview Team Repo Structure (Current)
 
@@ -279,8 +279,8 @@ Top-level directories (not `.claude/`) so content is surfaceable for global inst
 ```json
 {
   "interview_repo": "~/projects/personal/my-agentic-interviews",
-  "cookbook_repo": "~/projects/agentic-cookbook/agentic-cookbook",
-  "interview_team_repo": "~/projects/agentic-cookbook/dev-team",
+  "cookbook_repo": "~/projects/active/cookbook",
+  "interview_team_repo": "~/projects/active/dev-team",
   "user_name": "mike",
   "authorized_repos": []
 }
