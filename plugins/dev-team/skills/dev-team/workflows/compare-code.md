@@ -224,11 +224,11 @@ Tell the user: "Capturing and comparing screenshots..."
 Run the capture scripts via Bash:
 
 ```bash
-${CLAUDE_PLUGIN_ROOT}/scripts/capture-screenshots.sh <baseline-path> <output>/screenshots/baseline
+python3 ${CLAUDE_PLUGIN_ROOT}/scripts/capture_screenshots.py <baseline-path> <output>/screenshots/baseline
 ```
 
 ```bash
-${CLAUDE_PLUGIN_ROOT}/scripts/capture-screenshots.sh <target-path> <output>/screenshots/target
+python3 ${CLAUDE_PLUGIN_ROOT}/scripts/capture_screenshots.py <target-path> <output>/screenshots/target
 ```
 
 If `--no-swiftui` was passed, append `--no-swiftui` to both capture commands.
@@ -240,7 +240,7 @@ If either capture script fails (build failure, launch failure, etc.), report the
 Run the comparison script:
 
 ```bash
-${CLAUDE_PLUGIN_ROOT}/scripts/compare-screenshots.sh <output>/screenshots/baseline <output>/screenshots/target <output>/screenshots > <output>/screenshots/screenshot-comparison.md
+python3 ${CLAUDE_PLUGIN_ROOT}/scripts/compare_screenshots.py <output>/screenshots/baseline <output>/screenshots/target <output>/screenshots > <output>/screenshots/screenshot-comparison.md
 ```
 
 If ImageMagick is not installed (command fails with `compare: command not found` or similar), report: "Screenshot comparison requires ImageMagick. Install with `brew install imagemagick`." Skip screenshot comparison.
