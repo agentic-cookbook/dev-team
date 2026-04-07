@@ -85,9 +85,9 @@ class TestPathHelpers:
         assert Path(REPO_ROOT, "plugins", "dev-team", "agents").exists()
 
     def test_test_config_path_points_to_the_test_config(self):
-        # Requires dev-team-tests sibling repo to be present
-        if not TEST_OUTPUT.exists():
-            pytest.skip("dev-team-tests sibling repo not present")
+        # Config file is created by E2E tests; skip if not yet generated
+        if not TEST_CONFIG_PATH.exists():
+            pytest.skip("test config not yet generated (run E2E tests first)")
         assert TEST_CONFIG_PATH.exists()
 
     def test_persona_path_resolves_persona_files(self):

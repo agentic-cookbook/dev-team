@@ -14,7 +14,7 @@ import {
   writeFileSync,
 } from "fs";
 import { join, resolve } from "path";
-import { tmpdir } from "os";
+import { tmpdir, homedir } from "os";
 
 const FIXTURES_DIR = join(import.meta.dirname, "../../fixtures");
 
@@ -23,7 +23,7 @@ const FIXTURES_DIR = join(import.meta.dirname, "../../fixtures");
  */
 export const REPO_PATHS = {
   interviewTeam: resolve(import.meta.dirname, "../../.."),
-  testOutput: resolve(import.meta.dirname, "../../../../dev-team-tests"),
+  testOutput: resolve(homedir(), "projects", "tests", "dev-team-tests"),
   cookbook: resolve(import.meta.dirname, "../../../../agentic-cookbook"),
 };
 
