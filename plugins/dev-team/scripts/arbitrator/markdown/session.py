@@ -3,7 +3,7 @@
 import json
 import sys
 from pathlib import Path
-from _lib import (
+from session_store import (
     parse_flags, require_flag, require_session,
     new_session_id, session_dir, now_iso, json_output, SESSION_BASE,
 )

@@ -2,7 +2,7 @@
 """Gate-option resource for markdown arbitrator."""
 import json
 import sys
-from _lib import (
+from session_store import (
     parse_flags, require_flag, require_session,
     json_output,
 )

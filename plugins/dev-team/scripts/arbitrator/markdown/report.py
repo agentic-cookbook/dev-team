@@ -6,7 +6,7 @@ Actions: overview, specialist, finding, trace
 """
 import json
 import sys
-from _lib import (
+from session_store import (
     parse_flags, require_flag, require_session,
     session_dir, json_output,
 )
