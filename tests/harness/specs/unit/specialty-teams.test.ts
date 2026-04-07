@@ -63,14 +63,19 @@ describe("specialty-teams directory structure", () => {
   });
 
   it("every category corresponds to a specialist", () => {
+    // Category-to-specialist name mapping for cases where they differ
+    const categoryToSpecialist: Record<string, string> = {
+      "project-management": "project-manager",
+    };
     const categories = readdirSync(TEAMS_DIR).filter(
       (f) => statSync(join(TEAMS_DIR, f)).isDirectory() && f !== "_example"
     );
     for (const category of categories) {
-      const specialistFile = join(SPECIALISTS_DIR, `${category}.md`);
+      const specialistName = categoryToSpecialist[category] ?? category;
+      const specialistFile = join(SPECIALISTS_DIR, `${specialistName}.md`);
       expect(
         existsSync(specialistFile),
-        `Category ${category} has no matching specialist file`
+        `Category ${category} has no matching specialist file (looked for ${specialistName}.md)`
       ).toBe(true);
     }
   });
@@ -107,7 +112,9 @@ describe.each(teamFiles)(
 
     it("artifact is a non-empty path", () => {
       expect(parsed!.fields.artifact.length).toBeGreaterThan(0);
-      expect(parsed!.fields.artifact).toMatch(/\.md$/);
+      // Artifacts are typically .md files but project-management teams
+      // use directory paths (e.g. .dev-team-project/todos/)
+      expect(parsed!.fields.artifact).toMatch(/\.(md|json)$|\/$/);
     });
 
     it("version is semver", () => {
