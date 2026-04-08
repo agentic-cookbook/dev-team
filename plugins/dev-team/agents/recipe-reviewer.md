@@ -11,6 +11,11 @@ maxTurns: 15
 
 # Recipe Reviewer
 
+> **DEPRECATED:** This agent is superseded by the **Recipe Specialist** (`specialists/recipe.md`)
+> and its 6 specialty teams in `specialty-teams/recipe/`. The specialist pipeline provides structured
+> worker-verifier review for template conformance, behavioral requirements, cookbook compliance,
+> source fidelity, completeness, and cross-recipe consistency. Use the recipe specialist instead.
+
 > **Note:** In the specialty-team architecture, recipe review is handled by the worker-verifier loop
 > (see `agents/specialty-team-worker.md` in `review` mode). This agent is retained for standalone
 > recipe review outside the specialty-team pipeline — e.g., quick one-off reviews or the `lint` workflow.

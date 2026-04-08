@@ -81,49 +81,56 @@ Present a summary to the user:
 
 **(One-shot):** Proceed to Phase 2 immediately.
 
-## Phase 2 — Scope Discovery
+## Phase 2 — Codebase Decomposition
 
-Tell the user: "Matching your codebase against cookbook recipe scopes..."
+Tell the user: "Decomposing the codebase into scope groups..."
 
-Spawn the **scope-matcher** agent (`agents/scope-matcher.md`) using the Agent tool with `subagent_type: "scope-matcher"`:
+Run the **codebase-decomposition specialist** (`specialists/codebase-decomposition.md`) through the standard specialty-team pipeline:
 
-Provide:
-- **Architecture map path** — the file just written
-- **Cookbook repo path** from config
-- **Recipe INDEX path** — `<cookbook_repo>/recipes/INDEX.md`
+1. Get the specialty-team manifest:
+   ```
+   python3 ${CLAUDE_PLUGIN_ROOT}/scripts/run_specialty_teams.py ${CLAUDE_PLUGIN_ROOT}/specialists/codebase-decomposition.md
+   ```
 
-The matcher returns the scope report.
+2. For each of the 12 specialty teams, run the worker-verifier loop:
+   - **Worker** receives: the architecture map, the repo path (as target), the team's artifact (from cookbook repo), and mode `analysis`
+   - **Verifier** checks worker output against the team's verify criteria
+   - Max 3 iterations per team; escalate on failure
+
+3. After all teams complete, **synthesize** their findings into a decomposition report — definitive scope groups with full characterization (purpose, complexity, dependencies, interactions, lifecycle, runtime conditions, cross-cutting concerns).
 
 **Immediately persist:**
 ```
-<output>/context/research/scope-report.md
+<output>/context/research/decomposition-report.md
 ```
 
 Present to the user:
-- List of matched scopes with confidence levels
-- List of custom scopes discovered
-- Scopes marked not applicable
+- Number of scope groups identified
+- List of groups with their primary purpose and key boundaries
+- Cross-cutting concerns identified (not proposed as scope groups)
 
-**(Incremental only):** "Here's what I found. Want to add or remove any scopes before I generate recipes?" Wait for user approval. The user can remove scopes, add missing ones, promote low-confidence matches, or confirm and proceed.
+**(Incremental only):** "Here are the scope groups I identified. Want to merge, split, add, or remove any before I generate recipes?" Wait for user approval.
 
-**(One-shot):** Accept all matched scopes (including low-confidence) and proceed to Phase 3 immediately.
+**(One-shot):** Accept all scope groups and proceed to Phase 3 immediately.
+
+> **Note:** The deprecated `scope-matcher` agent (`agents/scope-matcher.md`) can still be used for
+> top-down cookbook-scope matching if needed. The decomposition specialist works bottom-up from code
+> structure and does not require the cookbook recipe INDEX.
 
 ## Phase 3 — Recipe Generation
 
-Tell the user: "Generating recipes for <N> scopes..."
+Tell the user: "Generating recipes for <N> scope groups..."
 
-For each approved scope, spawn a **recipe-writer** agent (`agents/recipe-writer.md`) using the Agent tool with `subagent_type: "recipe-writer"`:
+For each scope group from the decomposition report, spawn a **recipe-writer** agent (`agents/recipe-writer.md`) using the Agent tool with `subagent_type: "recipe-writer"`:
 
 Provide:
-- **Scope identifier**
-- **Source file paths** — from the scope report's evidence/source paths
+- **Scope group name** — from the decomposition report
+- **Source file paths** — from the scope group's boundary/files list
+- **Scope group characterization** — the full characterization block (purpose, complexity, dependencies, interactions, etc.)
 - **Recipe template path** — `<cookbook_repo>/recipes/_template.md`
-- **Matching cookbook recipe path** — if the scope matches a cookbook recipe, provide its path (derive from the scope: `recipe.ui.panel.file-tree-browser` → `<cookbook_repo>/recipes/ui/panels/file-tree-browser.md`)
+- **Matching cookbook recipe path** — if the scope group name matches a known cookbook recipe scope, provide its path
 - **Architecture map path**
-- **Output path** — derive from the scope and component hierarchy:
-  - `recipe.ui.panel.file-tree-browser` → `<output>/app/<parent>/file-tree-browser.md`
-  - `recipe.infrastructure.logging` → `<output>/app/infrastructure/logging.md`
-  - Custom scopes follow the same pattern
+- **Output path** — derive from the scope group name and component hierarchy
 
 **Persist each recipe immediately** as each writer completes. Don't wait for all to finish.
 

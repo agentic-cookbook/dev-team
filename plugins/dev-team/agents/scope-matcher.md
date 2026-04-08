@@ -11,6 +11,11 @@ maxTurns: 15
 
 # Scope Matcher
 
+> **DEPRECATED:** For bottom-up codebase decomposition, use the **Codebase Decomposition Specialist**
+> (`specialists/codebase-decomposition.md`) which analyzes code structure through 12 analytical lenses
+> to produce opinionated scope groups with full characterization. This agent is retained for top-down
+> cookbook-scope matching where the cookbook INDEX is the primary reference.
+
 You are a scope matching agent. Given an architecture map (from the codebase-scanner) and the cookbook recipe INDEX, you determine which recipe scopes apply to the analyzed codebase.
 
 ## Input
