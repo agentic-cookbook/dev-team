@@ -83,7 +83,9 @@ Present a summary to the user:
 
 ## Phase 2 — Codebase Decomposition
 
-Tell the user: "Decomposing the codebase into scope groups..."
+### Phase 2a — Analytical Lenses
+
+Tell the user: "Analyzing the codebase through 12 analytical lenses..."
 
 Run the **codebase-decomposition specialist** (`specialists/codebase-decomposition.md`) through the standard specialty-team pipeline:
 
@@ -97,21 +99,38 @@ Run the **codebase-decomposition specialist** (`specialists/codebase-decompositi
    - **Verifier** checks worker output against the team's verify criteria
    - Max 3 iterations per team; escalate on failure
 
-3. After all teams complete, **synthesize** their findings into a decomposition report — definitive scope groups with full characterization (purpose, complexity, dependencies, interactions, lifecycle, runtime conditions, cross-cutting concerns).
+3. Collect all 12 sets of verified findings.
 
-**Immediately persist:**
+**Immediately persist** each team's findings as they complete:
 ```
-<output>/context/research/decomposition-report.md
+<output>/context/research/decomposition-findings/<team-name>.md
 ```
+
+### Phase 2b — Application Map Synthesis
+
+Tell the user: "Building the application map from analytical findings..."
+
+Spawn the **decomposition-synthesizer** agent (`agents/decomposition-synthesizer.md`) using the Agent tool with `subagent_type: "decomposition-synthesizer"`:
+
+Provide:
+- **Architecture map path** — from Phase 1
+- **Repo path** — the target codebase
+- **Team findings** — paths to all 12 findings files from Phase 2a
+- **Output path** — `<output>/context/research/application-map.md`
+
+The synthesizer builds a complete application map: a hierarchical tree of the codebase with every source file mapped to a node, every node annotated with findings from all lenses, dependency edges and feature flows between nodes, cross-cutting concerns identified, and a bottom-up recipe order computed via topological sort.
+
+**Immediately persist** the application map.
 
 Present to the user:
-- Number of scope groups identified
-- List of groups with their primary purpose and key boundaries
-- Cross-cutting concerns identified (not proposed as scope groups)
+- The tree structure (node names and hierarchy)
+- Total nodes, nodes with recipes, recipe order
+- Cross-cutting concerns identified
+- Feature flows traced
 
-**(Incremental only):** "Here are the scope groups I identified. Want to merge, split, add, or remove any before I generate recipes?" Wait for user approval.
+**(Incremental only):** "Here's the application map. Want to adjust the tree structure, merge or split nodes, or change recipe granularity before I generate recipes?" Wait for user approval.
 
-**(One-shot):** Accept all scope groups and proceed to Phase 3 immediately.
+**(One-shot):** Accept the map and proceed to Phase 3 immediately.
 
 > **Note:** The deprecated `scope-matcher` agent (`agents/scope-matcher.md`) can still be used for
 > top-down cookbook-scope matching if needed. The decomposition specialist works bottom-up from code
@@ -119,24 +138,27 @@ Present to the user:
 
 ## Phase 3 — Recipe Generation
 
-Tell the user: "Generating recipes for <N> scope groups..."
+Tell the user: "Generating recipes for <N> nodes (bottom-up)..."
 
-For each scope group from the decomposition report, spawn a **recipe-writer** agent (`agents/recipe-writer.md`) using the Agent tool with `subagent_type: "recipe-writer"`:
+Walk the application map in **recipe order** (bottom-up — leaves first, root last). For each node marked `recipe: true`, spawn a **recipe-writer** agent (`agents/recipe-writer.md`) using the Agent tool with `subagent_type: "recipe-writer"`:
 
 Provide:
-- **Scope group name** — from the decomposition report
-- **Source file paths** — from the scope group's boundary/files list
-- **Scope group characterization** — the full characterization block (purpose, complexity, dependencies, interactions, etc.)
+- **Node name** — from the application map
+- **Source file paths** — the files assigned to this node
+- **Node annotations** — the full annotation block (purpose, complexity, dependencies, interactions, lifecycle, runtime conditions, cross-cutting concerns)
+- **Dependency edges** — which other nodes this one depends on, with their recipe paths (already written, since we're going bottom-up)
+- **Feature flows** — any feature flows that pass through this node
+- **Child recipe paths** — paths to already-generated recipes for child nodes (for cross-referencing)
 - **Recipe template path** — `<cookbook_repo>/recipes/_template.md`
-- **Matching cookbook recipe path** — if the scope group name matches a known cookbook recipe scope, provide its path
+- **Matching cookbook recipe path** — if the node name matches a known cookbook recipe scope, provide its path
 - **Architecture map path**
-- **Output path** — derive from the scope group name and component hierarchy
+- **Output path** — derive from the node's position in the tree hierarchy
 
-**Persist each recipe immediately** as each writer completes. Don't wait for all to finish.
+**Persist each recipe immediately** as each writer completes.
 
-**Parallelization**: You may spawn multiple recipe-writers in parallel since each scope is independent. Use 2-3 parallel agents at a time to balance speed with manageability.
+**Parallelization**: Nodes at the same level with no dependencies between them can be written in parallel (2-3 at a time). But a node MUST NOT be written before its dependencies are complete.
 
-After each recipe completes, briefly note: "✓ Generated recipe for `<scope>`"
+After each recipe completes, briefly note: "✓ Generated recipe for `<node>` (order <N>/<total>)"
 
 After all recipes complete, summarize: "Generated <N> recipes. <M> have sections marked for review."
 
