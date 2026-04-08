@@ -109,49 +109,14 @@ Mark each node as `recipe: true` or `recipe: false`. Nodes with `recipe: false` 
 
 ## Output Format
 
-Write the application map as structured markdown:
+Write the application map conforming to the **Application Map Specification** at `${CLAUDE_PLUGIN_ROOT}/docs/application-map-spec.md`. Read the full spec before writing.
 
-```markdown
-# Application Map — <project-name>
-
-## Overview
-- **Repo:** <path>
-- **Total files:** <N>
-- **Tree nodes:** <N> (<M> with recipes)
-- **Recipe order:** bottom-up, <N> recipes total
-- **Cross-cutting concerns:** <list>
-
-## Tree
-
-### <Node Name> [recipe: yes, order: N]
-- **Path:** <directory or file paths>
-- **Files:** <list of source files in this node>
-- **Purpose:** <from purpose-classification>
-- **Children:** <list of child node names, or "leaf">
-
-#### Annotations
-- **Algorithmic complexity:** <profile>
-- **Dependencies (internal):** <list of node names this depends on>
-- **Dependencies (external):** <libraries, OS frameworks, system services>
-- **Runtime conditions:** <permissions, entitlements, env requirements>
-- **App interactions:** <delegation, observation, event patterns with other nodes>
-- **System interactions:** <lifecycle hooks, IPC, background execution>
-- **Lifecycle:** <init/teardown pattern>
-- **Framework convention:** <pattern name>
-- **Cross-cutting:** <concerns passing through this node>
-
-#### Feature Flows
-- <Flow name>: <Node1> → <Node2> → <Node3> → ...
-
-#### Edges
-- depends-on: [<node>, <node>, ...]
-- depended-on-by: [<node>, <node>, ...]
-- interacts-with: [<node> (pattern), ...]
-
----
-
-(repeat for each node, ordered by recipe_order)
-```
+The spec defines:
+- Required frontmatter fields (id, title, type, version, repo, etc.)
+- Required sections in order: Overview, File Index, Tree, Nodes, Feature Flows, Cross-Cutting Concerns
+- Per-node structure: metadata, files, annotations, edges, feature flows
+- Validation rules (structural and content)
+- The relationship between map concepts and cookbook project concepts
 
 ## Guidelines
 
@@ -161,3 +126,4 @@ Write the application map as structured markdown:
 - **Bottom-up is the law.** Recipe order must be a valid topological sort. No node is ordered before its dependencies.
 - **Annotate honestly.** If a lens had no findings for a node, omit that annotation. Don't pad.
 - **Name nodes after what they are**, not what directory they're in. `AuthService` not `src/auth`.
+- **Conform to the spec.** The application-map-spec.md is the contract. Every validation rule must pass.
