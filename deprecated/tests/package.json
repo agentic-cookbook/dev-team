@@ -1,0 +1,21 @@
+{
+  "name": "cookbook-skill-tests",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:e2e": "vitest run --config vitest.e2e.config.ts",
+    "test:lint": "vitest run specs/lint-artifact.test.ts",
+    "test:approve": "vitest run specs/approve-artifact.test.ts",
+    "test:add": "vitest run specs/add-artifact.test.ts",
+    "test:create": "vitest run --config vitest.e2e.config.ts specs/create-artifact.test.ts",
+    "test:website": "vitest run specs/update-website.test.ts",
+    "test:repair": "vitest run specs/repair-cookbook.test.ts",
+    "test:install": "vitest run specs/install-cookbook-global.test.ts",
+    "test:smoke": "vitest run specs/lint-artifact.test.ts specs/approve-artifact.test.ts"
+  },
+  "devDependencies": {
+    "vitest": "^3.2.1"
+  }
+}
