@@ -6,7 +6,7 @@ scope of rules, skills, and agents.
 
 Each file is preserved with its original content. The filename prefix indicates the source project.
 
-**Total files**: 126
+**Total files**: 236
 
 ## Contents by Category
 
@@ -67,6 +67,7 @@ Each file is preserved with its original content. The filename prefix indicates 
 - **[agenticdevteam_sp_spec_2026-04-06-test-coverage-design.md](agenticdevteam_sp_spec_2026-04-06-test-coverage-design.md)** — from `~/projects/agenticdevteam/docs/superpowers/specs/2026-04-06-test-coverage-design.md`
 - **[agenticdevteam_sp_spec_2026-04-07-storage-provider-design.md](agenticdevteam_sp_spec_2026-04-07-storage-provider-design.md)** — from `~/projects/agenticdevteam/docs/superpowers/specs/2026-04-07-storage-provider-design.md`
 - **[agenticdevteam_sp_spec_2026-04-08-team-pipeline-design.md](agenticdevteam_sp_spec_2026-04-08-team-pipeline-design.md)** — from `~/projects/agenticdevteam/docs/superpowers/specs/2026-04-08-team-pipeline-design.md`
+- **[agenticdevteam_sp_spec_2026-04-11-conductor-design.md](agenticdevteam_sp_spec_2026-04-11-conductor-design.md)** — from `~/projects/agenticdevteam/docs/superpowers/specs/2026-04-11-conductor-design.md`
 
 ### 06-agenticdevteam-plugin-specs
 
@@ -192,3 +193,160 @@ Each file is preserved with its original content. The filename prefix indicates 
 - **[persona-creator_project_description.md](persona-creator_project_description.md)** — from `~/projects/persona-creator/docs/project/description.md`
 - **[persona-creator_sp_plan.md](persona-creator_sp_plan.md)** — from `~/projects/persona-creator/docs/superpowers/plans/2026-04-08-persona-creator.md`
 - **[persona-creator_sp_spec.md](persona-creator_sp_spec.md)** — from `~/projects/persona-creator/docs/superpowers/specs/2026-04-08-persona-creator-design.md`
+
+### 50-cookbook-principles
+
+- **[cookbook_principle_composition-over-inheritance.md](cookbook_principle_composition-over-inheritance.md)** — from `~/projects/cookbook-web/cookbook/principles/composition-over-inheritance.md`
+- **[cookbook_principle_dependency-injection.md](cookbook_principle_dependency-injection.md)** — from `~/projects/cookbook-web/cookbook/principles/dependency-injection.md`
+- **[cookbook_principle_design-for-deletion.md](cookbook_principle_design-for-deletion.md)** — from `~/projects/cookbook-web/cookbook/principles/design-for-deletion.md`
+- **[cookbook_principle_explicit-over-implicit.md](cookbook_principle_explicit-over-implicit.md)** — from `~/projects/cookbook-web/cookbook/principles/explicit-over-implicit.md`
+- **[cookbook_principle_fail-fast.md](cookbook_principle_fail-fast.md)** — from `~/projects/cookbook-web/cookbook/principles/fail-fast.md`
+- **[cookbook_principle_idempotency.md](cookbook_principle_idempotency.md)** — from `~/projects/cookbook-web/cookbook/principles/idempotency.md`
+- **[cookbook_principle_immutability-by-default.md](cookbook_principle_immutability-by-default.md)** — from `~/projects/cookbook-web/cookbook/principles/immutability-by-default.md`
+- **[cookbook_principle_least-astonishment.md](cookbook_principle_least-astonishment.md)** — from `~/projects/cookbook-web/cookbook/principles/principle-of-least-astonishment.md`
+- **[cookbook_principle_make-it-work-right-fast.md](cookbook_principle_make-it-work-right-fast.md)** — from `~/projects/cookbook-web/cookbook/principles/make-it-work-make-it-right-make-it-fast.md`
+- **[cookbook_principle_manage-complexity-through-boundaries.md](cookbook_principle_manage-complexity-through-boundaries.md)** — from `~/projects/cookbook-web/cookbook/principles/manage-complexity-through-boundaries.md`
+- **[cookbook_principle_meta-optimize-for-change.md](cookbook_principle_meta-optimize-for-change.md)** — from `~/projects/cookbook-web/cookbook/principles/meta-principle-optimize-for-change.md`
+- **[cookbook_principle_native-controls.md](cookbook_principle_native-controls.md)** — from `~/projects/cookbook-web/cookbook/principles/native-controls.md`
+- **[cookbook_principle_open-source-preference.md](cookbook_principle_open-source-preference.md)** — from `~/projects/cookbook-web/cookbook/principles/open-source-preference.md`
+- **[cookbook_principle_separation-of-concerns.md](cookbook_principle_separation-of-concerns.md)** — from `~/projects/cookbook-web/cookbook/principles/separation-of-concerns.md`
+- **[cookbook_principle_simplicity.md](cookbook_principle_simplicity.md)** — from `~/projects/cookbook-web/cookbook/principles/simplicity.md`
+- **[cookbook_principle_small-reversible-decisions.md](cookbook_principle_small-reversible-decisions.md)** — from `~/projects/cookbook-web/cookbook/principles/small-reversible-decisions.md`
+- **[cookbook_principle_support-automation.md](cookbook_principle_support-automation.md)** — from `~/projects/cookbook-web/cookbook/principles/support-automation.md`
+- **[cookbook_principle_tight-feedback-loops.md](cookbook_principle_tight-feedback-loops.md)** — from `~/projects/cookbook-web/cookbook/principles/tight-feedback-loops.md`
+- **[cookbook_principle_yagni.md](cookbook_principle_yagni.md)** — from `~/projects/cookbook-web/cookbook/principles/yagni.md`
+- **[cookbook_principles_INDEX.md](cookbook_principles_INDEX.md)** — from `~/projects/cookbook-web/cookbook/principles/INDEX.md`
+
+### 51-cookbook-claude-recipes
+
+- **[cookbook_ingredient_claude_INDEX.md](cookbook_ingredient_claude_INDEX.md)** — from `~/projects/cookbook-web/cookbook/ingredients/developer-tools/claude/INDEX.md`
+- **[cookbook_ingredient_claude_yolo-mode.md](cookbook_ingredient_claude_yolo-mode.md)** — from `~/projects/cookbook-web/cookbook/ingredients/developer-tools/claude/yolo-mode.md`
+- **[cookbook_recipe_claude-rule-optimization-pipeline.md](cookbook_recipe_claude-rule-optimization-pipeline.md)** — from `~/projects/cookbook-web/cookbook/recipes/developer-tools/claude/claude-rule-optimization-pipeline.md`
+- **[cookbook_recipe_claude_INDEX.md](cookbook_recipe_claude_INDEX.md)** — from `~/projects/cookbook-web/cookbook/recipes/developer-tools/claude/INDEX.md`
+- **[cookbook_recipe_developer-tools_INDEX.md](cookbook_recipe_developer-tools_INDEX.md)** — from `~/projects/cookbook-web/cookbook/recipes/developer-tools/INDEX.md`
+
+### 52-cookbook-autonomous-bots
+
+- **[cookbook_recipe_autonomous-bots_INDEX.md](cookbook_recipe_autonomous-bots_INDEX.md)** — from `~/projects/cookbook-web/cookbook/recipes/autonomous-dev-bots/INDEX.md`
+- **[cookbook_recipe_autonomous-bots_pr-review-pipeline.md](cookbook_recipe_autonomous-bots_pr-review-pipeline.md)** — from `~/projects/cookbook-web/cookbook/recipes/autonomous-dev-bots/pr-review-pipeline.md`
+
+### 53-cookbook-workflows
+
+- **[cookbook_workflow_INDEX.md](cookbook_workflow_INDEX.md)** — from `~/projects/cookbook-web/cookbook/workflows/INDEX.md`
+- **[cookbook_workflow_branching-strategy.md](cookbook_workflow_branching-strategy.md)** — from `~/projects/cookbook-web/cookbook/workflows/branching-strategy.md`
+- **[cookbook_workflow_code-implementation.md](cookbook_workflow_code-implementation.md)** — from `~/projects/cookbook-web/cookbook/workflows/code-implementation.md`
+- **[cookbook_workflow_code-planning.md](cookbook_workflow_code-planning.md)** — from `~/projects/cookbook-web/cookbook/workflows/code-planning.md`
+- **[cookbook_workflow_code-review.md](cookbook_workflow_code-review.md)** — from `~/projects/cookbook-web/cookbook/workflows/code-review.md`
+- **[cookbook_workflow_code-verification.md](cookbook_workflow_code-verification.md)** — from `~/projects/cookbook-web/cookbook/workflows/code-verification.md`
+- **[cookbook_workflow_guideline-checklist.md](cookbook_workflow_guideline-checklist.md)** — from `~/projects/cookbook-web/cookbook/workflows/guideline-checklist.md`
+
+### 54-cookbook-appendix
+
+- **[cookbook_appendix_INDEX.md](cookbook_appendix_INDEX.md)** — from `~/projects/cookbook-web/cookbook/appendix/INDEX.md`
+- **[cookbook_appendix_contributing_AUTHORING.md](cookbook_appendix_contributing_AUTHORING.md)** — from `~/projects/cookbook-web/cookbook/appendix/contributing/AUTHORING.md`
+- **[cookbook_appendix_contributing_INDEX.md](cookbook_appendix_contributing_INDEX.md)** — from `~/projects/cookbook-web/cookbook/appendix/contributing/INDEX.md`
+- **[cookbook_appendix_decisions_INDEX.md](cookbook_appendix_decisions_INDEX.md)** — from `~/projects/cookbook-web/cookbook/appendix/decisions/INDEX.md`
+- **[cookbook_appendix_decisions_ui-guidelines.md](cookbook_appendix_decisions_ui-guidelines.md)** — from `~/projects/cookbook-web/cookbook/appendix/decisions/ui-guidelines.md`
+
+### 55-cookbook-compliance-formatting
+
+- **[cookbook_compliance_guideline-formatting.md](cookbook_compliance_guideline-formatting.md)** — from `~/projects/cookbook-web/cookbook/compliance/artifact-formatting/guideline-formatting.md`
+- **[cookbook_compliance_ingredient-formatting.md](cookbook_compliance_ingredient-formatting.md)** — from `~/projects/cookbook-web/cookbook/compliance/artifact-formatting/ingredient-formatting.md`
+- **[cookbook_compliance_principle-formatting.md](cookbook_compliance_principle-formatting.md)** — from `~/projects/cookbook-web/cookbook/compliance/artifact-formatting/principle-formatting.md`
+- **[cookbook_compliance_recipe-formatting.md](cookbook_compliance_recipe-formatting.md)** — from `~/projects/cookbook-web/cookbook/compliance/artifact-formatting/recipe-formatting.md`
+
+### 56-cookbook-superpowers
+
+- **[cookbook_sp_plan_2026-04-04-skill-test-harness.md](cookbook_sp_plan_2026-04-04-skill-test-harness.md)** — from `~/projects/cookbook-web/cookbook/docs/superpowers/plans/2026-04-04-skill-test-harness.md`
+- **[cookbook_sp_spec_2026-04-04-skill-test-harness-design.md](cookbook_sp_spec_2026-04-04-skill-test-harness-design.md)** — from `~/projects/cookbook-web/cookbook/docs/superpowers/specs/2026-04-04-skill-test-harness-design.md`
+- **[cookbook_sp_spec_2026-04-06-rename-concoction-to-cookbook-design.md](cookbook_sp_spec_2026-04-06-rename-concoction-to-cookbook-design.md)** — from `~/projects/cookbook-web/cookbook/docs/superpowers/specs/2026-04-06-rename-concoction-to-cookbook-design.md`
+
+### 60-devteam-claude-code-team
+
+- **[devteam_specialty_claude-code_agent-checklist.md](devteam_specialty_claude-code_agent-checklist.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/claude-code/agent-checklist.md`
+- **[devteam_specialty_claude-code_agent-structure-reference.md](devteam_specialty_claude-code_agent-structure-reference.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/claude-code/agent-structure-reference.md`
+- **[devteam_specialty_claude-code_authoring-skills-and-rules.md](devteam_specialty_claude-code_authoring-skills-and-rules.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/claude-code/authoring-skills-and-rules.md`
+- **[devteam_specialty_claude-code_design-for-deletion.md](devteam_specialty_claude-code_design-for-deletion.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/claude-code/design-for-deletion.md`
+- **[devteam_specialty_claude-code_explicit-over-implicit.md](devteam_specialty_claude-code_explicit-over-implicit.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/claude-code/explicit-over-implicit.md`
+- **[devteam_specialty_claude-code_manage-complexity.md](devteam_specialty_claude-code_manage-complexity.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/claude-code/manage-complexity-through-boundaries.md`
+- **[devteam_specialty_claude-code_performance.md](devteam_specialty_claude-code_performance.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/claude-code/performance.md`
+- **[devteam_specialty_claude-code_rule-checklist.md](devteam_specialty_claude-code_rule-checklist.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/claude-code/rule-checklist.md`
+- **[devteam_specialty_claude-code_rule-structure-reference.md](devteam_specialty_claude-code_rule-structure-reference.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/claude-code/rule-structure-reference.md`
+- **[devteam_specialty_claude-code_separation-of-concerns.md](devteam_specialty_claude-code_separation-of-concerns.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/claude-code/separation-of-concerns.md`
+- **[devteam_specialty_claude-code_simplicity.md](devteam_specialty_claude-code_simplicity.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/claude-code/simplicity.md`
+- **[devteam_specialty_claude-code_skill-checklist.md](devteam_specialty_claude-code_skill-checklist.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/claude-code/skill-checklist.md`
+- **[devteam_specialty_claude-code_skill-structure-reference.md](devteam_specialty_claude-code_skill-structure-reference.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/claude-code/skill-structure-reference.md`
+- **[devteam_specialty_claude-code_support-automation.md](devteam_specialty_claude-code_support-automation.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/claude-code/support-automation.md`
+- **[devteam_specialty_claude-code_yagni.md](devteam_specialty_claude-code_yagni.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/claude-code/yagni.md`
+
+### 61-devteam-development-process
+
+- **[devteam_specialty_dev-process_ab-testing.md](devteam_specialty_dev-process_ab-testing.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/development-process/ab-testing.md`
+- **[devteam_specialty_dev-process_debug-mode.md](devteam_specialty_dev-process_debug-mode.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/development-process/debug-mode.md`
+- **[devteam_specialty_dev-process_feature-flags.md](devteam_specialty_dev-process_feature-flags.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/development-process/feature-flags.md`
+- **[devteam_specialty_dev-process_make-it-work.md](devteam_specialty_dev-process_make-it-work.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/development-process/make-it-work.md`
+- **[devteam_specialty_dev-process_small-reversible-decisions.md](devteam_specialty_dev-process_small-reversible-decisions.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/development-process/small-reversible-decisions.md`
+- **[devteam_specialty_dev-process_yagni.md](devteam_specialty_dev-process_yagni.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/development-process/yagni.md`
+
+### 62-devteam-software-architecture
+
+- **[devteam_specialty_sw-arch_composition-over-inheritance.md](devteam_specialty_sw-arch_composition-over-inheritance.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/software-architecture/composition-over-inheritance.md`
+- **[devteam_specialty_sw-arch_concurrency-immutability.md](devteam_specialty_sw-arch_concurrency-immutability.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/software-architecture/concurrency-immutability.md`
+- **[devteam_specialty_sw-arch_concurrency.md](devteam_specialty_sw-arch_concurrency.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/software-architecture/concurrency.md`
+- **[devteam_specialty_sw-arch_dependency-injection.md](devteam_specialty_sw-arch_dependency-injection.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/software-architecture/dependency-injection.md`
+- **[devteam_specialty_sw-arch_manage-complexity.md](devteam_specialty_sw-arch_manage-complexity.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/software-architecture/manage-complexity-through-boundaries.md`
+- **[devteam_specialty_sw-arch_open-source-preference.md](devteam_specialty_sw-arch_open-source-preference.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/software-architecture/open-source-preference.md`
+- **[devteam_specialty_sw-arch_optimize-for-change.md](devteam_specialty_sw-arch_optimize-for-change.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/software-architecture/optimize-for-change.md`
+- **[devteam_specialty_sw-arch_separation-of-concerns.md](devteam_specialty_sw-arch_separation-of-concerns.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/software-architecture/separation-of-concerns.md`
+
+### 63-devteam-code-quality
+
+- **[devteam_specialty_code-quality_atomic-commits.md](devteam_specialty_code-quality_atomic-commits.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/code-quality/atomic-commits.md`
+- **[devteam_specialty_code-quality_best-practices-compliance.md](devteam_specialty_code-quality_best-practices-compliance.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/code-quality/best-practices-compliance.md`
+- **[devteam_specialty_code-quality_bulk-operation-verification.md](devteam_specialty_code-quality_bulk-operation-verification.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/code-quality/bulk-operation-verification.md`
+- **[devteam_specialty_code-quality_design-for-deletion.md](devteam_specialty_code-quality_design-for-deletion.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/code-quality/design-for-deletion.md`
+- **[devteam_specialty_code-quality_explicit-over-implicit.md](devteam_specialty_code-quality_explicit-over-implicit.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/code-quality/explicit-over-implicit.md`
+- **[devteam_specialty_code-quality_linting.md](devteam_specialty_code-quality_linting.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/code-quality/linting.md`
+- **[devteam_specialty_code-quality_scope-discipline.md](devteam_specialty_code-quality_scope-discipline.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/code-quality/scope-discipline.md`
+- **[devteam_specialty_code-quality_simplicity.md](devteam_specialty_code-quality_simplicity.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/code-quality/simplicity.md`
+
+### 64-devteam-codebase-decomposition
+
+- **[devteam_specialty_decomp_algorithmic-complexity.md](devteam_specialty_decomp_algorithmic-complexity.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/codebase-decomposition/algorithmic-complexity.md`
+- **[devteam_specialty_decomp_app-interactions.md](devteam_specialty_decomp_app-interactions.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/codebase-decomposition/app-interactions.md`
+- **[devteam_specialty_decomp_cross-cutting-detection.md](devteam_specialty_decomp_cross-cutting-detection.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/codebase-decomposition/cross-cutting-detection.md`
+- **[devteam_specialty_decomp_dependency-clusters.md](devteam_specialty_decomp_dependency-clusters.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/codebase-decomposition/dependency-clusters.md`
+- **[devteam_specialty_decomp_framework-conventions.md](devteam_specialty_decomp_framework-conventions.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/codebase-decomposition/framework-conventions.md`
+- **[devteam_specialty_decomp_interface-cohesion.md](devteam_specialty_decomp_interface-cohesion.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/codebase-decomposition/interface-cohesion.md`
+- **[devteam_specialty_decomp_lifecycle-patterns.md](devteam_specialty_decomp_lifecycle-patterns.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/codebase-decomposition/lifecycle-patterns.md`
+- **[devteam_specialty_decomp_module-boundaries.md](devteam_specialty_decomp_module-boundaries.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/codebase-decomposition/module-boundaries.md`
+- **[devteam_specialty_decomp_purpose-classification.md](devteam_specialty_decomp_purpose-classification.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/codebase-decomposition/purpose-classification.md`
+- **[devteam_specialty_decomp_runtime-conditions.md](devteam_specialty_decomp_runtime-conditions.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/codebase-decomposition/runtime-conditions.md`
+- **[devteam_specialty_decomp_system-dependencies.md](devteam_specialty_decomp_system-dependencies.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/codebase-decomposition/system-dependencies.md`
+- **[devteam_specialty_decomp_system-interactions.md](devteam_specialty_decomp_system-interactions.md)** — from `~/projects/agenticdevteam/plugins/dev-team/specialty-teams/codebase-decomposition/system-interactions.md`
+
+### 65-devteam-consulting-teams
+
+- **[devteam_consulting_example.md](devteam_consulting_example.md)** — from `~/projects/agenticdevteam/plugins/dev-team/consulting-teams/_example/example-consulting-team.md`
+- **[devteam_consulting_platform-database_access-pattern-coherence.md](devteam_consulting_platform-database_access-pattern-coherence.md)** — from `~/projects/agenticdevteam/plugins/dev-team/consulting-teams/platform-database/access-pattern-coherence.md`
+- **[devteam_consulting_platform-database_cross-database-compatibility.md](devteam_consulting_platform-database_cross-database-compatibility.md)** — from `~/projects/agenticdevteam/plugins/dev-team/consulting-teams/platform-database/cross-database-compatibility.md`
+- **[devteam_consulting_platform-database_sync-impact.md](devteam_consulting_platform-database_sync-impact.md)** — from `~/projects/agenticdevteam/plugins/dev-team/consulting-teams/platform-database/sync-impact.md`
+
+### 66-devteam-local-skills
+
+- **[devteam_local-skill_create-specialist_SKILL.md](devteam_local-skill_create-specialist_SKILL.md)** — from `~/projects/agenticdevteam/.claude/skills/create-specialist/SKILL.md`
+- **[devteam_local-skill_lint-specialist_SKILL.md](devteam_local-skill_lint-specialist_SKILL.md)** — from `~/projects/agenticdevteam/.claude/skills/lint-specialist/SKILL.md`
+- **[devteam_local-skill_lint-specialist_specialist-checks.md](devteam_local-skill_lint-specialist_specialist-checks.md)** — from `~/projects/agenticdevteam/.claude/skills/lint-specialist/references/specialist-checks.md`
+- **[devteam_plugin_tests_test-mode-spec.md](devteam_plugin_tests_test-mode-spec.md)** — from `~/projects/agenticdevteam/plugins/dev-team/tests/test-mode-spec.md`
+
+### 67-devteam-planning-missed
+
+- **[agenticdevteam_planning_2026-04-02-compare-code-design.md](agenticdevteam_planning_2026-04-02-compare-code-design.md)** — from `~/projects/agenticdevteam/docs/planning/2026-04-02-compare-code-design.md`
+- **[agenticdevteam_planning_2026-04-02-compare-code-plan.md](agenticdevteam_planning_2026-04-02-compare-code-plan.md)** — from `~/projects/agenticdevteam/docs/planning/2026-04-02-compare-code-plan.md`
+- **[agenticdevteam_planning_2026-04-02-shared-database-design.md](agenticdevteam_planning_2026-04-02-shared-database-design.md)** — from `~/projects/agenticdevteam/docs/planning/2026-04-02-shared-database-design.md`
+- **[agenticdevteam_planning_2026-04-02-shared-database-plan.md](agenticdevteam_planning_2026-04-02-shared-database-plan.md)** — from `~/projects/agenticdevteam/docs/planning/2026-04-02-shared-database-plan.md`
+- **[agenticdevteam_planning_2026-04-03-initial-database-design.md](agenticdevteam_planning_2026-04-03-initial-database-design.md)** — from `~/projects/agenticdevteam/docs/planning/2026-04-03-initial-database-design.md`
+
+### 70-agentic-auth-service
+
+- **[agentic-auth-service_research_shared-auth-service.md](agentic-auth-service_research_shared-auth-service.md)** — from `~/projects/agentic-auth-service/docs/research/shared-auth-service.md`
