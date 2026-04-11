@@ -16,12 +16,12 @@ from typing import Any
 # ---------------------------------------------------------------------------
 
 
-@dataclass(frozen=True)
+@dataclass
 class Action:
-    """Marker base class. Every action is an immutable value object."""
+    """Marker base class. Authors should treat action instances as immutable."""
 
 
-@dataclass(frozen=True)
+@dataclass
 class EmitMessage(Action):
     """Write a `message` row to the arbitrator.
 
@@ -32,14 +32,14 @@ class EmitMessage(Action):
     type: str = "notification"
 
 
-@dataclass(frozen=True)
+@dataclass
 class WaitForUserInput(Action):
     """Pause the state machine until the next user-direction message arrives."""
 
     prompt: str | None = None
 
 
-@dataclass(frozen=True)
+@dataclass
 class JudgmentCall(Action):
     """Invoke a named JudgmentSpec via the dispatcher.
 
@@ -50,18 +50,44 @@ class JudgmentCall(Action):
     spec_name: str
 
 
-@dataclass(frozen=True)
+@dataclass
 class DispatchSpecialist(Action):
     """Dispatch a specialist by manifest name. Push a child state node."""
 
     specialist_name: str
 
 
-@dataclass(frozen=True)
+@dataclass
 class PresentResults(Action):
     """Aggregate result rows for this session and emit a final notification."""
 
     header: str = "Results"
+
+
+@dataclass
+class SendRequest(Action):
+    """Create an inter-team request and wait for the response.
+
+    The target team's playbook must declare a handler for `kind` via
+    `request_handlers`. The response JSON is stored in the caller's
+    specialty context under `response_context_key`.
+    """
+
+    kind: str
+    to_team: str
+    input_data: dict[str, Any] = field(default_factory=dict)
+    response_context_key: str = "request_response"
+
+
+@dataclass
+class RespondToRequest(Action):
+    """Complete the currently-handled request with a response payload.
+
+    Only valid inside a handler state. The conductor tracks the active
+    request and the arbitrator validates the completion.
+    """
+
+    response_data: dict[str, Any] = field(default_factory=dict)
 
 
 # ---------------------------------------------------------------------------
@@ -69,7 +95,7 @@ class PresentResults(Action):
 # ---------------------------------------------------------------------------
 
 
-@dataclass(frozen=True)
+@dataclass
 class State:
     name: str
     entry_actions: tuple[Action, ...] = ()
@@ -77,7 +103,7 @@ class State:
     terminal: bool = False
 
 
-@dataclass(frozen=True)
+@dataclass
 class Transition:
     from_state: str
     to_state: str
@@ -136,6 +162,9 @@ class TeamPlaybook:
     judgment_specs: dict[str, JudgmentSpec]
     manifest: Manifest
     initial_state: str
+    # kind → handler state name. Each entry is a declaration that this
+    # team handles incoming requests of `kind` by running the named state.
+    request_handlers: dict[str, str] = field(default_factory=dict)
 
     def state(self, name: str) -> State:
         for s in self.states:

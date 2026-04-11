@@ -27,12 +27,15 @@ from .dispatcher import (
     DispatchError,
     Dispatcher,
 )
+from .arbitrator.models import Request
 from .playbook.types import (
     Action,
     DispatchSpecialist,
     EmitMessage,
     JudgmentCall,
     PresentResults,
+    RespondToRequest,
+    SendRequest,
     WaitForUserInput,
 )
 from .specialist_runner import run_specialist
@@ -62,6 +65,7 @@ class Conductor:
         team_lead: TeamLead,
         session_id: UUID,
         max_steps: int = 200,
+        aux_team_leads: list[TeamLead] | None = None,
     ):
         self._arb = arbitrator
         self._dispatcher = dispatcher
@@ -72,12 +76,20 @@ class Conductor:
             session_id=session_id, team_id=self._team_id
         )
         self._max_steps = max_steps
+        # Secondary teams keyed by playbook name. Each one's declared
+        # request_handlers get registered on the arbitrator at start.
+        self._aux_team_leads: dict[str, TeamLead] = {
+            t.playbook.name: t for t in (aux_team_leads or [])
+        }
+        self._current_request: Request | None = None
+        self._active_team_id = self._team_id
 
     async def run(self) -> None:
         """Run the session from the initial state to a terminal state."""
         await self._arb.open_session(
             self._session_id, initial_team_id=self._team_id
         )
+        self._register_cross_team_handlers()
         current = self._team_lead.initial_state
         step = 0
         while True:
@@ -142,6 +154,21 @@ class Conductor:
             self._team_lead.validate_transition(state.name, next_state)
             current = next_state
 
+    def _register_cross_team_handlers(self) -> None:
+        """Register every aux team's declared request handlers on the arbitrator."""
+        for team_id, aux in self._aux_team_leads.items():
+            for kind, handler_state in aux.playbook.request_handlers.items():
+                if kind not in self._arb._request_kinds:  # noqa: SLF001
+                    # Permissive schemas for step 3; tighten per-kind later.
+                    self._arb.register_request_kind(
+                        kind,
+                        input_schema={"type": "object"},
+                        response_schema={"type": "object"},
+                    )
+                self._arb.register_request_handler(
+                    team_id=team_id, kind=kind, handler_state_node=handler_state
+                )
+
     async def _execute_entry_actions(
         self, actions: tuple[Action, ...]
     ) -> None:
@@ -199,6 +226,19 @@ class Conductor:
                 state_name=None, spec_name=action.spec_name
             )
             return
+        if isinstance(action, SendRequest):
+            await self._send_request(action)
+            return
+        if isinstance(action, RespondToRequest):
+            if self._current_request is None:
+                raise RuntimeError(
+                    "RespondToRequest is only valid inside a handler state"
+                )
+            await self._arb.complete_request(
+                self._current_request.request_id,
+                dict(action.response_data),
+            )
+            return
         if isinstance(action, PresentResults):
             results = await self._arb.list_results(
                 self._session_id, self._team_id
@@ -234,6 +274,60 @@ class Conductor:
                 self._ctx.pending_next_state = "gather_traits"
             return
         raise TypeError(f"Unknown action type: {type(action).__name__}")
+
+    async def _send_request(self, action: SendRequest) -> None:
+        """Create a request, run the target team's handler, store response."""
+        aux = self._aux_team_leads.get(action.to_team)
+        if aux is None:
+            raise KeyError(
+                f"No auxiliary team {action.to_team!r} registered on conductor"
+            )
+        handler_state_name = aux.playbook.request_handlers.get(action.kind)
+        if handler_state_name is None:
+            raise KeyError(
+                f"Team {action.to_team!r} has no handler for kind {action.kind!r}"
+            )
+
+        request = await self._arb.create_request(
+            session_id=self._session_id,
+            from_team=self._team_id,
+            to_team=action.to_team,
+            kind=action.kind,
+            input_data=dict(action.input_data),
+        )
+        # Enforce the serial-queue semantics from §7.4 even though we run
+        # the handler inline — exercises the arbitrator's queue logic.
+        ready = await self._arb.next_ready_request(self._session_id)
+        if ready is None or ready.request_id != request.request_id:
+            raise RuntimeError(
+                "Arbitrator did not return the just-created request as ready"
+            )
+
+        handler_state = aux.playbook.state(handler_state_name)
+        handler_node = await self._arb.push_state(
+            session_id=self._session_id,
+            team_id=action.to_team,
+            state_name=f"handler:{handler_state_name}",
+            parent_node_id=None,  # handlers form their own subtree root
+        )
+        prev_team = self._active_team_id
+        prev_parent = self._ctx.parent_state_node_id
+        prev_request = self._current_request
+        self._active_team_id = action.to_team
+        self._ctx.parent_state_node_id = handler_node.node_id
+        self._current_request = ready
+        try:
+            for act in handler_state.entry_actions:
+                await self._execute_action(act)
+        finally:
+            await self._arb.pop_state(handler_node.node_id)
+            self._active_team_id = prev_team
+            self._ctx.parent_state_node_id = prev_parent
+            self._current_request = prev_request
+
+        final = await self._arb.get_request(request.request_id)
+        response = (final.response_json or {}) if final else {}
+        self._ctx.specialty_context[action.response_context_key] = response
 
     async def _run_judgment(
         self, state_name: str | None, spec_name: str
