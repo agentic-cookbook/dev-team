@@ -25,7 +25,16 @@ class SqliteBackend(Storage):
 
     async def connect(self) -> None:
         def _open() -> sqlite3.Connection:
-            conn = sqlite3.connect(self._db_path, isolation_level=None)
+            # check_same_thread=False is safe here: every DB call goes
+            # through asyncio.to_thread under self._lock, so at most one
+            # executor thread touches the connection at a time. Without
+            # this, cross-thread access (common when asyncio.to_thread
+            # picks different pool workers) raises ProgrammingError.
+            conn = sqlite3.connect(
+                self._db_path,
+                isolation_level=None,
+                check_same_thread=False,
+            )
             conn.row_factory = sqlite3.Row
             conn.execute("PRAGMA foreign_keys = ON")
             conn.executescript(SCHEMA_PATH.read_text())
