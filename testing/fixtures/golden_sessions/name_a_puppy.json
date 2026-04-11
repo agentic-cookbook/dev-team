@@ -1,0 +1,458 @@
+{
+  "event": [
+    {
+      "agent_id": "breed-name-worker",
+      "dispatch_id": "<redacted>",
+      "emitted_at": "<ts>+00:00",
+      "event_id": "<redacted>",
+      "kind": "dispatch_complete",
+      "payload_json": "{\"kind\": \"dispatch_complete\", \"agent\": \"breed-name-worker\", \"dispatch_id\": \"<dispatch_id>\"}",
+      "sequence": 9,
+      "session_id": "<redacted>",
+      "team_id": "name-a-puppy"
+    },
+    {
+      "agent_id": "breed-name-worker",
+      "dispatch_id": "<redacted>",
+      "emitted_at": "<ts>+00:00",
+      "event_id": "<redacted>",
+      "kind": "dispatch_start",
+      "payload_json": "{\"kind\": \"dispatch_start\", \"agent\": \"breed-name-worker\", \"dispatch_id\": \"<dispatch_id>\"}",
+      "sequence": 6,
+      "session_id": "<redacted>",
+      "team_id": "name-a-puppy"
+    },
+    {
+      "agent_id": "lifestyle-name-worker",
+      "dispatch_id": "<redacted>",
+      "emitted_at": "<ts>+00:00",
+      "event_id": "<redacted>",
+      "kind": "dispatch_complete",
+      "payload_json": "{\"kind\": \"dispatch_complete\", \"agent\": \"lifestyle-name-worker\", \"dispatch_id\": \"<dispatch_id>\"}",
+      "sequence": 10,
+      "session_id": "<redacted>",
+      "team_id": "name-a-puppy"
+    },
+    {
+      "agent_id": "lifestyle-name-worker",
+      "dispatch_id": "<redacted>",
+      "emitted_at": "<ts>+00:00",
+      "event_id": "<redacted>",
+      "kind": "dispatch_start",
+      "payload_json": "{\"kind\": \"dispatch_start\", \"agent\": \"lifestyle-name-worker\", \"dispatch_id\": \"<dispatch_id>\"}",
+      "sequence": 7,
+      "session_id": "<redacted>",
+      "team_id": "name-a-puppy"
+    },
+    {
+      "agent_id": "team-lead-aggregator",
+      "dispatch_id": "<redacted>",
+      "emitted_at": "<ts>+00:00",
+      "event_id": "<redacted>",
+      "kind": "dispatch_complete",
+      "payload_json": "{\"kind\": \"dispatch_complete\", \"agent\": \"team-lead-aggregator\", \"dispatch_id\": \"<dispatch_id>\"}",
+      "sequence": 14,
+      "session_id": "<redacted>",
+      "team_id": "name-a-puppy"
+    },
+    {
+      "agent_id": "team-lead-aggregator",
+      "dispatch_id": "<redacted>",
+      "emitted_at": "<ts>+00:00",
+      "event_id": "<redacted>",
+      "kind": "dispatch_start",
+      "payload_json": "{\"kind\": \"dispatch_start\", \"agent\": \"team-lead-aggregator\", \"dispatch_id\": \"<dispatch_id>\"}",
+      "sequence": 13,
+      "session_id": "<redacted>",
+      "team_id": "name-a-puppy"
+    },
+    {
+      "agent_id": "team-lead-gather",
+      "dispatch_id": "<redacted>",
+      "emitted_at": "<ts>+00:00",
+      "event_id": "<redacted>",
+      "kind": "dispatch_complete",
+      "payload_json": "{\"kind\": \"dispatch_complete\", \"agent\": \"team-lead-gather\", \"dispatch_id\": \"<dispatch_id>\"}",
+      "sequence": 4,
+      "session_id": "<redacted>",
+      "team_id": "name-a-puppy"
+    },
+    {
+      "agent_id": "team-lead-gather",
+      "dispatch_id": "<redacted>",
+      "emitted_at": "<ts>+00:00",
+      "event_id": "<redacted>",
+      "kind": "dispatch_start",
+      "payload_json": "{\"kind\": \"dispatch_start\", \"agent\": \"team-lead-gather\", \"dispatch_id\": \"<dispatch_id>\"}",
+      "sequence": 3,
+      "session_id": "<redacted>",
+      "team_id": "name-a-puppy"
+    },
+    {
+      "agent_id": "temperament-name-worker",
+      "dispatch_id": "<redacted>",
+      "emitted_at": "<ts>+00:00",
+      "event_id": "<redacted>",
+      "kind": "dispatch_complete",
+      "payload_json": "{\"kind\": \"dispatch_complete\", \"agent\": \"temperament-name-worker\", \"dispatch_id\": \"<dispatch_id>\"}",
+      "sequence": 11,
+      "session_id": "<redacted>",
+      "team_id": "name-a-puppy"
+    },
+    {
+      "agent_id": "temperament-name-worker",
+      "dispatch_id": "<redacted>",
+      "emitted_at": "<ts>+00:00",
+      "event_id": "<redacted>",
+      "kind": "dispatch_start",
+      "payload_json": "{\"kind\": \"dispatch_start\", \"agent\": \"temperament-name-worker\", \"dispatch_id\": \"<dispatch_id>\"}",
+      "sequence": 8,
+      "session_id": "<redacted>",
+      "team_id": "name-a-puppy"
+    },
+    {
+      "agent_id": null,
+      "dispatch_id": null,
+      "emitted_at": "<ts>+00:00",
+      "event_id": "<redacted>",
+      "kind": "state_enter",
+      "payload_json": "{\"state\": \"aggregate\"}",
+      "sequence": 12,
+      "session_id": "<redacted>",
+      "team_id": "name-a-puppy"
+    },
+    {
+      "agent_id": null,
+      "dispatch_id": null,
+      "emitted_at": "<ts>+00:00",
+      "event_id": "<redacted>",
+      "kind": "state_enter",
+      "payload_json": "{\"state\": \"dispatch_specialists\"}",
+      "sequence": 5,
+      "session_id": "<redacted>",
+      "team_id": "name-a-puppy"
+    },
+    {
+      "agent_id": null,
+      "dispatch_id": null,
+      "emitted_at": "<ts>+00:00",
+      "event_id": "<redacted>",
+      "kind": "state_enter",
+      "payload_json": "{\"state\": \"done\"}",
+      "sequence": 16,
+      "session_id": "<redacted>",
+      "team_id": "name-a-puppy"
+    },
+    {
+      "agent_id": null,
+      "dispatch_id": null,
+      "emitted_at": "<ts>+00:00",
+      "event_id": "<redacted>",
+      "kind": "state_enter",
+      "payload_json": "{\"state\": \"gather_traits\"}",
+      "sequence": 2,
+      "session_id": "<redacted>",
+      "team_id": "name-a-puppy"
+    },
+    {
+      "agent_id": null,
+      "dispatch_id": null,
+      "emitted_at": "<ts>+00:00",
+      "event_id": "<redacted>",
+      "kind": "state_enter",
+      "payload_json": "{\"state\": \"present\"}",
+      "sequence": 15,
+      "session_id": "<redacted>",
+      "team_id": "name-a-puppy"
+    },
+    {
+      "agent_id": null,
+      "dispatch_id": null,
+      "emitted_at": "<ts>+00:00",
+      "event_id": "<redacted>",
+      "kind": "state_enter",
+      "payload_json": "{\"state\": \"start\"}",
+      "sequence": 1,
+      "session_id": "<redacted>",
+      "team_id": "name-a-puppy"
+    }
+  ],
+  "finding": [
+    {
+      "body": "Biscuit",
+      "finding_id": "<redacted>",
+      "kind": "candidate",
+      "result_id": "<redacted>",
+      "severity": "info",
+      "source_artifact": null
+    },
+    {
+      "body": "Daisy",
+      "finding_id": "<redacted>",
+      "kind": "candidate",
+      "result_id": "<redacted>",
+      "severity": "info",
+      "source_artifact": null
+    },
+    {
+      "body": "Dash",
+      "finding_id": "<redacted>",
+      "kind": "candidate",
+      "result_id": "<redacted>",
+      "severity": "info",
+      "source_artifact": null
+    },
+    {
+      "body": "Luna",
+      "finding_id": "<redacted>",
+      "kind": "candidate",
+      "result_id": "<redacted>",
+      "severity": "info",
+      "source_artifact": null
+    },
+    {
+      "body": "Ollie",
+      "finding_id": "<redacted>",
+      "kind": "candidate",
+      "result_id": "<redacted>",
+      "severity": "info",
+      "source_artifact": null
+    },
+    {
+      "body": "Rex",
+      "finding_id": "<redacted>",
+      "kind": "candidate",
+      "result_id": "<redacted>",
+      "severity": "info",
+      "source_artifact": null
+    },
+    {
+      "body": "River",
+      "finding_id": "<redacted>",
+      "kind": "candidate",
+      "result_id": "<redacted>",
+      "severity": "info",
+      "source_artifact": null
+    },
+    {
+      "body": "Sage",
+      "finding_id": "<redacted>",
+      "kind": "candidate",
+      "result_id": "<redacted>",
+      "severity": "info",
+      "source_artifact": null
+    },
+    {
+      "body": "Scout",
+      "finding_id": "<redacted>",
+      "kind": "candidate",
+      "result_id": "<redacted>",
+      "severity": "info",
+      "source_artifact": null
+    }
+  ],
+  "gate": [
+    {
+      "category": "confirm",
+      "created_at": "<redacted>",
+      "gate_id": "<redacted>",
+      "options_json": "[\"accept\", \"reject\", \"refine\"]",
+      "resolved_at": "<redacted>",
+      "session_id": "<redacted>",
+      "team_id": "name-a-puppy",
+      "verdict": "accept"
+    }
+  ],
+  "message": [
+    {
+      "body": "Let's find a name for your puppy.",
+      "created_at": "<redacted>",
+      "direction": "out",
+      "message_id": "<redacted>",
+      "session_id": "<redacted>",
+      "team_id": "name-a-puppy",
+      "type": "notification"
+    },
+    {
+      "body": "Tell me about your puppy \u2014 breed, lifestyle, temperament.",
+      "created_at": "<redacted>",
+      "direction": "out",
+      "message_id": "<redacted>",
+      "session_id": "<redacted>",
+      "team_id": "name-a-puppy",
+      "type": "question"
+    },
+    {
+      "body": "Top candidate names:\n1. Luna\n2. Scout\n3. Rex\n4. Daisy\n5. Biscuit",
+      "created_at": "<redacted>",
+      "direction": "out",
+      "message_id": "<redacted>",
+      "session_id": "<redacted>",
+      "team_id": "name-a-puppy",
+      "type": "notification"
+    }
+  ],
+  "request": [],
+  "result": [
+    {
+      "created_at": "<redacted>",
+      "passed": 1,
+      "result_id": "<redacted>",
+      "session_id": "<redacted>",
+      "specialist_id": "breed",
+      "summary_json": "{\"findings\": [{\"kind\": \"candidate\", \"severity\": \"info\", \"body\": \"Rex\"}, {\"kind\": \"candidate\", \"severity\": \"info\", \"body\": \"Dash\"}, {\"kind\": \"candidate\", \"severity\": \"info\", \"body\": \"Biscuit\"}]}",
+      "team_id": "name-a-puppy"
+    },
+    {
+      "created_at": "<redacted>",
+      "passed": 1,
+      "result_id": "<redacted>",
+      "session_id": "<redacted>",
+      "specialist_id": "lifestyle",
+      "summary_json": "{\"findings\": [{\"kind\": \"candidate\", \"severity\": \"info\", \"body\": \"Scout\"}, {\"kind\": \"candidate\", \"severity\": \"info\", \"body\": \"River\"}, {\"kind\": \"candidate\", \"severity\": \"info\", \"body\": \"Sage\"}]}",
+      "team_id": "name-a-puppy"
+    },
+    {
+      "created_at": "<redacted>",
+      "passed": 1,
+      "result_id": "<redacted>",
+      "session_id": "<redacted>",
+      "specialist_id": "temperament",
+      "summary_json": "{\"findings\": [{\"kind\": \"candidate\", \"severity\": \"info\", \"body\": \"Luna\"}, {\"kind\": \"candidate\", \"severity\": \"info\", \"body\": \"Daisy\"}, {\"kind\": \"candidate\", \"severity\": \"info\", \"body\": \"Ollie\"}]}",
+      "team_id": "name-a-puppy"
+    }
+  ],
+  "session": [
+    {
+      "ended_at": "<redacted>",
+      "initial_team_id": "name-a-puppy",
+      "metadata_json": "{}",
+      "session_id": "<redacted>",
+      "started_at": "<redacted>",
+      "status": "completed"
+    }
+  ],
+  "state": [
+    {
+      "entered_at": "<redacted>",
+      "exited_at": "<redacted>",
+      "node_id": "<redacted>",
+      "parent_node_id": "<redacted>",
+      "session_id": "<redacted>",
+      "state_name": "specialist:breed",
+      "status": "completed",
+      "team_id": "name-a-puppy"
+    },
+    {
+      "entered_at": "<redacted>",
+      "exited_at": "<redacted>",
+      "node_id": "<redacted>",
+      "parent_node_id": "<redacted>",
+      "session_id": "<redacted>",
+      "state_name": "specialist:lifestyle",
+      "status": "completed",
+      "team_id": "name-a-puppy"
+    },
+    {
+      "entered_at": "<redacted>",
+      "exited_at": "<redacted>",
+      "node_id": "<redacted>",
+      "parent_node_id": "<redacted>",
+      "session_id": "<redacted>",
+      "state_name": "specialist:temperament",
+      "status": "completed",
+      "team_id": "name-a-puppy"
+    },
+    {
+      "entered_at": "<redacted>",
+      "exited_at": "<redacted>",
+      "node_id": "<redacted>",
+      "parent_node_id": "<redacted>",
+      "session_id": "<redacted>",
+      "state_name": "specialty:breed-name-suggester",
+      "status": "completed",
+      "team_id": "name-a-puppy"
+    },
+    {
+      "entered_at": "<redacted>",
+      "exited_at": "<redacted>",
+      "node_id": "<redacted>",
+      "parent_node_id": "<redacted>",
+      "session_id": "<redacted>",
+      "state_name": "specialty:lifestyle-name-suggester",
+      "status": "completed",
+      "team_id": "name-a-puppy"
+    },
+    {
+      "entered_at": "<redacted>",
+      "exited_at": "<redacted>",
+      "node_id": "<redacted>",
+      "parent_node_id": "<redacted>",
+      "session_id": "<redacted>",
+      "state_name": "specialty:temperament-name-suggester",
+      "status": "completed",
+      "team_id": "name-a-puppy"
+    },
+    {
+      "entered_at": "<redacted>",
+      "exited_at": "<redacted>",
+      "node_id": "<redacted>",
+      "parent_node_id": null,
+      "session_id": "<redacted>",
+      "state_name": "aggregate",
+      "status": "completed",
+      "team_id": "name-a-puppy"
+    },
+    {
+      "entered_at": "<redacted>",
+      "exited_at": "<redacted>",
+      "node_id": "<redacted>",
+      "parent_node_id": null,
+      "session_id": "<redacted>",
+      "state_name": "dispatch_specialists",
+      "status": "completed",
+      "team_id": "name-a-puppy"
+    },
+    {
+      "entered_at": "<redacted>",
+      "exited_at": "<redacted>",
+      "node_id": "<redacted>",
+      "parent_node_id": null,
+      "session_id": "<redacted>",
+      "state_name": "done",
+      "status": "completed",
+      "team_id": "name-a-puppy"
+    },
+    {
+      "entered_at": "<redacted>",
+      "exited_at": "<redacted>",
+      "node_id": "<redacted>",
+      "parent_node_id": null,
+      "session_id": "<redacted>",
+      "state_name": "gather_traits",
+      "status": "completed",
+      "team_id": "name-a-puppy"
+    },
+    {
+      "entered_at": "<redacted>",
+      "exited_at": "<redacted>",
+      "node_id": "<redacted>",
+      "parent_node_id": null,
+      "session_id": "<redacted>",
+      "state_name": "present",
+      "status": "completed",
+      "team_id": "name-a-puppy"
+    },
+    {
+      "entered_at": "<redacted>",
+      "exited_at": "<redacted>",
+      "node_id": "<redacted>",
+      "parent_node_id": null,
+      "session_id": "<redacted>",
+      "state_name": "start",
+      "status": "completed",
+      "team_id": "name-a-puppy"
+    }
+  ],
+  "task": []
+}

@@ -7,3 +7,8 @@ testpaths = ["testing/unit/tests", "testing/unit/harness", "testing/functional/t
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
+markers = [
+    "stress: opt-in stress tests; run with `pytest -m stress`",
+]
+# Default run excludes stress suites. Run them explicitly with `-m stress`.
+addopts = "-m 'not stress'"
