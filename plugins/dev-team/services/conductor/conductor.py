@@ -37,6 +37,7 @@ from .playbook.types import (
     RespondToRequest,
     SendRequest,
     WaitForUserInput,
+    WriteProjectResource,
 )
 from .specialist_runner import run_specialist
 from .team_lead import TeamLead
@@ -228,6 +229,41 @@ class Conductor:
             return
         if isinstance(action, SendRequest):
             await self._send_request(action)
+            return
+        if isinstance(action, WriteProjectResource):
+            if self._current_request is None:
+                raise RuntimeError(
+                    "WriteProjectResource is only valid inside a handler state"
+                )
+            kwargs = dict(self._current_request.input_json)
+            team_for_row = self._active_team_id
+            if action.resource_type == "schedule":
+                row = await self._arb.create_schedule_item(
+                    session_id=self._session_id,
+                    team_id=team_for_row,
+                    **kwargs,
+                )
+            elif action.resource_type == "todo":
+                row = await self._arb.create_todo_item(
+                    session_id=self._session_id,
+                    team_id=team_for_row,
+                    **kwargs,
+                )
+            elif action.resource_type == "decision":
+                row = await self._arb.create_decision_item(
+                    session_id=self._session_id,
+                    team_id=team_for_row,
+                    **kwargs,
+                )
+            else:
+                raise ValueError(
+                    f"Unknown project resource type: {action.resource_type!r}"
+                )
+            # Strip session_id from the response so callers don't need UUID handling.
+            response_row = {k: v for k, v in row.items() if k != "session_id"}
+            await self._arb.complete_request(
+                self._current_request.request_id, response_row
+            )
             return
         if isinstance(action, RespondToRequest):
             if self._current_request is None:

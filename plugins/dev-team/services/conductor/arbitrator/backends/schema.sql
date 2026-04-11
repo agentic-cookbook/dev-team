@@ -121,3 +121,51 @@ CREATE TABLE IF NOT EXISTS request (
 );
 CREATE INDEX IF NOT EXISTS idx_request_session_status_enqueued
     ON request(session_id, status, enqueued_at);
+
+-- ---------------------------------------------------------------------------
+-- Project-management resources (absorbed from project-storage-provider,
+-- spec §6.1). Minimal columns for step 4: only the fields a future query
+-- would WHERE/ORDER BY. No blob columns.
+-- ---------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS schedule (
+    schedule_id    TEXT PRIMARY KEY,
+    session_id     TEXT NOT NULL,
+    team_id        TEXT NOT NULL,
+    milestone_name TEXT NOT NULL,
+    target_date    TEXT,
+    status         TEXT NOT NULL,
+    creation_date  TEXT NOT NULL,
+    FOREIGN KEY (session_id) REFERENCES session(session_id)
+);
+CREATE INDEX IF NOT EXISTS idx_schedule_session_team
+    ON schedule(session_id, team_id);
+
+CREATE TABLE IF NOT EXISTS todo (
+    todo_id        TEXT PRIMARY KEY,
+    session_id     TEXT NOT NULL,
+    team_id        TEXT NOT NULL,
+    title          TEXT NOT NULL,
+    status         TEXT NOT NULL,
+    owner          TEXT,
+    milestone_name TEXT,
+    creation_date  TEXT NOT NULL,
+    FOREIGN KEY (session_id) REFERENCES session(session_id)
+);
+CREATE INDEX IF NOT EXISTS idx_todo_session_team
+    ON todo(session_id, team_id);
+CREATE INDEX IF NOT EXISTS idx_todo_session_status
+    ON todo(session_id, status);
+
+CREATE TABLE IF NOT EXISTS decision (
+    decision_id    TEXT PRIMARY KEY,
+    session_id     TEXT NOT NULL,
+    team_id        TEXT NOT NULL,
+    title          TEXT NOT NULL,
+    rationale      TEXT NOT NULL,
+    decided_by     TEXT,
+    creation_date  TEXT NOT NULL,
+    FOREIGN KEY (session_id) REFERENCES session(session_id)
+);
+CREATE INDEX IF NOT EXISTS idx_decision_session_team
+    ON decision(session_id, team_id);

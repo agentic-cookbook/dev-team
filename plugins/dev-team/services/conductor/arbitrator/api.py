@@ -601,6 +601,103 @@ class Arbitrator:
         )
         return _row_to_request(row, None) if row else None
 
+    # ---- Project-management resources (spec §6.1) ------------------------
+
+    async def create_schedule_item(
+        self,
+        session_id: UUID,
+        team_id: str,
+        milestone_name: str,
+        status: str,
+        target_date: str | None = None,
+    ) -> dict[str, Any]:
+        schedule_id = _new_id("sched")
+        row = {
+            "schedule_id": schedule_id,
+            "session_id": str(session_id),
+            "team_id": team_id,
+            "milestone_name": milestone_name,
+            "target_date": target_date,
+            "status": status,
+            "creation_date": _utcnow_iso(),
+        }
+        await self._storage.insert("schedule", row)
+        return row
+
+    async def list_schedule_items(
+        self, session_id: UUID, team_id: str | None = None
+    ) -> list[dict[str, Any]]:
+        where: dict[str, Any] = {"session_id": str(session_id)}
+        if team_id is not None:
+            where["team_id"] = team_id
+        return await self._storage.fetch_all(
+            "schedule", where=where, order_by="creation_date"
+        )
+
+    async def create_todo_item(
+        self,
+        session_id: UUID,
+        team_id: str,
+        title: str,
+        status: str,
+        owner: str | None = None,
+        milestone_name: str | None = None,
+    ) -> dict[str, Any]:
+        todo_id = _new_id("todo")
+        row = {
+            "todo_id": todo_id,
+            "session_id": str(session_id),
+            "team_id": team_id,
+            "title": title,
+            "status": status,
+            "owner": owner,
+            "milestone_name": milestone_name,
+            "creation_date": _utcnow_iso(),
+        }
+        await self._storage.insert("todo", row)
+        return row
+
+    async def list_todo_items(
+        self, session_id: UUID, team_id: str | None = None
+    ) -> list[dict[str, Any]]:
+        where: dict[str, Any] = {"session_id": str(session_id)}
+        if team_id is not None:
+            where["team_id"] = team_id
+        return await self._storage.fetch_all(
+            "todo", where=where, order_by="creation_date"
+        )
+
+    async def create_decision_item(
+        self,
+        session_id: UUID,
+        team_id: str,
+        title: str,
+        rationale: str,
+        decided_by: str | None = None,
+    ) -> dict[str, Any]:
+        decision_id = _new_id("dec")
+        row = {
+            "decision_id": decision_id,
+            "session_id": str(session_id),
+            "team_id": team_id,
+            "title": title,
+            "rationale": rationale,
+            "decided_by": decided_by,
+            "creation_date": _utcnow_iso(),
+        }
+        await self._storage.insert("decision", row)
+        return row
+
+    async def list_decision_items(
+        self, session_id: UUID, team_id: str | None = None
+    ) -> list[dict[str, Any]]:
+        where: dict[str, Any] = {"session_id": str(session_id)}
+        if team_id is not None:
+            where["team_id"] = team_id
+        return await self._storage.fetch_all(
+            "decision", where=where, order_by="creation_date"
+        )
+
 
 # ---------------------------------------------------------------------------
 # Row → dataclass helpers

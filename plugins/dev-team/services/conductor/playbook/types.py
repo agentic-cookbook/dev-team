@@ -80,6 +80,18 @@ class SendRequest(Action):
 
 
 @dataclass
+class WriteProjectResource(Action):
+    """Write a PM resource row from the active request's input_json.
+
+    Valid only inside a handler state. The conductor reads
+    `self._current_request.input_json` as kwargs for the matching
+    arbitrator.create_* method and responds with the inserted row.
+    """
+
+    resource_type: str  # "schedule" | "todo" | "decision"
+
+
+@dataclass
 class RespondToRequest(Action):
     """Complete the currently-handled request with a response payload.
 
