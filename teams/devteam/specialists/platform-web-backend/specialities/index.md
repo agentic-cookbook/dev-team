@@ -1,0 +1,26 @@
+# platform-web-backend — Specialities
+
+- [access-patterns-compliance](access-patterns-compliance.md) — 8 compliance checks — api-design-conventions, offline-behavior, retry-with-backo
+- [api-design](api-design.md) — REST conventions — lowercase-hyphenated plural-noun URLs, max 2-level nesting, n
+- [caching](caching.md) — Server sets correct Cache-Control — immutable for versioned assets, `private, ma
+- [content-security-policy](content-security-policy.md) — Server sets CSP header on all HTML responses; `default-src 'none'` baseline; non
+- [cors](cors.md) — Explicit static allowlist of origins, never reflect Origin, no wildcard with cre
+- [error-responses](error-responses.md) — RFC 9457 Problem Details format with `Content-Type: application/problem+json`; m
+- [offline-and-connectivity](offline-and-connectivity.md) — Server supports ETag/version numbers for conflict detection (409 with both versi
+- [pagination](pagination.md) — Cursor pagination by default (`next_cursor`, `has_more`) for most APIs; offset (
+- [python-dashboard-display-only](python-dashboard-display-only.md) — Dashboard service is a generic display layer — no git, file, or roadmap-structur
+- [python-database](python-database.md) — SQLite with WAL mode (`PRAGMA journal_mode=WAL`), `sqlite3` standard library (no
+- [python-deterministic-ids](python-deterministic-ids.md) — IDs taken from YAML frontmatter UUID, never `uuid.uuid4()` or random generation;
+- [python-file-paths](python-file-paths.md) — `pathlib.Path` for all path operations, never `os.path` string concatenation; `P
+- [python-no-external-deps](python-no-external-deps.md) — Core library (`roadmap_lib`) uses standard library only — no PyYAML, requests, o
+- [python-shell-scripts](python-shell-scripts.md) — `main()` functions delegate to named functions — no inline logic in main; compos
+- [python-type-hints](python-type-hints.md) — Type hints welcome but not required; Python 3.9 compatibility — use `from __futu
+- [python-use-roadmaplib](python-use-roadmaplib.md) — Use `roadmap_lib` functions for all roadmap operations (reading state, parsing f
+- [python-web-services](python-web-services.md) — Flask for web services; REST API with SSE or polling for live updates; no other 
+- [python-yaml-frontmatter](python-yaml-frontmatter.md) — Use `roadmap_lib`'s built-in frontmatter parser for `---` delimited frontmatter;
+- [rate-limiting](rate-limiting.md) — Emit `Retry-After` header on 429 responses; expose `RateLimit-Remaining`/`RateLi
+- [real-time-communication](real-time-communication.md) — SSE endpoints for server-push (notifications, live feeds, progress); WebSocket o
+- [reliability-compliance](reliability-compliance.md) — 8 compliance checks — error-recovery (retry transient failures), graceful-degrad
+- [retry-and-resilience](retry-and-resilience.md) — Idempotent endpoints (GET, PUT, DELETE) safe to retry; POST endpoints idempotenc
+- [security-compliance](security-compliance.md) — 12 compliance checks — secure-authentication (OAuth/PKCE), server-side-authoriza
+- [timeouts](timeouts.md) — All outbound HTTP calls have connection timeout (10s), read timeout (30s), total

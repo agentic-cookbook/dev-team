@@ -1,0 +1,23 @@
+# Specialists
+
+- [accessibility](accessibility/specialist.md) — Platform accessibility APIs, screen readers, keyboard navigation, font scaling, 
+- [claude-code](claude-code/specialist.md) — Claude Code plugin architecture, skill/rule/agent authoring and linting, perform
+- [code-quality](code-quality/specialist.md) — Simplicity, deletability, explicitness, scope discipline, linting, atomic commit
+- [codebase-decomposition](codebase-decomposition/specialist.md) — Bottom-up codebase analysis, scope discovery, boundary detection, unit character
+- [data-persistence](data-persistence/specialist.md) — Storage, sync, conflict resolution, migration, offline data, consistency models,
+- [development-process](development-process/specialist.md) — Feature development cycle, iterative delivery, technical debt, feature flags, A/
+- [devops-observability](devops-observability/specialist.md) — Structured logging, analytics instrumentation, tight feedback loops, performance
+- [localization-i18n](localization-i18n/specialist.md) — String externalization, RTL support, locale-aware formatting, text expansion, Un
+- [networking-api](networking-api/specialist.md) — REST conventions, HTTP semantics, offline-first, caching, retry/resilience, time
+- [platform-android](platform-android/specialist.md) — Kotlin, Material Design, font scaling, Play Store, Jetpack libraries, Android ar
+- [platform-database](platform-database/specialist.md) — Schema design, migrations, indexing, query optimization, transactions, concurren
+- [platform-ios-apple](platform-ios-apple/specialist.md) — UIKit, AppKit, SwiftUI (where Apple requires it), Dynamic Type, App Store, Human
+- [platform-web-backend](platform-web-backend/specialist.md) — API design, networking resilience (retry, timeouts, rate limiting, real-time), s
+- [platform-web-frontend](platform-web-frontend/specialist.md) — HTML/CSS/JS implementation of UI guidelines, accessibility (WCAG), responsive an
+- [platform-windows](platform-windows/specialist.md) — WinUI 3, Fluent Design, MSIX packaging, High DPI/display scaling, MVVM with Comm
+- [recipe](recipe/specialist.md) — Recipe quality, template conformance, behavioral requirement rigor, cookbook com
+- [reliability](reliability/specialist.md) — Fail fast, idempotency, error categorization, retry strategies, timeout handling
+- [security](security/specialist.md) — Auth, transport security, token handling, input validation, secure storage, sens
+- [software-architecture](software-architecture/specialist.md) — Composition, dependency injection, boundaries, separation of concerns, modularit
+- [testing-qa](testing-qa/specialist.md) — Test pyramid distribution, isolation, determinism, unit test patterns, test doub
+- [ui-ux-design](ui-ux-design/specialist.md) — Layout, color, typography, animation, forms, visual hierarchy, feedback patterns

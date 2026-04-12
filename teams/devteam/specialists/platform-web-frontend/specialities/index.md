@@ -1,0 +1,29 @@
+# platform-web-frontend — Specialities
+
+- [accessibility](accessibility.md) — WCAG 2.1 AA minimum; ARIA roles, states, properties (WAI-ARIA APG); keyboard nav
+- [always-show-progress](always-show-progress.md) — Implement determinate progress bars (with percentage) and indeterminate spinners
+- [animation-motion](animation-motion.md) — CSS transitions and JS animations use correct duration ranges per interaction ty
+- [api-design-client](api-design-client.md) — Client calls match REST conventions — correct HTTP methods, no verb-in-URL, prop
+- [caching](caching.md) — Immutable versioned assets use `Cache-Control: public, max-age=31536000, immutab
+- [color](color.md) — CSS custom properties (not hard-coded hex), semantic color tokens per design sys
+- [content-security-policy](content-security-policy.md) — Implement `default-src 'none'` baseline, nonce-based script-src with strict-dyna
+- [cors](cors.md) — Never reflect Origin header; static allowlist of permitted origins; no wildcard 
+- [data-display](data-display.md) — Implement correct HTML patterns — `<ul>/<li>` for lists, `<table>` with sortable
+- [error-responses-client](error-responses-client.md) — Parse RFC 9457 Problem Details (`application/problem+json`); display `detail` fi
+- [feedback-patterns](feedback-patterns.md) — Implement toast/snackbar (auto-dismiss 3-5s), inline alerts/banners, and modal d
+- [form-design](form-design.md) — Single-column layout, `<label>` top-aligned or floating, blur-event validation (
+- [iconography](iconography.md) — Use SVG icons with accessible names (`aria-label` or `<title>`), consistent size
+- [layout](layout.md) — CSS Grid/Flexbox with responsive breakpoints via media queries (no hard-coded wi
+- [offline-and-connectivity](offline-and-connectivity.md) — Optimistic updates for most cases; outbox queue for mutations during offline; cl
+- [pagination-client](pagination-client.md) — Client handles cursor-based pagination (`next_cursor`, `has_more`) and offset-ba
+- [platform-compliance](platform-compliance.md) — Web platform: WCAG 2.1 AA design language, native browser controls preferred, WC
+- [platform-design-languages](platform-design-languages.md) — Web target follows WCAG 2.1 and browser/OS design conventions; use platform-appr
+- [rate-limiting-client](rate-limiting-client.md) — Honor `Retry-After` header on 429; track `RateLimit-Remaining` and throttle proa
+- [real-time-communication](real-time-communication.md) — Prefer SSE (`EventSource`) for server-push (notifications, live feeds, progress)
+- [retry-and-resilience-client](retry-and-resilience-client.md) — Exponential backoff with full jitter for transient failures (408, 429, 500, 502,
+- [spacing](spacing.md) — CSS custom properties or design tokens for spacing on 4px scale (4/8/12/16/24/32
+- [state-design](state-design.md) — Implement all four states in component templates — loading (skeleton/spinner), e
+- [timeouts-client](timeouts-client.md) — All fetch/XHR calls have connection timeout (10s), response timeout (30s), total
+- [touch-click-targets](touch-click-targets.md) — Web minimum 24x24 CSS px (target 44x44), pad hit area beyond visual element via 
+- [typography](typography.md) — System font stack, body 16px default, minimum 11-12px captions, line-height 1.4-
+- [visual-hierarchy](visual-hierarchy.md) — Single primary CTA per screen with `type="submit"` or strong visual weight; head

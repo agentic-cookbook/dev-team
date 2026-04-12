@@ -1,0 +1,24 @@
+# platform-database — Specialities
+
+- [access-pattern-analysis](access-pattern-analysis.md) — Evaluates query patterns, read/write tradeoffs, index coverage, and batch sizing
+- [backup-and-recovery](backup-and-recovery.md) — Evaluates backup strategies, Litestream integration, integrity checks, recovery 
+- [clock-systems](clock-systems.md) — Physical clocks, Lamport timestamps, vector clocks, Hybrid Logical Clocks, serve
+- [conflict-resolution](conflict-resolution.md) — Last-Write-Wins, server/client-wins policies, field-level merge, CRDTs, manual r
+- [constraints-and-validation](constraints-and-validation.md) — Evaluates CHECK constraints, boolean/enum enforcement patterns, and NULL truthin
+- [data-types](data-types.md) — Evaluates SQLite type affinity, STRICT tables, cross-database type mapping, and 
+- [foreign-keys](foreign-keys.md) — Evaluates foreign key enforcement—PRAGMA foreign_keys configuration, ON DELETE/U
+- [indexing](indexing.md) — Evaluates B-tree fundamentals, partial/expression/composite indexes, covering in
+- [json-columns](json-columns.md) — Evaluates JSON column usage, extraction patterns, indexing strategies, and when 
+- [naming-conventions](naming-conventions.md) — Evaluates database naming conventions—snake_case identifiers, table naming patte
+- [normalization-and-denormalization](normalization-and-denormalization.md) — Evaluates schema normalization (3NF baseline), selective denormalization with me
+- [offline-first-architecture](offline-first-architecture.md) — WAL mode, operation queues, optimistic UI, rollback handling, offline migrations
+- [primary-keys](primary-keys.md) — Evaluates primary key strategy—INTEGER PRIMARY KEY semantics, AUTOINCREMENT trad
+- [query-optimization](query-optimization.md) — Evaluates SQLite query planner behavior, query rewriting, subquery elimination, 
+- [relationships](relationships.md) — Evaluates relationship patterns—one-to-many via FK, many-to-many join tables, po
+- [schema-evolution](schema-evolution.md) — Evaluates migration strategies, ALTER TABLE compatibility, backwards-compatible 
+- [sync-engine-design](sync-engine-design.md) — Sync orchestrator layers, Syncable interface, sync cycle steps, scheduling, snap
+- [sync-protocol](sync-protocol.md) — Push/pull/bidirectional sync, incremental syncing, idempotent operations, outbox
+- [sync-schema-design](sync-schema-design.md) — Dual schema design, UUID keys, soft deletes, dirty tracking, versioning for offl
+- [sync-tooling](sync-tooling.md) — Evaluating sync tools — SQLite Session Extension, cr-sqlite, Litestream, Electri
+- [testing](testing.md) — Evaluates test database strategy, migration testing, sync logic testing, and con
+- [transactions-and-concurrency](transactions-and-concurrency.md) — Evaluates WAL mode, journal modes, transaction patterns, connection strategies, 
