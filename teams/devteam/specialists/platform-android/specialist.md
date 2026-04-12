@@ -14,17 +14,17 @@ Kotlin, Material Design, font scaling, Play Store, Jetpack libraries, Android ar
 
 ## Manifest
 
-- specialty-teams/platform-android/background-tasks.md
-- specialty-teams/platform-android/deep-linking.md
-- specialty-teams/platform-android/font-scaling.md
-- specialty-teams/platform-android/handoff-and-continuity.md
-- specialty-teams/platform-android/native-controls.md
-- specialty-teams/platform-android/notifications.md
-- specialty-teams/platform-android/platform-compliance.md
-- specialty-teams/platform-android/search-integration.md
-- specialty-teams/platform-android/share-and-inter-app-data.md
-- specialty-teams/platform-android/shortcuts-and-automation.md
-- specialty-teams/platform-android/widgets-and-glanceable-surfaces.md
+- specialities/platform-android/background-tasks.md
+- specialities/platform-android/deep-linking.md
+- specialities/platform-android/font-scaling.md
+- specialities/platform-android/handoff-and-continuity.md
+- specialities/platform-android/native-controls.md
+- specialities/platform-android/notifications.md
+- specialities/platform-android/platform-compliance.md
+- specialities/platform-android/search-integration.md
+- specialities/platform-android/share-and-inter-app-data.md
+- specialities/platform-android/shortcuts-and-automation.md
+- specialities/platform-android/widgets-and-glanceable-surfaces.md
 
 ## Exploratory Prompts
 

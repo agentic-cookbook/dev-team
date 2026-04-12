@@ -15,24 +15,24 @@ WinUI 3, Fluent Design, MSIX packaging, High DPI/display scaling, MVVM with Comm
 
 ## Manifest
 
-- specialty-teams/platform-windows/background-tasks.md
-- specialty-teams/platform-windows/csharp-naming.md
-- specialty-teams/platform-windows/deep-linking.md
-- specialty-teams/platform-windows/dependency-injection.md
-- specialty-teams/platform-windows/design-time-data.md
-- specialty-teams/platform-windows/fluent-design.md
-- specialty-teams/platform-windows/handoff-and-continuity-windows.md
-- specialty-teams/platform-windows/high-dpi-display-scaling.md
-- specialty-teams/platform-windows/msix-packaging.md
-- specialty-teams/platform-windows/native-controls.md
-- specialty-teams/platform-windows/notifications-windows.md
-- specialty-teams/platform-windows/nullable-reference-types.md
-- specialty-teams/platform-windows/platform-compliance.md
-- specialty-teams/platform-windows/search-integration-windows.md
-- specialty-teams/platform-windows/share-and-inter-app-data-windows.md
-- specialty-teams/platform-windows/shortcuts-and-automation-windows.md
-- specialty-teams/platform-windows/theming.md
-- specialty-teams/platform-windows/windows-architecture.md
+- specialities/platform-windows/background-tasks.md
+- specialities/platform-windows/csharp-naming.md
+- specialities/platform-windows/deep-linking.md
+- specialities/platform-windows/dependency-injection.md
+- specialities/platform-windows/design-time-data.md
+- specialities/platform-windows/fluent-design.md
+- specialities/platform-windows/handoff-and-continuity-windows.md
+- specialities/platform-windows/high-dpi-display-scaling.md
+- specialities/platform-windows/msix-packaging.md
+- specialities/platform-windows/native-controls.md
+- specialities/platform-windows/notifications-windows.md
+- specialities/platform-windows/nullable-reference-types.md
+- specialities/platform-windows/platform-compliance.md
+- specialities/platform-windows/search-integration-windows.md
+- specialities/platform-windows/share-and-inter-app-data-windows.md
+- specialities/platform-windows/shortcuts-and-automation-windows.md
+- specialities/platform-windows/theming.md
+- specialities/platform-windows/windows-architecture.md
 
 ## Exploratory Prompts
 

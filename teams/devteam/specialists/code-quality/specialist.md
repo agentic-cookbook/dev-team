@@ -18,14 +18,14 @@ Simplicity, deletability, explicitness, scope discipline, linting, atomic commit
 
 ## Manifest
 
-- specialty-teams/code-quality/atomic-commits.md
-- specialty-teams/code-quality/best-practices-compliance.md
-- specialty-teams/code-quality/bulk-operation-verification.md
-- specialty-teams/code-quality/design-for-deletion.md
-- specialty-teams/code-quality/explicit-over-implicit.md
-- specialty-teams/code-quality/linting.md
-- specialty-teams/code-quality/scope-discipline.md
-- specialty-teams/code-quality/simplicity.md
+- specialities/code-quality/atomic-commits.md
+- specialities/code-quality/best-practices-compliance.md
+- specialities/code-quality/bulk-operation-verification.md
+- specialities/code-quality/design-for-deletion.md
+- specialities/code-quality/explicit-over-implicit.md
+- specialities/code-quality/linting.md
+- specialities/code-quality/scope-discipline.md
+- specialities/code-quality/simplicity.md
 
 ## Exploratory Prompts
 

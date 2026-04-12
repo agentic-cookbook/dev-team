@@ -16,12 +16,12 @@ Feature development cycle, iterative delivery, technical debt, feature flags, A/
 
 ## Manifest
 
-- specialty-teams/development-process/ab-testing.md
-- specialty-teams/development-process/debug-mode.md
-- specialty-teams/development-process/feature-flags.md
-- specialty-teams/development-process/make-it-work.md
-- specialty-teams/development-process/small-reversible-decisions.md
-- specialty-teams/development-process/yagni.md
+- specialities/development-process/ab-testing.md
+- specialities/development-process/debug-mode.md
+- specialities/development-process/feature-flags.md
+- specialities/development-process/make-it-work.md
+- specialities/development-process/small-reversible-decisions.md
+- specialities/development-process/yagni.md
 
 ## Exploratory Prompts
 

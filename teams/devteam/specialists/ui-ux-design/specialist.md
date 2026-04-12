@@ -13,23 +13,23 @@ Layout, color, typography, animation, forms, visual hierarchy, feedback patterns
 
 ## Manifest
 
-- specialty-teams/ui-ux-design/always-show-progress.md
-- specialty-teams/ui-ux-design/animation-motion.md
-- specialty-teams/ui-ux-design/color.md
-- specialty-teams/ui-ux-design/data-display.md
-- specialty-teams/ui-ux-design/feedback-patterns.md
-- specialty-teams/ui-ux-design/form-design.md
-- specialty-teams/ui-ux-design/iconography.md
-- specialty-teams/ui-ux-design/layout.md
-- specialty-teams/ui-ux-design/least-astonishment.md
-- specialty-teams/ui-ux-design/platform-compliance.md
-- specialty-teams/ui-ux-design/platform-design-languages.md
-- specialty-teams/ui-ux-design/previews.md
-- specialty-teams/ui-ux-design/spacing.md
-- specialty-teams/ui-ux-design/state-design.md
-- specialty-teams/ui-ux-design/touch-click-targets.md
-- specialty-teams/ui-ux-design/typography.md
-- specialty-teams/ui-ux-design/visual-hierarchy.md
+- specialities/ui-ux-design/always-show-progress.md
+- specialities/ui-ux-design/animation-motion.md
+- specialities/ui-ux-design/color.md
+- specialities/ui-ux-design/data-display.md
+- specialities/ui-ux-design/feedback-patterns.md
+- specialities/ui-ux-design/form-design.md
+- specialities/ui-ux-design/iconography.md
+- specialities/ui-ux-design/layout.md
+- specialities/ui-ux-design/least-astonishment.md
+- specialities/ui-ux-design/platform-compliance.md
+- specialities/ui-ux-design/platform-design-languages.md
+- specialities/ui-ux-design/previews.md
+- specialities/ui-ux-design/spacing.md
+- specialities/ui-ux-design/state-design.md
+- specialities/ui-ux-design/touch-click-targets.md
+- specialities/ui-ux-design/typography.md
+- specialities/ui-ux-design/visual-hierarchy.md
 
 ## Exploratory Prompts
 

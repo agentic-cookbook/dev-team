@@ -18,14 +18,14 @@ Composition, dependency injection, boundaries, separation of concerns, modularit
 
 ## Manifest
 
-- specialty-teams/software-architecture/composition-over-inheritance.md
-- specialty-teams/software-architecture/concurrency-immutability.md
-- specialty-teams/software-architecture/concurrency.md
-- specialty-teams/software-architecture/dependency-injection.md
-- specialty-teams/software-architecture/manage-complexity-through-boundaries.md
-- specialty-teams/software-architecture/open-source-preference.md
-- specialty-teams/software-architecture/optimize-for-change.md
-- specialty-teams/software-architecture/separation-of-concerns.md
+- specialities/software-architecture/composition-over-inheritance.md
+- specialities/software-architecture/concurrency-immutability.md
+- specialities/software-architecture/concurrency.md
+- specialities/software-architecture/dependency-injection.md
+- specialities/software-architecture/manage-complexity-through-boundaries.md
+- specialities/software-architecture/open-source-preference.md
+- specialities/software-architecture/optimize-for-change.md
+- specialities/software-architecture/separation-of-concerns.md
 
 ## Exploratory Prompts
 

@@ -14,21 +14,21 @@ Auth, transport security, token handling, input validation, secure storage, sens
 
 ## Manifest
 
-- specialty-teams/security/authentication.md
-- specialty-teams/security/authorization.md
-- specialty-teams/security/content-security-policy.md
-- specialty-teams/security/cors.md
-- specialty-teams/security/dependency-security.md
-- specialty-teams/security/input-validation.md
-- specialty-teams/security/privacy-and-data-compliance.md
-- specialty-teams/security/privacy.md
-- specialty-teams/security/secure-storage.md
-- specialty-teams/security/security-compliance.md
-- specialty-teams/security/security-headers-checklist.md
-- specialty-teams/security/sensitive-data.md
-- specialty-teams/security/token-handling.md
-- specialty-teams/security/transport-security.md
-- specialty-teams/security/user-safety-compliance.md
+- specialities/security/authentication.md
+- specialities/security/authorization.md
+- specialities/security/content-security-policy.md
+- specialities/security/cors.md
+- specialities/security/dependency-security.md
+- specialities/security/input-validation.md
+- specialities/security/privacy-and-data-compliance.md
+- specialities/security/privacy.md
+- specialities/security/secure-storage.md
+- specialities/security/security-compliance.md
+- specialities/security/security-headers-checklist.md
+- specialities/security/sensitive-data.md
+- specialities/security/token-handling.md
+- specialities/security/transport-security.md
+- specialities/security/user-safety-compliance.md
 
 ## Exploratory Prompts
 

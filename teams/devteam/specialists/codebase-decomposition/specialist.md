@@ -37,18 +37,18 @@ Correctness of boundaries over speed of analysis. A missed dependency between sc
 - `guidelines/codebase-decomposition/cross-cutting-detection.md`
 
 ## Manifest
-- specialty-teams/codebase-decomposition/module-boundaries.md
-- specialty-teams/codebase-decomposition/interface-cohesion.md
-- specialty-teams/codebase-decomposition/dependency-clusters.md
-- specialty-teams/codebase-decomposition/system-dependencies.md
-- specialty-teams/codebase-decomposition/runtime-conditions.md
-- specialty-teams/codebase-decomposition/algorithmic-complexity.md
-- specialty-teams/codebase-decomposition/app-interactions.md
-- specialty-teams/codebase-decomposition/system-interactions.md
-- specialty-teams/codebase-decomposition/lifecycle-patterns.md
-- specialty-teams/codebase-decomposition/framework-conventions.md
-- specialty-teams/codebase-decomposition/purpose-classification.md
-- specialty-teams/codebase-decomposition/cross-cutting-detection.md
+- specialities/codebase-decomposition/module-boundaries.md
+- specialities/codebase-decomposition/interface-cohesion.md
+- specialities/codebase-decomposition/dependency-clusters.md
+- specialities/codebase-decomposition/system-dependencies.md
+- specialities/codebase-decomposition/runtime-conditions.md
+- specialities/codebase-decomposition/algorithmic-complexity.md
+- specialities/codebase-decomposition/app-interactions.md
+- specialities/codebase-decomposition/system-interactions.md
+- specialities/codebase-decomposition/lifecycle-patterns.md
+- specialities/codebase-decomposition/framework-conventions.md
+- specialities/codebase-decomposition/purpose-classification.md
+- specialities/codebase-decomposition/cross-cutting-detection.md
 
 ## Exploratory Prompts
 

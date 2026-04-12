@@ -11,18 +11,18 @@ Test pyramid distribution, isolation, determinism, unit test patterns, test doub
 
 ## Manifest
 
-- specialty-teams/testing-qa/flaky-test-prevention.md
-- specialty-teams/testing-qa/mutation-testing.md
-- specialty-teams/testing-qa/post-generation-verification.md
-- specialty-teams/testing-qa/properties-of-good-tests.md
-- specialty-teams/testing-qa/property-based-testing.md
-- specialty-teams/testing-qa/security-testing.md
-- specialty-teams/testing-qa/test-data.md
-- specialty-teams/testing-qa/test-doubles.md
-- specialty-teams/testing-qa/test-pyramid.md
-- specialty-teams/testing-qa/testing.md
-- specialty-teams/testing-qa/the-testing-workflow.md
-- specialty-teams/testing-qa/unit-test-patterns.md
+- specialities/testing-qa/flaky-test-prevention.md
+- specialities/testing-qa/mutation-testing.md
+- specialities/testing-qa/post-generation-verification.md
+- specialities/testing-qa/properties-of-good-tests.md
+- specialities/testing-qa/property-based-testing.md
+- specialities/testing-qa/security-testing.md
+- specialities/testing-qa/test-data.md
+- specialities/testing-qa/test-doubles.md
+- specialities/testing-qa/test-pyramid.md
+- specialities/testing-qa/testing.md
+- specialities/testing-qa/the-testing-workflow.md
+- specialities/testing-qa/unit-test-patterns.md
 
 ## Exploratory Prompts
 

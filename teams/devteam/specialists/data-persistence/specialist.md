@@ -14,10 +14,10 @@ Storage, sync, conflict resolution, migration, offline data, consistency models,
 
 ## Manifest
 
-- specialty-teams/data-persistence/idempotency.md
-- specialty-teams/data-persistence/immutability.md
-- specialty-teams/data-persistence/offline-and-connectivity.md
-- specialty-teams/data-persistence/reliability-compliance.md
+- specialities/data-persistence/idempotency.md
+- specialities/data-persistence/immutability.md
+- specialities/data-persistence/offline-and-connectivity.md
+- specialities/data-persistence/reliability-compliance.md
 
 ## Exploratory Prompts
 

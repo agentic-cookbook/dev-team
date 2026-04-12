@@ -17,13 +17,13 @@ Structured logging, analytics instrumentation, tight feedback loops, performance
 
 ## Manifest
 
-- specialty-teams/devops-observability/ab-testing.md
-- specialty-teams/devops-observability/analytics.md
-- specialty-teams/devops-observability/debug-mode.md
-- specialty-teams/devops-observability/feature-flags.md
-- specialty-teams/devops-observability/logging.md
-- specialty-teams/devops-observability/performance-compliance.md
-- specialty-teams/devops-observability/tight-feedback-loops.md
+- specialities/devops-observability/ab-testing.md
+- specialities/devops-observability/analytics.md
+- specialities/devops-observability/debug-mode.md
+- specialities/devops-observability/feature-flags.md
+- specialities/devops-observability/logging.md
+- specialities/devops-observability/performance-compliance.md
+- specialities/devops-observability/tight-feedback-loops.md
 
 ## Exploratory Prompts
 

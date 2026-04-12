@@ -13,17 +13,17 @@ REST conventions, HTTP semantics, offline-first, caching, retry/resilience, time
 
 ## Manifest
 
-- specialty-teams/networking-api/access-patterns-compliance.md
-- specialty-teams/networking-api/api-design.md
-- specialty-teams/networking-api/caching.md
-- specialty-teams/networking-api/error-responses.md
-- specialty-teams/networking-api/offline-and-connectivity.md
-- specialty-teams/networking-api/pagination.md
-- specialty-teams/networking-api/principle-of-least-astonishment.md
-- specialty-teams/networking-api/rate-limiting.md
-- specialty-teams/networking-api/real-time-communication.md
-- specialty-teams/networking-api/retry-and-resilience.md
-- specialty-teams/networking-api/timeouts.md
+- specialities/networking-api/access-patterns-compliance.md
+- specialities/networking-api/api-design.md
+- specialities/networking-api/caching.md
+- specialities/networking-api/error-responses.md
+- specialities/networking-api/offline-and-connectivity.md
+- specialities/networking-api/pagination.md
+- specialities/networking-api/principle-of-least-astonishment.md
+- specialities/networking-api/rate-limiting.md
+- specialities/networking-api/real-time-communication.md
+- specialities/networking-api/retry-and-resilience.md
+- specialities/networking-api/timeouts.md
 
 ## Exploratory Prompts
 

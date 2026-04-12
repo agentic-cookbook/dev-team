@@ -17,30 +17,30 @@ API design, networking resilience (retry, timeouts, rate limiting, real-time), s
 
 ## Manifest
 
-- specialty-teams/platform-web-backend/access-patterns-compliance.md
-- specialty-teams/platform-web-backend/api-design.md
-- specialty-teams/platform-web-backend/caching.md
-- specialty-teams/platform-web-backend/content-security-policy.md
-- specialty-teams/platform-web-backend/cors.md
-- specialty-teams/platform-web-backend/error-responses.md
-- specialty-teams/platform-web-backend/offline-and-connectivity.md
-- specialty-teams/platform-web-backend/pagination.md
-- specialty-teams/platform-web-backend/python-dashboard-display-only.md
-- specialty-teams/platform-web-backend/python-database.md
-- specialty-teams/platform-web-backend/python-deterministic-ids.md
-- specialty-teams/platform-web-backend/python-file-paths.md
-- specialty-teams/platform-web-backend/python-no-external-deps.md
-- specialty-teams/platform-web-backend/python-shell-scripts.md
-- specialty-teams/platform-web-backend/python-type-hints.md
-- specialty-teams/platform-web-backend/python-use-roadmaplib.md
-- specialty-teams/platform-web-backend/python-web-services.md
-- specialty-teams/platform-web-backend/python-yaml-frontmatter.md
-- specialty-teams/platform-web-backend/rate-limiting.md
-- specialty-teams/platform-web-backend/real-time-communication.md
-- specialty-teams/platform-web-backend/reliability-compliance.md
-- specialty-teams/platform-web-backend/retry-and-resilience.md
-- specialty-teams/platform-web-backend/security-compliance.md
-- specialty-teams/platform-web-backend/timeouts.md
+- specialities/platform-web-backend/access-patterns-compliance.md
+- specialities/platform-web-backend/api-design.md
+- specialities/platform-web-backend/caching.md
+- specialities/platform-web-backend/content-security-policy.md
+- specialities/platform-web-backend/cors.md
+- specialities/platform-web-backend/error-responses.md
+- specialities/platform-web-backend/offline-and-connectivity.md
+- specialities/platform-web-backend/pagination.md
+- specialities/platform-web-backend/python-dashboard-display-only.md
+- specialities/platform-web-backend/python-database.md
+- specialities/platform-web-backend/python-deterministic-ids.md
+- specialities/platform-web-backend/python-file-paths.md
+- specialities/platform-web-backend/python-no-external-deps.md
+- specialities/platform-web-backend/python-shell-scripts.md
+- specialities/platform-web-backend/python-type-hints.md
+- specialities/platform-web-backend/python-use-roadmaplib.md
+- specialities/platform-web-backend/python-web-services.md
+- specialities/platform-web-backend/python-yaml-frontmatter.md
+- specialities/platform-web-backend/rate-limiting.md
+- specialities/platform-web-backend/real-time-communication.md
+- specialities/platform-web-backend/reliability-compliance.md
+- specialities/platform-web-backend/retry-and-resilience.md
+- specialities/platform-web-backend/security-compliance.md
+- specialities/platform-web-backend/timeouts.md
 
 ## Exploratory Prompts
 

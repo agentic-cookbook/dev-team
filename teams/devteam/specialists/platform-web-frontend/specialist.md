@@ -16,33 +16,33 @@ HTML/CSS/JS implementation of UI guidelines, accessibility (WCAG), responsive an
 
 ## Manifest
 
-- specialty-teams/platform-web-frontend/accessibility.md
-- specialty-teams/platform-web-frontend/always-show-progress.md
-- specialty-teams/platform-web-frontend/animation-motion.md
-- specialty-teams/platform-web-frontend/api-design-client.md
-- specialty-teams/platform-web-frontend/caching.md
-- specialty-teams/platform-web-frontend/color.md
-- specialty-teams/platform-web-frontend/content-security-policy.md
-- specialty-teams/platform-web-frontend/cors.md
-- specialty-teams/platform-web-frontend/data-display.md
-- specialty-teams/platform-web-frontend/error-responses-client.md
-- specialty-teams/platform-web-frontend/feedback-patterns.md
-- specialty-teams/platform-web-frontend/form-design.md
-- specialty-teams/platform-web-frontend/iconography.md
-- specialty-teams/platform-web-frontend/layout.md
-- specialty-teams/platform-web-frontend/offline-and-connectivity.md
-- specialty-teams/platform-web-frontend/pagination-client.md
-- specialty-teams/platform-web-frontend/platform-compliance.md
-- specialty-teams/platform-web-frontend/platform-design-languages.md
-- specialty-teams/platform-web-frontend/rate-limiting-client.md
-- specialty-teams/platform-web-frontend/real-time-communication.md
-- specialty-teams/platform-web-frontend/retry-and-resilience-client.md
-- specialty-teams/platform-web-frontend/spacing.md
-- specialty-teams/platform-web-frontend/state-design.md
-- specialty-teams/platform-web-frontend/timeouts-client.md
-- specialty-teams/platform-web-frontend/touch-click-targets.md
-- specialty-teams/platform-web-frontend/typography.md
-- specialty-teams/platform-web-frontend/visual-hierarchy.md
+- specialities/platform-web-frontend/accessibility.md
+- specialities/platform-web-frontend/always-show-progress.md
+- specialities/platform-web-frontend/animation-motion.md
+- specialities/platform-web-frontend/api-design-client.md
+- specialities/platform-web-frontend/caching.md
+- specialities/platform-web-frontend/color.md
+- specialities/platform-web-frontend/content-security-policy.md
+- specialities/platform-web-frontend/cors.md
+- specialities/platform-web-frontend/data-display.md
+- specialities/platform-web-frontend/error-responses-client.md
+- specialities/platform-web-frontend/feedback-patterns.md
+- specialities/platform-web-frontend/form-design.md
+- specialities/platform-web-frontend/iconography.md
+- specialities/platform-web-frontend/layout.md
+- specialities/platform-web-frontend/offline-and-connectivity.md
+- specialities/platform-web-frontend/pagination-client.md
+- specialities/platform-web-frontend/platform-compliance.md
+- specialities/platform-web-frontend/platform-design-languages.md
+- specialities/platform-web-frontend/rate-limiting-client.md
+- specialities/platform-web-frontend/real-time-communication.md
+- specialities/platform-web-frontend/retry-and-resilience-client.md
+- specialities/platform-web-frontend/spacing.md
+- specialities/platform-web-frontend/state-design.md
+- specialities/platform-web-frontend/timeouts-client.md
+- specialities/platform-web-frontend/touch-click-targets.md
+- specialities/platform-web-frontend/typography.md
+- specialities/platform-web-frontend/visual-hierarchy.md
 
 ## Exploratory Prompts
 

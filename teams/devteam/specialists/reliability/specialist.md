@@ -13,9 +13,9 @@ Fail fast, idempotency, error categorization, retry strategies, timeout handling
 
 ## Manifest
 
-- specialty-teams/reliability/fail-fast.md
-- specialty-teams/reliability/idempotency.md
-- specialty-teams/reliability/reliability-compliance.md
+- specialities/reliability/fail-fast.md
+- specialities/reliability/idempotency.md
+- specialities/reliability/reliability-compliance.md
 
 ## Exploratory Prompts
 

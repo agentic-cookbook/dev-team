@@ -13,9 +13,9 @@ String externalization, RTL support, locale-aware formatting, text expansion, Un
 
 ## Manifest
 
-- specialty-teams/localization-i18n/internationalization-compliance.md
-- specialty-teams/localization-i18n/localization.md
-- specialty-teams/localization-i18n/rtl-support.md
+- specialities/localization-i18n/internationalization-compliance.md
+- specialities/localization-i18n/localization.md
+- specialities/localization-i18n/rtl-support.md
 
 ## Exploratory Prompts
 

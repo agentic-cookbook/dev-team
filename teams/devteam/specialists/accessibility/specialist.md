@@ -12,8 +12,8 @@ Platform accessibility APIs, screen readers, keyboard navigation, font scaling, 
 
 ## Manifest
 
-- specialty-teams/accessibility/accessibility-compliance.md
-- specialty-teams/accessibility/accessibility.md
+- specialities/accessibility/accessibility-compliance.md
+- specialities/accessibility/accessibility.md
 
 ## Exploratory Prompts
 

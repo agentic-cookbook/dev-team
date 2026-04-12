@@ -14,18 +14,18 @@ UIKit, AppKit, SwiftUI (where Apple requires it), Dynamic Type, App Store, Human
 
 ## Manifest
 
-- specialty-teams/platform-ios-apple/background-tasks.md
-- specialty-teams/platform-ios-apple/deep-linking.md
-- specialty-teams/platform-ios-apple/dynamic-type.md
-- specialty-teams/platform-ios-apple/handoff-and-continuity.md
-- specialty-teams/platform-ios-apple/native-controls.md
-- specialty-teams/platform-ios-apple/notifications.md
-- specialty-teams/platform-ios-apple/platform-compliance.md
-- specialty-teams/platform-ios-apple/prefer-explicit-apple-apis.md
-- specialty-teams/platform-ios-apple/search-integration.md
-- specialty-teams/platform-ios-apple/share-and-inter-app-data.md
-- specialty-teams/platform-ios-apple/shortcuts-and-automation.md
-- specialty-teams/platform-ios-apple/widgets-and-glanceable-surfaces.md
+- specialities/platform-ios-apple/background-tasks.md
+- specialities/platform-ios-apple/deep-linking.md
+- specialities/platform-ios-apple/dynamic-type.md
+- specialities/platform-ios-apple/handoff-and-continuity.md
+- specialities/platform-ios-apple/native-controls.md
+- specialities/platform-ios-apple/notifications.md
+- specialities/platform-ios-apple/platform-compliance.md
+- specialities/platform-ios-apple/prefer-explicit-apple-apis.md
+- specialities/platform-ios-apple/search-integration.md
+- specialities/platform-ios-apple/share-and-inter-app-data.md
+- specialities/platform-ios-apple/shortcuts-and-automation.md
+- specialities/platform-ios-apple/widgets-and-glanceable-surfaces.md
 
 ## Exploratory Prompts
 

@@ -52,21 +52,21 @@ Claude Code plugin architecture, skill/rule/agent authoring and linting, perform
 
 ## Manifest
 
-- specialty-teams/claude-code/agent-checklist.md
-- specialty-teams/claude-code/agent-structure-reference.md
-- specialty-teams/claude-code/authoring-skills-and-rules.md
-- specialty-teams/claude-code/design-for-deletion.md
-- specialty-teams/claude-code/explicit-over-implicit.md
-- specialty-teams/claude-code/manage-complexity-through-boundaries.md
-- specialty-teams/claude-code/performance.md
-- specialty-teams/claude-code/rule-checklist.md
-- specialty-teams/claude-code/rule-structure-reference.md
-- specialty-teams/claude-code/separation-of-concerns.md
-- specialty-teams/claude-code/simplicity.md
-- specialty-teams/claude-code/skill-checklist.md
-- specialty-teams/claude-code/skill-structure-reference.md
-- specialty-teams/claude-code/support-automation.md
-- specialty-teams/claude-code/yagni.md
+- specialities/claude-code/agent-checklist.md
+- specialities/claude-code/agent-structure-reference.md
+- specialities/claude-code/authoring-skills-and-rules.md
+- specialities/claude-code/design-for-deletion.md
+- specialities/claude-code/explicit-over-implicit.md
+- specialities/claude-code/manage-complexity-through-boundaries.md
+- specialities/claude-code/performance.md
+- specialities/claude-code/rule-checklist.md
+- specialities/claude-code/rule-structure-reference.md
+- specialities/claude-code/separation-of-concerns.md
+- specialities/claude-code/simplicity.md
+- specialities/claude-code/skill-checklist.md
+- specialities/claude-code/skill-structure-reference.md
+- specialities/claude-code/support-automation.md
+- specialities/claude-code/yagni.md
 
 ## Exploratory Prompts
 

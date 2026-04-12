@@ -31,12 +31,12 @@ Accuracy over completeness — a recipe with five correct requirements beats one
 - `guidelines/recipe-quality/cross-recipe-consistency.md`
 
 ## Manifest
-- specialty-teams/recipe/template-conformance.md
-- specialty-teams/recipe/behavioral-requirements.md
-- specialty-teams/recipe/cookbook-compliance.md
-- specialty-teams/recipe/source-fidelity.md
-- specialty-teams/recipe/completeness.md
-- specialty-teams/recipe/cross-recipe-consistency.md
+- specialities/recipe/template-conformance.md
+- specialities/recipe/behavioral-requirements.md
+- specialities/recipe/cookbook-compliance.md
+- specialities/recipe/source-fidelity.md
+- specialities/recipe/completeness.md
+- specialities/recipe/cross-recipe-consistency.md
 
 ## Exploratory Prompts
 
