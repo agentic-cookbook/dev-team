@@ -16,50 +16,64 @@ CREATE TABLE IF NOT EXISTS state (
     session_id        TEXT NOT NULL,
     team_id           TEXT NOT NULL,
     parent_node_id    TEXT,
+    plan_node_id      TEXT,                         -- optional: roadmap node this dispatch addresses
     state_name        TEXT NOT NULL,
     status            TEXT NOT NULL,
     entered_at        TEXT NOT NULL,
     exited_at         TEXT,
-    FOREIGN KEY (session_id) REFERENCES session(session_id)
+    FOREIGN KEY (session_id)   REFERENCES session(session_id),
+    FOREIGN KEY (plan_node_id) REFERENCES plan_node(node_id)
 );
 CREATE INDEX IF NOT EXISTS idx_state_session_parent
     ON state(session_id, parent_node_id);
+CREATE INDEX IF NOT EXISTS idx_state_plan_node
+    ON state(plan_node_id);
 
 CREATE TABLE IF NOT EXISTS message (
     message_id        TEXT PRIMARY KEY,
     session_id        TEXT NOT NULL,
     team_id           TEXT NOT NULL,
+    plan_node_id      TEXT,                         -- optional: roadmap node this message is about
     direction         TEXT NOT NULL,
     type              TEXT NOT NULL,
     body              TEXT NOT NULL,
     created_at        TEXT NOT NULL,
-    FOREIGN KEY (session_id) REFERENCES session(session_id)
+    FOREIGN KEY (session_id)   REFERENCES session(session_id),
+    FOREIGN KEY (plan_node_id) REFERENCES plan_node(node_id)
 );
 CREATE INDEX IF NOT EXISTS idx_message_session_created
     ON message(session_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_message_plan_node
+    ON message(plan_node_id);
 
 CREATE TABLE IF NOT EXISTS gate (
     gate_id           TEXT PRIMARY KEY,
     session_id        TEXT NOT NULL,
     team_id           TEXT NOT NULL,
+    plan_node_id      TEXT,                         -- optional: roadmap node this gate is about
     category          TEXT NOT NULL,
     options_json      TEXT NOT NULL,
     verdict           TEXT,
     created_at        TEXT NOT NULL,
     resolved_at       TEXT,
-    FOREIGN KEY (session_id) REFERENCES session(session_id)
+    FOREIGN KEY (session_id)   REFERENCES session(session_id),
+    FOREIGN KEY (plan_node_id) REFERENCES plan_node(node_id)
 );
+CREATE INDEX IF NOT EXISTS idx_gate_plan_node ON gate(plan_node_id);
 
 CREATE TABLE IF NOT EXISTS result (
     result_id         TEXT PRIMARY KEY,
     session_id        TEXT NOT NULL,
     team_id           TEXT NOT NULL,
+    plan_node_id      TEXT,                         -- optional: roadmap node this result is about
     specialist_id     TEXT NOT NULL,
     passed            INTEGER NOT NULL,
     summary_json      TEXT NOT NULL,
     created_at        TEXT NOT NULL,
-    FOREIGN KEY (session_id) REFERENCES session(session_id)
+    FOREIGN KEY (session_id)   REFERENCES session(session_id),
+    FOREIGN KEY (plan_node_id) REFERENCES plan_node(node_id)
 );
+CREATE INDEX IF NOT EXISTS idx_result_plan_node ON result(plan_node_id);
 
 CREATE TABLE IF NOT EXISTS finding (
     finding_id        TEXT PRIMARY KEY,
@@ -77,20 +91,25 @@ CREATE TABLE IF NOT EXISTS event (
     session_id        TEXT NOT NULL,
     team_id           TEXT,
     agent_id          TEXT,
+    plan_node_id      TEXT,                         -- optional: roadmap node this event concerns
     dispatch_id       TEXT,
     sequence          INTEGER NOT NULL,
     kind              TEXT NOT NULL,
     payload_json      TEXT NOT NULL,
     emitted_at        TEXT NOT NULL,
-    FOREIGN KEY (session_id) REFERENCES session(session_id)
+    FOREIGN KEY (session_id)   REFERENCES session(session_id),
+    FOREIGN KEY (plan_node_id) REFERENCES plan_node(node_id)
 );
 CREATE INDEX IF NOT EXISTS idx_event_session_sequence
     ON event(session_id, sequence);
+CREATE INDEX IF NOT EXISTS idx_event_plan_node
+    ON event(plan_node_id);
 
 CREATE TABLE IF NOT EXISTS task (
     task_id           TEXT PRIMARY KEY,
     session_id        TEXT NOT NULL,
     team_id           TEXT NOT NULL,
+    plan_node_id      TEXT,                         -- optional: roadmap node this task serves
     kind              TEXT NOT NULL,
     payload_json      TEXT NOT NULL,
     status            TEXT NOT NULL,
@@ -98,16 +117,20 @@ CREATE TABLE IF NOT EXISTS task (
     started_at        TEXT,
     completed_at      TEXT,
     result_json       TEXT,
-    FOREIGN KEY (session_id) REFERENCES session(session_id)
+    FOREIGN KEY (session_id)   REFERENCES session(session_id),
+    FOREIGN KEY (plan_node_id) REFERENCES plan_node(node_id)
 );
 CREATE INDEX IF NOT EXISTS idx_task_session_status_enqueued
     ON task(session_id, status, enqueued_at);
+CREATE INDEX IF NOT EXISTS idx_task_plan_node
+    ON task(plan_node_id);
 
 CREATE TABLE IF NOT EXISTS request (
     request_id        TEXT PRIMARY KEY,
     session_id        TEXT NOT NULL,
     from_team         TEXT NOT NULL,
     to_team           TEXT NOT NULL,
+    plan_node_id      TEXT,                         -- optional: roadmap node this request advances
     kind              TEXT NOT NULL,
     input_json        TEXT NOT NULL,
     status            TEXT NOT NULL,
@@ -117,10 +140,13 @@ CREATE TABLE IF NOT EXISTS request (
     in_flight_at      TEXT,
     completed_at      TEXT,
     timeout_at        TEXT NOT NULL,
-    FOREIGN KEY (session_id) REFERENCES session(session_id)
+    FOREIGN KEY (session_id)   REFERENCES session(session_id),
+    FOREIGN KEY (plan_node_id) REFERENCES plan_node(node_id)
 );
 CREATE INDEX IF NOT EXISTS idx_request_session_status_enqueued
     ON request(session_id, status, enqueued_at);
+CREATE INDEX IF NOT EXISTS idx_request_plan_node
+    ON request(plan_node_id);
 
 -- ---------------------------------------------------------------------------
 -- Project-management resources (absorbed from project-storage-provider,
