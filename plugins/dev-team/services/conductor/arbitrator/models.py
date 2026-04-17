@@ -80,6 +80,7 @@ class StateNode:
     status: StateStatus
     entered_at: datetime
     exited_at: datetime | None = None
+    plan_node_id: str | None = None          # optional join to roadmap graph
 
 
 @dataclass
@@ -91,6 +92,7 @@ class Message:
     type: str  # "question" | "answer" | "notification"
     body: str
     created_at: datetime
+    plan_node_id: str | None = None
 
 
 @dataclass
@@ -103,6 +105,7 @@ class Gate:
     verdict: str | None
     created_at: datetime
     resolved_at: datetime | None = None
+    plan_node_id: str | None = None
 
 
 @dataclass
@@ -114,6 +117,7 @@ class Result:
     passed: bool
     summary_json: dict[str, Any]
     created_at: datetime
+    plan_node_id: str | None = None
 
 
 @dataclass
@@ -137,6 +141,7 @@ class Event:
     kind: str
     payload_json: dict[str, Any]
     emitted_at: datetime
+    plan_node_id: str | None = None
 
 
 @dataclass
@@ -151,6 +156,7 @@ class Task:
     started_at: datetime | None = None
     completed_at: datetime | None = None
     result_json: dict[str, Any] | None = None
+    plan_node_id: str | None = None
 
 
 @dataclass
@@ -168,6 +174,7 @@ class Request:
     in_flight_at: datetime | None
     completed_at: datetime | None
     timeout_at: datetime
+    plan_node_id: str | None = None
 
 
 # ---------------------------------------------------------------------------

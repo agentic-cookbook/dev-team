@@ -125,6 +125,7 @@ class Arbitrator:
         team_id: str,
         state_name: str,
         parent_node_id: str | None,
+        plan_node_id: str | None = None,
     ) -> StateNode:
         node_id = _new_id("state")
         now = _utcnow_iso()
@@ -135,6 +136,7 @@ class Arbitrator:
                 "session_id": str(session_id),
                 "team_id": team_id,
                 "parent_node_id": parent_node_id,
+                "plan_node_id": plan_node_id,
                 "state_name": state_name,
                 "status": StateStatus.ACTIVE.value,
                 "entered_at": now,
@@ -149,6 +151,7 @@ class Arbitrator:
             state_name=state_name,
             status=StateStatus.ACTIVE,
             entered_at=datetime.fromisoformat(now),
+            plan_node_id=plan_node_id,
         )
 
     async def pop_state(
@@ -182,6 +185,7 @@ class Arbitrator:
         direction: str,
         type: str,
         body: str,
+        plan_node_id: str | None = None,
     ) -> Message:
         message_id = _new_id("msg")
         now = _utcnow_iso()
@@ -191,6 +195,7 @@ class Arbitrator:
                 "message_id": message_id,
                 "session_id": str(session_id),
                 "team_id": team_id,
+                "plan_node_id": plan_node_id,
                 "direction": direction,
                 "type": type,
                 "body": body,
@@ -205,6 +210,7 @@ class Arbitrator:
             type=type,
             body=body,
             created_at=datetime.fromisoformat(now),
+            plan_node_id=plan_node_id,
         )
 
     async def list_messages(
@@ -226,6 +232,7 @@ class Arbitrator:
         team_id: str,
         category: str,
         options: list[str],
+        plan_node_id: str | None = None,
     ) -> Gate:
         gate_id = _new_id("gate")
         now = _utcnow_iso()
@@ -235,6 +242,7 @@ class Arbitrator:
                 "gate_id": gate_id,
                 "session_id": str(session_id),
                 "team_id": team_id,
+                "plan_node_id": plan_node_id,
                 "category": category,
                 "options_json": json.dumps(options),
                 "verdict": None,
@@ -250,6 +258,7 @@ class Arbitrator:
             options_json=options,
             verdict=None,
             created_at=datetime.fromisoformat(now),
+            plan_node_id=plan_node_id,
         )
 
     async def resolve_gate(self, gate_id: str, verdict: str) -> None:
@@ -268,6 +277,7 @@ class Arbitrator:
         specialist_id: str,
         passed: bool,
         summary: dict[str, Any],
+        plan_node_id: str | None = None,
     ) -> Result:
         result_id = _new_id("res")
         now = _utcnow_iso()
@@ -277,6 +287,7 @@ class Arbitrator:
                 "result_id": result_id,
                 "session_id": str(session_id),
                 "team_id": team_id,
+                "plan_node_id": plan_node_id,
                 "specialist_id": specialist_id,
                 "passed": 1 if passed else 0,
                 "summary_json": json.dumps(summary),
@@ -291,6 +302,7 @@ class Arbitrator:
             passed=passed,
             summary_json=summary,
             created_at=datetime.fromisoformat(now),
+            plan_node_id=plan_node_id,
         )
 
     async def list_results(
@@ -343,6 +355,7 @@ class Arbitrator:
         payload: dict[str, Any],
         agent_id: str | None = None,
         dispatch_id: str | None = None,
+        plan_node_id: str | None = None,
     ) -> Event:
         key = str(session_id)
         self._event_seq[key] = self._event_seq.get(key, 0) + 1
@@ -356,6 +369,7 @@ class Arbitrator:
                 "session_id": key,
                 "team_id": team_id,
                 "agent_id": agent_id,
+                "plan_node_id": plan_node_id,
                 "dispatch_id": dispatch_id,
                 "sequence": seq,
                 "kind": kind,
@@ -373,6 +387,7 @@ class Arbitrator:
             kind=kind,
             payload_json=payload,
             emitted_at=datetime.fromisoformat(now),
+            plan_node_id=plan_node_id,
         )
 
     async def list_events(
@@ -395,6 +410,7 @@ class Arbitrator:
         team_id: str,
         kind: str,
         payload: dict[str, Any],
+        plan_node_id: str | None = None,
     ) -> Task:
         task_id = _new_id("task")
         now = _utcnow_iso()
@@ -404,6 +420,7 @@ class Arbitrator:
                 "task_id": task_id,
                 "session_id": str(session_id),
                 "team_id": team_id,
+                "plan_node_id": plan_node_id,
                 "kind": kind,
                 "payload_json": json.dumps(payload),
                 "status": TaskStatus.PENDING.value,
@@ -421,6 +438,7 @@ class Arbitrator:
             payload_json=payload,
             status=TaskStatus.PENDING,
             enqueued_at=datetime.fromisoformat(now),
+            plan_node_id=plan_node_id,
         )
 
     async def next_task(self, session_id: UUID) -> Task | None:
@@ -491,6 +509,7 @@ class Arbitrator:
         input_data: dict[str, Any],
         parent_request_id: str | None = None,
         timeout_seconds: int | None = None,
+        plan_node_id: str | None = None,
     ) -> Request:
         if kind not in self._request_kinds:
             raise ValueError(f"Unregistered request kind: {kind}")
@@ -509,6 +528,7 @@ class Arbitrator:
                 "session_id": str(session_id),
                 "from_team": from_team,
                 "to_team": to_team,
+                "plan_node_id": plan_node_id,
                 "kind": kind,
                 "input_json": json.dumps(input_data),
                 "status": RequestStatus.PENDING.value,
@@ -534,6 +554,7 @@ class Arbitrator:
             in_flight_at=None,
             completed_at=None,
             timeout_at=now + timedelta(seconds=timeout),
+            plan_node_id=plan_node_id,
         )
 
     async def next_ready_request(
@@ -1040,6 +1061,7 @@ def _row_to_state_node(row: dict[str, Any]) -> StateNode:
         exited_at=(
             datetime.fromisoformat(row["exited_at"]) if row["exited_at"] else None
         ),
+        plan_node_id=row.get("plan_node_id"),
     )
 
 
@@ -1052,6 +1074,7 @@ def _row_to_message(row: dict[str, Any]) -> Message:
         type=row["type"],
         body=row["body"],
         created_at=datetime.fromisoformat(row["created_at"]),
+        plan_node_id=row.get("plan_node_id"),
     )
 
 
@@ -1064,6 +1087,7 @@ def _row_to_result(row: dict[str, Any]) -> Result:
         passed=bool(row["passed"]),
         summary_json=json.loads(row["summary_json"]),
         created_at=datetime.fromisoformat(row["created_at"]),
+        plan_node_id=row.get("plan_node_id"),
     )
 
 
@@ -1078,6 +1102,7 @@ def _row_to_event(row: dict[str, Any]) -> Event:
         kind=row["kind"],
         payload_json=json.loads(row["payload_json"]),
         emitted_at=datetime.fromisoformat(row["emitted_at"]),
+        plan_node_id=row.get("plan_node_id"),
     )
 
 
@@ -1103,6 +1128,7 @@ def _row_to_task(
         result_json=(
             json.loads(row["result_json"]) if row["result_json"] else None
         ),
+        plan_node_id=row.get("plan_node_id"),
     )
 
 
@@ -1133,4 +1159,5 @@ def _row_to_request(
             else None
         ),
         timeout_at=datetime.fromisoformat(row["timeout_at"]),
+        plan_node_id=row.get("plan_node_id"),
     )
