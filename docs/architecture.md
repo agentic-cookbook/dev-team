@@ -2,6 +2,18 @@
 
 Single source of truth for the dev-team system. For LLM consumption.
 
+> **In-flight reshaping.** This doc describes the current (pre-conductor)
+> dev-team skill pipeline. Two forward-looking designs are already landing:
+>
+> - [`planning/2026-04-11-conductor-architecture.md`](planning/2026-04-11-conductor-architecture.md)
+>   — headless conductor, stream-json observer, typed inter-team requests.
+> - [`planning/2026-04-17-atp-roadmap-design.md`](planning/2026-04-17-atp-roadmap-design.md)
+>   — roadmap graph (tree + DAG projections), body side-table, cross-stream
+>   `plan_node_id` join key. Already shipped into the conductor arbitrator.
+>
+> Where the two overlap, the newer designs win. This doc will be rewritten
+> to describe the combined system once both land in full.
+
 ## System Overview
 
 The dev-team is a Claude Code plugin that provides a multi-agent pipeline for product discovery, analysis, and project building. It is distributed via the agentic-cookbook marketplace.
