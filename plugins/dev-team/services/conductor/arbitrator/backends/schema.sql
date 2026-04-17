@@ -169,3 +169,71 @@ CREATE TABLE IF NOT EXISTS decision (
 );
 CREATE INDEX IF NOT EXISTS idx_decision_session_team
     ON decision(session_id, team_id);
+
+-- ---------------------------------------------------------------------------
+-- Roadmap graph (project-scoped; persists across sessions).
+-- See docs/planning/2026-04-17-atp-roadmap-design.md for design rationale.
+-- The graph has two projections: tree via parent_id, DAG via node_dependency.
+-- ---------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS roadmap (
+    roadmap_id        TEXT PRIMARY KEY,
+    title             TEXT NOT NULL,
+    creation_date     TEXT NOT NULL,
+    modification_date TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS plan_node (
+    node_id           TEXT PRIMARY KEY,
+    roadmap_id        TEXT NOT NULL,
+    parent_id         TEXT,                         -- NULL = root
+    position          REAL NOT NULL,                -- fractional index for order
+    node_kind         TEXT NOT NULL,                -- compound | primitive
+    title             TEXT NOT NULL,
+    specialist        TEXT,
+    speciality        TEXT,
+    creation_date     TEXT NOT NULL,
+    modification_date TEXT NOT NULL,
+    FOREIGN KEY (roadmap_id) REFERENCES roadmap(roadmap_id),
+    FOREIGN KEY (parent_id)  REFERENCES plan_node(node_id)
+);
+CREATE INDEX IF NOT EXISTS idx_plan_node_tree
+    ON plan_node(roadmap_id, parent_id, position);
+
+CREATE TABLE IF NOT EXISTS node_dependency (
+    dependency_id     INTEGER PRIMARY KEY AUTOINCREMENT,
+    node_id           TEXT NOT NULL,                -- dependent
+    depends_on_id     TEXT NOT NULL,                -- prerequisite
+    creation_date     TEXT NOT NULL,
+    UNIQUE (node_id, depends_on_id),
+    FOREIGN KEY (node_id)       REFERENCES plan_node(node_id),
+    FOREIGN KEY (depends_on_id) REFERENCES plan_node(node_id)
+);
+CREATE INDEX IF NOT EXISTS idx_node_dep_from ON node_dependency(node_id);
+CREATE INDEX IF NOT EXISTS idx_node_dep_to   ON node_dependency(depends_on_id);
+
+CREATE TABLE IF NOT EXISTS node_state_event (
+    event_id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    node_id           TEXT NOT NULL,
+    session_id        TEXT,                         -- which session drove this
+    event_type        TEXT NOT NULL,                -- planned|ready|running|done|failed|superseded
+    actor             TEXT NOT NULL,
+    event_date        TEXT NOT NULL,
+    FOREIGN KEY (node_id) REFERENCES plan_node(node_id)
+);
+CREATE INDEX IF NOT EXISTS idx_nse_latest
+    ON node_state_event(node_id, event_date DESC);
+
+-- ---------------------------------------------------------------------------
+-- Body side-table: one place for narrative content.
+-- Primary rows stay lean; narrative routes through (owner_type, owner_id).
+-- ---------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS body (
+    owner_type        TEXT NOT NULL,
+    owner_id          TEXT NOT NULL,
+    body_format       TEXT NOT NULL,                -- markdown|plain|json
+    body_text         TEXT NOT NULL,
+    modification_date TEXT NOT NULL,
+    PRIMARY KEY (owner_type, owner_id)
+);
