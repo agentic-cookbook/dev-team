@@ -364,8 +364,9 @@ CREATE TABLE event (
   event_kind          TEXT NOT NULL,            -- lifecycle|partial-message|tool-use|hook
   event_subtype       TEXT,
   event_date          DATETIME NOT NULL,
-  FOREIGN KEY (session_id)  REFERENCES session(session_id),
-  FOREIGN KEY (dispatch_id) REFERENCES dispatch(dispatch_id)
+  FOREIGN KEY (session_id)   REFERENCES session(session_id),
+  FOREIGN KEY (dispatch_id)  REFERENCES dispatch(dispatch_id),
+  FOREIGN KEY (plan_node_id) REFERENCES plan_node(node_id)
 );
 ```
 
