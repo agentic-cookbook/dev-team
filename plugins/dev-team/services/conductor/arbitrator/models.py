@@ -65,8 +65,8 @@ class Session:
     session_id: UUID
     initial_team_id: str
     status: SessionStatus
-    started_at: datetime
-    ended_at: datetime | None = None
+    creation_date: datetime
+    completion_date: datetime | None = None
     metadata_json: dict[str, Any] = field(default_factory=dict)
 
 
@@ -78,8 +78,8 @@ class StateNode:
     parent_node_id: str | None
     state_name: str
     status: StateStatus
-    entered_at: datetime
-    exited_at: datetime | None = None
+    entry_date: datetime
+    exit_date: datetime | None = None
     plan_node_id: str | None = None          # optional join to roadmap graph
 
 
@@ -91,7 +91,7 @@ class Message:
     direction: str  # "in" (user→lead) or "out" (lead→user)
     type: str  # "question" | "answer" | "notification"
     body: str
-    created_at: datetime
+    creation_date: datetime
     plan_node_id: str | None = None
 
 
@@ -103,8 +103,8 @@ class Gate:
     category: str
     options_json: list[str]
     verdict: str | None
-    created_at: datetime
-    resolved_at: datetime | None = None
+    creation_date: datetime
+    verdict_date: datetime | None = None
     plan_node_id: str | None = None
 
 
@@ -116,7 +116,7 @@ class Result:
     specialist_id: str
     passed: bool
     summary_json: dict[str, Any]
-    created_at: datetime
+    creation_date: datetime
     plan_node_id: str | None = None
 
 
@@ -140,7 +140,7 @@ class Event:
     sequence: int
     kind: str
     payload_json: dict[str, Any]
-    emitted_at: datetime
+    event_date: datetime
     plan_node_id: str | None = None
 
 
@@ -152,9 +152,9 @@ class Task:
     kind: str
     payload_json: dict[str, Any]
     status: TaskStatus
-    enqueued_at: datetime
-    started_at: datetime | None = None
-    completed_at: datetime | None = None
+    scheduled_date: datetime
+    start_date: datetime | None = None
+    completion_date: datetime | None = None
     result_json: dict[str, Any] | None = None
     plan_node_id: str | None = None
 
@@ -170,10 +170,10 @@ class Request:
     status: RequestStatus
     response_json: dict[str, Any] | None
     parent_request_id: str | None
-    enqueued_at: datetime
-    in_flight_at: datetime | None
-    completed_at: datetime | None
-    timeout_at: datetime
+    creation_date: datetime
+    start_date: datetime | None
+    completion_date: datetime | None
+    timeout_date: datetime
     plan_node_id: str | None = None
 
 
