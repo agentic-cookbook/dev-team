@@ -114,7 +114,7 @@ def test_optional_columns_round_trip_as_none(arb_factory, session_id, run_async)
     run_async(_t())
 
 
-def test_close_session_sets_ended_at_for_every_status(
+def test_close_session_sets_completion_date_for_every_status(
     arb_factory, session_id, run_async
 ):
     async def _t():
@@ -126,7 +126,7 @@ def test_close_session_sets_ended_at_for_every_status(
             "session", {"session_id": str(session_id)}
         )
         assert row["status"] == SessionStatus.FAILED.value
-        assert row["ended_at"] is not None
+        assert row["completion_date"] is not None
         await arb.close()
 
     run_async(_t())
@@ -247,9 +247,9 @@ def test_request_pk_must_be_unique(arb_factory, session_id, run_async):
                     "status": RequestStatus.PENDING.value,
                     "response_json": None,
                     "parent_request_id": None,
-                    "enqueued_at": "2026-04-11T00:00:00+00:00",
-                    "in_flight_at": None,
-                    "completed_at": None,
+                    "creation_date": "2026-04-11T00:00:00+00:00",
+                    "start_date": None,
+                    "completion_date": None,
                     "timeout_date": "2026-04-11T00:05:00+00:00",
                 },
             )

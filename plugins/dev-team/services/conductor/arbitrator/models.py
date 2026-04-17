@@ -65,8 +65,8 @@ class Session:
     session_id: UUID
     initial_team_id: str
     status: SessionStatus
-    started_at: datetime
-    ended_at: datetime | None = None
+    creation_date: datetime
+    completion_date: datetime | None = None
     metadata_json: dict[str, Any] = field(default_factory=dict)
 
 
@@ -152,9 +152,9 @@ class Task:
     kind: str
     payload_json: dict[str, Any]
     status: TaskStatus
-    enqueued_at: datetime
-    started_at: datetime | None = None
-    completed_at: datetime | None = None
+    scheduled_date: datetime
+    start_date: datetime | None = None
+    completion_date: datetime | None = None
     result_json: dict[str, Any] | None = None
     plan_node_id: str | None = None
 
@@ -170,9 +170,9 @@ class Request:
     status: RequestStatus
     response_json: dict[str, Any] | None
     parent_request_id: str | None
-    enqueued_at: datetime
-    in_flight_at: datetime | None
-    completed_at: datetime | None
+    creation_date: datetime
+    start_date: datetime | None
+    completion_date: datetime | None
     timeout_date: datetime
     plan_node_id: str | None = None
 

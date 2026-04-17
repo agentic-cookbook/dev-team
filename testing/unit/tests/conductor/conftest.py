@@ -142,7 +142,7 @@ async def assert_session_invariants(
         2. event sequence is a contiguous 1..N with no duplicates
         3. no dangling requests (unless allow_pending)
         4. finding.result_id points to a real result row
-        5. session row exists, is closed, has ended_at set
+        5. session row exists, is closed, has completion_date set
         6. state.parent_node_id FK integrity
     """
     sid = str(session_id)
@@ -154,7 +154,7 @@ async def assert_session_invariants(
         SessionStatus.COMPLETED.value,
         SessionStatus.FAILED.value,
     ), f"session {sid} still open: status={session_row['status']}"
-    assert session_row["ended_at"] is not None, "session.ended_at not set"
+    assert session_row["completion_date"] is not None, "session.completion_date not set"
 
     # (1) state tree balance.
     state_rows = await backend.fetch_all("state", where={"session_id": sid})

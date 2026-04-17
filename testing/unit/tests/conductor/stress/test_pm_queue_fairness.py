@@ -114,19 +114,19 @@ def test_hundred_pm_requests_preserve_fifo_order(tmp_path):
             for r in request_rows
         )
 
-        # Serial queue invariant: sorted by enqueued_at, request N's
-        # in_flight_at must be >= request (N-1)'s completed_at. Under
+        # Serial queue invariant: sorted by creation_date, request N's
+        # start_date must be >= request (N-1)'s completion_date. Under
         # the root-only serial queue, at most one request is in flight
         # at any time.
-        sorted_by_enqueue = sorted(
-            request_rows, key=lambda r: r["enqueued_at"]
+        sorted_by_creation = sorted(
+            request_rows, key=lambda r: r["creation_date"]
         )
-        for i in range(1, len(sorted_by_enqueue)):
-            prev = sorted_by_enqueue[i - 1]
-            curr = sorted_by_enqueue[i]
-            assert prev["completed_at"] is not None
-            assert curr["in_flight_at"] is not None
-            assert curr["in_flight_at"] >= prev["completed_at"], (
+        for i in range(1, len(sorted_by_creation)):
+            prev = sorted_by_creation[i - 1]
+            curr = sorted_by_creation[i]
+            assert prev["completion_date"] is not None
+            assert curr["start_date"] is not None
+            assert curr["start_date"] >= prev["completion_date"], (
                 f"request {i} went in-flight before previous completed "
                 f"— serial queue violation"
             )

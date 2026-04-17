@@ -82,10 +82,10 @@ class Arbitrator:
                 session_id=UUID(existing["session_id"]),
                 initial_team_id=existing["initial_team_id"],
                 status=SessionStatus(existing["status"]),
-                started_at=datetime.fromisoformat(existing["started_at"]),
-                ended_at=(
-                    datetime.fromisoformat(existing["ended_at"])
-                    if existing["ended_at"]
+                creation_date=datetime.fromisoformat(existing["creation_date"]),
+                completion_date=(
+                    datetime.fromisoformat(existing["completion_date"])
+                    if existing["completion_date"]
                     else None
                 ),
                 metadata_json=json.loads(existing["metadata_json"]),
@@ -95,8 +95,8 @@ class Arbitrator:
             "session_id": str(session_id),
             "initial_team_id": initial_team_id,
             "status": SessionStatus.OPEN.value,
-            "started_at": now,
-            "ended_at": None,
+            "creation_date": now,
+            "completion_date": None,
             "metadata_json": json.dumps(metadata or {}),
         }
         await self._storage.insert("session", row)
@@ -104,7 +104,7 @@ class Arbitrator:
             session_id=session_id,
             initial_team_id=initial_team_id,
             status=SessionStatus.OPEN,
-            started_at=datetime.fromisoformat(now),
+            creation_date=datetime.fromisoformat(now),
             metadata_json=metadata or {},
         )
 
@@ -114,7 +114,7 @@ class Arbitrator:
         await self._storage.update(
             "session",
             {"session_id": str(session_id)},
-            {"status": status.value, "ended_at": _utcnow_iso()},
+            {"status": status.value, "completion_date": _utcnow_iso()},
         )
 
     # ---- State tree -------------------------------------------------------
@@ -424,9 +424,9 @@ class Arbitrator:
                 "kind": kind,
                 "payload_json": json.dumps(payload),
                 "status": TaskStatus.PENDING.value,
-                "enqueued_at": now,
-                "started_at": None,
-                "completed_at": None,
+                "scheduled_date": now,
+                "start_date": None,
+                "completion_date": None,
                 "result_json": None,
             },
         )
@@ -437,7 +437,7 @@ class Arbitrator:
             kind=kind,
             payload_json=payload,
             status=TaskStatus.PENDING,
-            enqueued_at=datetime.fromisoformat(now),
+            scheduled_date=datetime.fromisoformat(now),
             plan_node_id=plan_node_id,
         )
 
@@ -448,7 +448,7 @@ class Arbitrator:
                 "session_id": str(session_id),
                 "status": TaskStatus.PENDING.value,
             },
-            order_by="enqueued_at",
+            order_by="scheduled_date",
             limit=1,
         )
         if not rows:
@@ -459,7 +459,7 @@ class Arbitrator:
             {"task_id": row["task_id"]},
             {
                 "status": TaskStatus.IN_PROGRESS.value,
-                "started_at": _utcnow_iso(),
+                "start_date": _utcnow_iso(),
             },
         )
         return _row_to_task(row, status_override=TaskStatus.IN_PROGRESS)
@@ -475,7 +475,7 @@ class Arbitrator:
             {"task_id": task_id},
             {
                 "status": status.value,
-                "completed_at": _utcnow_iso(),
+                "completion_date": _utcnow_iso(),
                 "result_json": json.dumps(result) if result is not None else None,
             },
         )
@@ -534,9 +534,9 @@ class Arbitrator:
                 "status": RequestStatus.PENDING.value,
                 "response_json": None,
                 "parent_request_id": parent_request_id,
-                "enqueued_at": now.isoformat(),
-                "in_flight_at": None,
-                "completed_at": None,
+                "creation_date": now.isoformat(),
+                "start_date": None,
+                "completion_date": None,
                 "timeout_date": (now + timedelta(seconds=timeout)).isoformat(),
             },
         )
@@ -550,9 +550,9 @@ class Arbitrator:
             status=RequestStatus.PENDING,
             response_json=None,
             parent_request_id=parent_request_id,
-            enqueued_at=now,
-            in_flight_at=None,
-            completed_at=None,
+            creation_date=now,
+            start_date=None,
+            completion_date=None,
             timeout_date=now + timedelta(seconds=timeout),
             plan_node_id=plan_node_id,
         )
@@ -573,7 +573,7 @@ class Arbitrator:
                 "session_id": str(session_id),
                 "status": RequestStatus.PENDING.value,
             },
-            order_by="enqueued_at",
+            order_by="creation_date",
         )
         for row in child_rows:
             if row["parent_request_id"]:
@@ -604,7 +604,7 @@ class Arbitrator:
             {"request_id": request_id},
             {
                 "status": RequestStatus.IN_FLIGHT.value,
-                "in_flight_at": _utcnow_iso(),
+                "start_date": _utcnow_iso(),
             },
         )
 
@@ -620,7 +620,7 @@ class Arbitrator:
             {
                 "status": status.value,
                 "response_json": json.dumps(response),
-                "completed_at": _utcnow_iso(),
+                "completion_date": _utcnow_iso(),
             },
         )
 
@@ -1116,13 +1116,13 @@ def _row_to_task(
         kind=row["kind"],
         payload_json=json.loads(row["payload_json"]),
         status=status_override or TaskStatus(row["status"]),
-        enqueued_at=datetime.fromisoformat(row["enqueued_at"]),
-        started_at=(
-            datetime.fromisoformat(row["started_at"]) if row["started_at"] else None
+        scheduled_date=datetime.fromisoformat(row["scheduled_date"]),
+        start_date=(
+            datetime.fromisoformat(row["start_date"]) if row["start_date"] else None
         ),
-        completed_at=(
-            datetime.fromisoformat(row["completed_at"])
-            if row["completed_at"]
+        completion_date=(
+            datetime.fromisoformat(row["completion_date"])
+            if row["completion_date"]
             else None
         ),
         result_json=(
@@ -1147,15 +1147,15 @@ def _row_to_request(
             json.loads(row["response_json"]) if row["response_json"] else None
         ),
         parent_request_id=row["parent_request_id"],
-        enqueued_at=datetime.fromisoformat(row["enqueued_at"]),
-        in_flight_at=(
-            datetime.fromisoformat(row["in_flight_at"])
-            if row["in_flight_at"]
+        creation_date=datetime.fromisoformat(row["creation_date"]),
+        start_date=(
+            datetime.fromisoformat(row["start_date"])
+            if row["start_date"]
             else None
         ),
-        completed_at=(
-            datetime.fromisoformat(row["completed_at"])
-            if row["completed_at"]
+        completion_date=(
+            datetime.fromisoformat(row["completion_date"])
+            if row["completion_date"]
             else None
         ),
         timeout_date=datetime.fromisoformat(row["timeout_date"]),

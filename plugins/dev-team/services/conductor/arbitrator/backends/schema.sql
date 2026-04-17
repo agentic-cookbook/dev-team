@@ -6,8 +6,8 @@ CREATE TABLE IF NOT EXISTS session (
     session_id        TEXT PRIMARY KEY,
     initial_team_id   TEXT NOT NULL,
     status            TEXT NOT NULL,
-    started_at        TEXT NOT NULL,
-    ended_at          TEXT,
+    creation_date     TEXT NOT NULL,
+    completion_date   TEXT,
     metadata_json     TEXT NOT NULL DEFAULT '{}'
 );
 
@@ -113,15 +113,15 @@ CREATE TABLE IF NOT EXISTS task (
     kind              TEXT NOT NULL,
     payload_json      TEXT NOT NULL,
     status            TEXT NOT NULL,
-    enqueued_at       TEXT NOT NULL,
-    started_at        TEXT,
-    completed_at      TEXT,
+    scheduled_date    TEXT NOT NULL,
+    start_date        TEXT,
+    completion_date   TEXT,
     result_json       TEXT,
     FOREIGN KEY (session_id)   REFERENCES session(session_id),
     FOREIGN KEY (plan_node_id) REFERENCES plan_node(node_id)
 );
-CREATE INDEX IF NOT EXISTS idx_task_session_status_enqueued
-    ON task(session_id, status, enqueued_at);
+CREATE INDEX IF NOT EXISTS idx_task_session_status_scheduled
+    ON task(session_id, status, scheduled_date);
 CREATE INDEX IF NOT EXISTS idx_task_plan_node
     ON task(plan_node_id);
 
@@ -136,15 +136,15 @@ CREATE TABLE IF NOT EXISTS request (
     status            TEXT NOT NULL,
     response_json     TEXT,
     parent_request_id TEXT,
-    enqueued_at       TEXT NOT NULL,
-    in_flight_at      TEXT,
-    completed_at      TEXT,
+    creation_date     TEXT NOT NULL,
+    start_date        TEXT,
+    completion_date   TEXT,
     timeout_date      TEXT NOT NULL,
     FOREIGN KEY (session_id)   REFERENCES session(session_id),
     FOREIGN KEY (plan_node_id) REFERENCES plan_node(node_id)
 );
-CREATE INDEX IF NOT EXISTS idx_request_session_status_enqueued
-    ON request(session_id, status, enqueued_at);
+CREATE INDEX IF NOT EXISTS idx_request_session_status_created
+    ON request(session_id, status, creation_date);
 CREATE INDEX IF NOT EXISTS idx_request_plan_node
     ON request(plan_node_id);
 

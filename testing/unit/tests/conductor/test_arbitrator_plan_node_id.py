@@ -40,7 +40,7 @@ def seeded(sqlite_conn):
     """One session, one roadmap, one plan_node, ready to reference."""
     now = _now()
     sqlite_conn.execute(
-        "INSERT INTO session (session_id, initial_team_id, status, started_at) "
+        "INSERT INTO session (session_id, initial_team_id, status, creation_date) "
         "VALUES ('s', 't', 'open', ?)", (now,),
     )
     sqlite_conn.execute(
@@ -121,13 +121,13 @@ def test_message_plan_node_id_fk_rejects_unknown(seeded):
     (
         "task",
         "INSERT INTO task (task_id, session_id, team_id, plan_node_id, kind, "
-        "payload_json, status, enqueued_at) "
+        "payload_json, status, scheduled_date) "
         "VALUES ('tk', 's', 't', 'n1', 'dispatch', '{}', 'queued', :now)",
     ),
     (
         "request",
         "INSERT INTO request (request_id, session_id, from_team, to_team, plan_node_id, "
-        "kind, input_json, status, enqueued_at, timeout_date) "
+        "kind, input_json, status, creation_date, timeout_date) "
         "VALUES ('rq', 's', 't', 't', 'n1', 'k', '{}', 'pending', :now, :now)",
     ),
 ])
@@ -154,7 +154,7 @@ def test_cross_stream_filter_returns_all_rows(seeded):
     )
     seeded.execute(
         "INSERT INTO request (request_id, session_id, from_team, to_team, plan_node_id, "
-        "kind, input_json, status, enqueued_at, timeout_date) "
+        "kind, input_json, status, creation_date, timeout_date) "
         "VALUES ('rq', 's', 't', 't', 'n1', 'k', '{}', 'pending', ?, ?)", (now, now),
     )
     seeded.commit()

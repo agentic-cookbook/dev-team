@@ -90,7 +90,7 @@ def test_persisted_state_after_simulated_crash(tmp_path):
         session_row = await backend.fetch_one("session", {"session_id": sid})
         assert session_row is not None
         assert session_row["status"] == SessionStatus.OPEN.value
-        assert session_row["ended_at"] is None
+        assert session_row["completion_date"] is None
 
         # At least one state row is still active (exit_date=NULL, status=active).
         state_rows = await backend.fetch_all("state", where={"session_id": sid})
