@@ -1,43 +1,44 @@
 # Dev-Team Planning Todo
 
+_Last refreshed 2026-04-18 — see `docs/architecture.md` for current state._
+
 ## In Progress
 
-- **Cookbook sources for project-manager** — filling in guidelines, principles, compliance in the agentic-cookbook repo (see `planning/cookbook-requests.md`)
-
-## Blocked
-
-- **DB schema finalization** — requirements doc at `docs/planning/2026-04-03-initial-database-design.md`, waiting on DB specialist to produce final schema
-- **Specialist script design** — how specialists execute in v2 (extend `run-specialty-teams.sh` or new script), blocked on DB
-- **Database arbitrator backend** — `scripts/arbitrator/database/`, blocked on DB schema
+- _(nothing actively in flight)_
 
 ## Todo
 
-### Test Coverage Expansion
+### Roadmap follow-ups (post-PRs #10-15, #23)
 
-- **Fix db_query.py missing commit** — write operations silently fail because `conn.commit()` is never called
-- **Pipeline scripts integration smoke tests** — `assign_specialists.py` + `run_specialty_teams.py` called in sequence (the real usage pattern), not just individually
-- **Functional: Smoke test (simulated user)** — Sarah persona, 5 exchanges, verify config read, project created, transcript files written, at least one specialist invoked
-- **Functional: Specialist coverage test** — Marcus persona, 20 exchanges, verify all expected specialists invoked, no unexpected ones
-- **Functional: Persistence test** — Sarah persona, 10 exchanges, verify transcript+analysis file pairs, valid frontmatter, correct file naming, chronological ordering
-- **Functional: Resume test** — Phase 1 (5 exchanges) + Phase 2 (5 exchanges), verify greeting references prior topics, checklist carries over
-- **Functional: Interruption test** — Kill after exchange 5 of 8, verify partial state recovery (5 transcripts, 4-5 analyses on disk)
-- **Functional: First-run config test** — No config file, verify skill prompts for config and creates config file
+- **Markdown export format spec.** Directory layout + front-matter for the read-only human-rendering of a roadmap. Design doc § "Open items".
+- **Cycle-detection policy.** `node_dependency` inserts can create cycles. Recommend write-time ancestor walk; pin the detail.
+- **Session scope options.** Schema supports one-session-per-run, one-per-primitive, and batching. Decide once executor team-lead behavior is being authored.
+- **Event-table retention.** Long-running projects will balloon `event`. Pick a pruning / archival policy.
+- **Dispatch / attempt tables on the live conductor schema.** Reference schema-v3.sql has them; live schema doesn't yet. When they land:
+  - extend `testing/unit/tests/conductor/contract/test_cross_stream_filter.py` to 11 streams
+  - add round-trip tests for `dispatch` + `attempt`
+  - update `plugins/dev-team/scripts/db/schema_lint.py` exemption list
 
-### Other
+### atp planning surface
 
-- **Recipe-reviewer disposition** — decide if it stays as standalone agent, becomes team-lead capability, or specialist mode
-- **Absorbed agents cleanup** — `agents/specialist-interviewer.md` and `agents/specialist-code-pass.md` still exist, referenced by current workflows; can't delete until v2 replacements are built
-- **Wire workflows to arbitrator** — update skill workflows to use `arbitrator.sh` instead of `db-*.sh` directly
-- **Wire project-manager to project-storage** — connect the specialist's specialty-teams to call `project-storage.sh`
-- **Update project-manager specialty-teams** — add cookbook artifact references once cookbook sources exist
-- **Replace planning/ with .dev-team-project** — move this tracking to the project-storage-provider when ready
+- **`atp plan <team>` command.** Drives the planner specialty against a team to produce a roadmap. Was the next item before the contract-tests pivot — needs a fresh plan doc.
 
-## Done (this session — 2026-04-04)
+### Tooling
 
-- DB schema v2 requirements doc
-- DB schema design rules
-- Terminology rename (workflow_runs → sessions, agent_runs → session_state)
-- Arbitrator abstraction (markdown backend, 58 tests)
-- Project-storage-provider (markdown backend, 64 tests)
-- Project-manager specialist + 6 specialty-team files
-- Cookbook requests doc
+- **Session-start submodule staleness advisory.** Stop hook no longer enforces submodule freshness (per fix `cat-herding/main` `fae0faa`). Replace with informational surfacing at session start (e.g. via `cc-repo-state` or a session-start hook) so drift is visible without forcing random bumps.
+- **cc-* test harness.** Brainstormed shape: pytest in cat-herding repo, temp git repos as fixtures, fake `gh` for PR-touching scripts. Scope and gh strategy still open.
+
+### Documentation
+
+- **`docs/architecture.md` update.** Once the conductor + roadmap designs are both fully landed, rewrite to current-state per the doc's own convention.
+
+## Recently Done
+
+- **Contract tests for roadmap arbitrator resources** (PR #23, 2026-04-18) — 28 tests under `testing/unit/tests/conductor/contract/`; covers verification items 2-4 (schema lint, tree+DAG round-trip, cross-stream filter).
+- **name-a-puppy + legacy runtime retirement** (PR #22).
+- **atp follow-ups: full action set, team loader, atp CLI, deprecation** (PR #20).
+- **name-a-puppy as roadmap + realizer** (PR #19, #21).
+- **Conductor "what's next" specialty + run_roadmap mode** (PR #18, design #17).
+- **Roadmap graph + plan_node_id join key + body side-table** (PRs #11, #12, #13, #14, #15).
+- **atp roadmap design doc** (PR #10) — `docs/planning/2026-04-17-atp-roadmap-design.md`.
+- **Stop-hook fix: drop submodule freshness check** (cat-herding `fae0faa`, 2026-04-18).
