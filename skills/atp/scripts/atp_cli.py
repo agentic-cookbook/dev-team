@@ -367,6 +367,7 @@ def cmd_rollcall(
     team: str | None,
     output_format: str,
     timeout: float,
+    limit: int | None,
 ) -> int:
     """Live roll-call: stream each role's real response through the
     integration surface, one role at a time — as if the team were
@@ -409,6 +410,34 @@ def cmd_rollcall(
     if not roles:
         print("atp: no roles discovered", file=sys.stderr)
         return 2
+
+    total_roles = len(roles)
+    if limit is not None and limit < total_roles:
+        roles = roles[:limit]
+
+    def _build_role_prompt(role) -> str:
+        """Inject the role's own markdown as identity so the LLM answers
+        in character instead of as generic Claude."""
+        try:
+            definition = role.path.read_text(encoding="utf-8")
+        except OSError:
+            definition = "(definition file unreadable)"
+        persona_verb = {
+            "team-lead": "team lead",
+            "specialty-worker": "worker for the specialty",
+            "specialty-verifier": "verifier for the specialty",
+            "specialist": "specialist",
+        }.get(role.kind, role.kind)
+        header = (
+            f'You are the {persona_verb} "{role.name}" on the '
+            f'"{role.team}" team. Below is your role definition — '
+            f"treat its focus, guidelines, and references as your own "
+            f"knowledge and perspective.\n\n"
+            f"--- role definition ({role.path.name}) ---\n"
+            f"{definition}\n"
+            f"--- end role definition ---\n\n"
+        )
+        return header + ROLL_CALL_PROMPT
 
     def _streaming_claude_runner(claude_bin: str):
         """TeamRunner that shells to `claude --output-format stream-json`
@@ -466,7 +495,7 @@ def cmd_rollcall(
         err: RollCallError | None = None
         t0 = _time.monotonic()
         handle = await session.start(
-            team=role.team, prompt=ROLL_CALL_PROMPT,
+            team=role.team, prompt=_build_role_prompt(role),
         )
         try:
             async def _consume():
@@ -506,6 +535,10 @@ def cmd_rollcall(
         return f"{role.name} ({kind_short})"
 
     async def _run_all() -> list[RollCallResult]:
+        if limit is not None and limit < total_roles:
+            sys.stdout.write(
+                f"(showing first {len(roles)} of {total_roles} roles)\n"
+            )
         sys.stdout.write(f"facilitator> {ROLL_CALL_PROMPT}\n\n")
         sys.stdout.flush()
         results: list[RollCallResult] = []
@@ -579,6 +612,12 @@ def main(argv: list[str] | None = None) -> int:
         default=120.0,
         help="Per-role timeout in seconds (default 120).",
     )
+    p_roll.add_argument(
+        "--limit",
+        type=int,
+        default=None,
+        help="Cap the number of roles polled (e.g. --limit 12).",
+    )
 
     args = parser.parse_args(argv)
     teams_root = args.teams_root or _default_teams_root()
@@ -594,7 +633,7 @@ def main(argv: list[str] | None = None) -> int:
         )
     if args.command == "rollcall":
         return cmd_rollcall(
-            teams_root, args.team, args.format, args.timeout,
+            teams_root, args.team, args.format, args.timeout, args.limit,
         )
 
     parser.print_help()
