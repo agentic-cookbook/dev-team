@@ -46,6 +46,10 @@ from services.conductor.generic_realizer import make_generic_realizer  # noqa: E
 from services.conductor.playbooks import name_a_puppy_roadmap  # noqa: E402
 from services.conductor.specialty import WhatsNextSpecialty  # noqa: E402
 from services.conductor.team_loader import TeamManifest, load_team  # noqa: E402
+from services.integration_surface import (  # noqa: E402
+    InProcessSession,
+    run_cli,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -153,12 +157,12 @@ def _build_dispatcher(
     raise SystemExit(f"atp: unknown dispatcher {name!r}")
 
 
-async def _stdin_gate_answerer(arb, session_id, team_id):
-    """Poll the session for open question gates; prompt the user on stdin
-    and resolve each gate with their reply. Exits when the session
-    reaches a terminal status so the conductor can finish cleanly."""
+async def _bridge_gate_questions(arb, session_id, team_id, io) -> None:
+    """Poll the arbitrator for open question gates; surface each one on
+    the integration surface via `io.ask(...)`, and resolve the gate with
+    the host's reply. Exits when the session reaches a terminal status.
+    """
     seen: set[str] = set()
-    loop = asyncio.get_event_loop()
     while True:
         session_row = await arb._storage.fetch_one(
             "session", {"session_id": str(session_id)}
@@ -178,7 +182,6 @@ async def _stdin_gate_answerer(arb, session_id, team_id):
             if gid in seen:
                 continue
             seen.add(gid)
-            # Find the most recent question message on this plan_node.
             messages = await arb.list_messages(session_id, team_id=team_id)
             body = ""
             for m in messages:
@@ -187,20 +190,12 @@ async def _stdin_gate_answerer(arb, session_id, team_id):
                     and m.plan_node_id == g.get("plan_node_id")
                 ):
                     body = m.body
-            options = json.loads(g.get("options_json") or "[]")
-            prompt = f"\n? {body}"
-            if options:
-                prompt += f"  (options: {'/'.join(options)})"
-            prompt += "\n> "
-            print(prompt, end="", flush=True)
-            # Read one line from stdin off the event loop.
-            answer = await loop.run_in_executor(
-                None, lambda: sys.stdin.readline().strip()
-            )
+            answer = await io.ask(gid, "user", body)
             if not answer:
+                options = json.loads(g.get("options_json") or "[]")
                 answer = options[0] if options else ""
             await arb.resolve_gate(gid, verdict=answer)
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.05)
 
 
 def _mock_scheduler_decide(prompt: str) -> dict:
@@ -234,17 +229,15 @@ def _mock_scheduler_decide(prompt: str) -> dict:
     }
 
 
-async def _run_team(
+async def _build_roadmap_and_realizer(
+    arb: Arbitrator,
     manifest: TeamManifest,
-    dispatcher_name: str,
-    db_path: Path,
     team_name: str,
-    interview: bool = False,
-) -> int:
-    backend = SqliteBackend(db_path)
-    arb = Arbitrator(backend)
-    await arb.start()
-
+    interview: bool,
+):
+    """Set up (roadmap_id, realizer, team_id, override) for a team. Uses
+    the hand-authored override when the team has one, otherwise builds a
+    generic one-node-per-specialty demo roadmap."""
     override = TEAM_OVERRIDES.get(team_name)
     if override is not None:
         roadmap_id = await override["build_roadmap"](arb)
@@ -253,72 +246,93 @@ async def _run_team(
         else:
             realizer = override["realize"]
         team_id = override["team_id"]
-    else:
-        # Generic fallback: one-node-per-specialty demo roadmap. Real
-        # planning roadmaps are produced by `atp plan` (follow-up).
-        roadmap = await arb.create_roadmap(f"{manifest.name}-demo")
-        roadmap_id = roadmap.roadmap_id
-        prev_node_id: str | None = None
-        for specialist in manifest.specialists.values():
-            for specialty in specialist.specialties.values():
-                node_id = f"{specialist.name}.{specialty.name}"
-                await arb.create_plan_node(
-                    roadmap_id=roadmap_id,
-                    title=f"{specialist.name} → {specialty.name}",
-                    node_kind=NodeKind.PRIMITIVE,
-                    node_id=node_id,
-                    specialist=specialist.name,
-                    speciality=specialty.name,
+        return roadmap_id, realizer, team_id, override
+
+    roadmap = await arb.create_roadmap(f"{manifest.name}-demo")
+    roadmap_id = roadmap.roadmap_id
+    prev_node_id: str | None = None
+    for specialist in manifest.specialists.values():
+        for specialty in specialist.specialties.values():
+            node_id = f"{specialist.name}.{specialty.name}"
+            await arb.create_plan_node(
+                roadmap_id=roadmap_id,
+                title=f"{specialist.name} → {specialty.name}",
+                node_kind=NodeKind.PRIMITIVE,
+                node_id=node_id,
+                specialist=specialist.name,
+                speciality=specialty.name,
+            )
+            if prev_node_id is not None:
+                await arb.add_dependency(node_id, prev_node_id)
+            prev_node_id = node_id
+    realizer = make_generic_realizer(manifest)
+    return roadmap_id, realizer, manifest.name, None
+
+
+def _make_conductor_runner(
+    manifest: TeamManifest,
+    dispatcher_name: str,
+    db_path: Path,
+    team_name: str,
+    interview: bool,
+):
+    """Return a TeamRunner that, when invoked, drives the conductor
+    end-to-end for one team and streams progress + final output back
+    through the integration surface as protocol events."""
+
+    async def runner(io, user_turn, ctx):
+        backend = SqliteBackend(db_path)
+        arb = Arbitrator(backend)
+        await arb.start()
+        try:
+            roadmap_id, realizer, team_id, override = (
+                await _build_roadmap_and_realizer(
+                    arb, manifest, team_name, interview
                 )
-                if prev_node_id is not None:
-                    await arb.add_dependency(node_id, prev_node_id)
-                prev_node_id = node_id
-        realizer = make_generic_realizer(manifest)
-        team_id = manifest.name
+            )
+            session_id = uuid4()
+            await arb.open_session(
+                session_id,
+                initial_team_id=team_id,
+                roadmap_id=roadmap_id,
+            )
 
-    session_id = uuid4()
-    await arb.open_session(
-        session_id,
-        initial_team_id=team_id,
-        roadmap_id=roadmap_id,
-    )
+            await io.emit(
+                "state",
+                {
+                    "phase": "starting",
+                    "team": manifest.name,
+                    "dispatcher": dispatcher_name,
+                    "session_id": str(session_id),
+                    "roadmap_id": roadmap_id,
+                },
+            )
 
-    dispatcher = _build_dispatcher(dispatcher_name, manifest, override)
-    conductor = Conductor(
-        arbitrator=arb,
-        dispatcher=dispatcher,
-        team_lead=None,
-        session_id=session_id,
-        max_steps=500,
-    )
-    # Run the conductor concurrently with a stdin-based gate answerer.
-    # Any question gate the realizer opens is rendered to stdout; the
-    # user's reply on stdin resolves the gate so the conductor resumes.
-    await asyncio.gather(
-        conductor.run_roadmap(
-            [WhatsNextSpecialty()], realize_primitive=realizer
-        ),
-        _stdin_gate_answerer(arb, session_id, team_id),
-    )
+            dispatcher = _build_dispatcher(dispatcher_name, manifest, override)
+            conductor = Conductor(
+                arbitrator=arb,
+                dispatcher=dispatcher,
+                team_lead=None,
+                session_id=session_id,
+                max_steps=500,
+            )
 
-    # Print a short summary including the final presented message, if any.
-    messages = await arb.list_messages(session_id, team_id=team_id)
-    final = messages[-1].body if messages else ""
-    print(
-        json.dumps(
-            {
-                "session_id": str(session_id),
-                "roadmap_id": roadmap_id,
-                "team": manifest.name,
-                "dispatcher": dispatcher_name,
-                "db": str(db_path),
-                "final_message": final,
-            },
-            indent=2,
-        )
-    )
-    await arb.close()
-    return 0
+            await asyncio.gather(
+                conductor.run_roadmap(
+                    [WhatsNextSpecialty()], realize_primitive=realizer
+                ),
+                _bridge_gate_questions(arb, session_id, team_id, io),
+            )
+
+            messages = await arb.list_messages(session_id, team_id=team_id)
+            final = messages[-1].body if messages else ""
+            if final:
+                await io.emit("text", {"text": final})
+            await io.emit("result", {"stop_reason": "end_turn"})
+        finally:
+            await arb.close()
+
+    return runner
 
 
 def cmd_run(
@@ -339,8 +353,12 @@ def cmd_run(
             file=sys.stderr,
         )
         return 2
+    runner = _make_conductor_runner(
+        manifest, dispatcher_name, db_path, team_name, interview
+    )
+    session = InProcessSession(runner)
     return asyncio.run(
-        _run_team(manifest, dispatcher_name, db_path, team_name, interview)
+        run_cli(session, team=team_name, prompt="run")
     )
 
 
