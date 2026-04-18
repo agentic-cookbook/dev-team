@@ -46,6 +46,10 @@ from services.conductor.generic_realizer import make_generic_realizer  # noqa: E
 from services.conductor.playbooks import name_a_puppy_roadmap  # noqa: E402
 from services.conductor.specialty import WhatsNextSpecialty  # noqa: E402
 from services.conductor.team_loader import TeamManifest, load_team  # noqa: E402
+from services.integration_surface import (  # noqa: E402
+    InProcessSession,
+    run_cli,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -153,12 +157,12 @@ def _build_dispatcher(
     raise SystemExit(f"atp: unknown dispatcher {name!r}")
 
 
-async def _stdin_gate_answerer(arb, session_id, team_id):
-    """Poll the session for open question gates; prompt the user on stdin
-    and resolve each gate with their reply. Exits when the session
-    reaches a terminal status so the conductor can finish cleanly."""
+async def _bridge_gate_questions(arb, session_id, team_id, io) -> None:
+    """Poll the arbitrator for open question gates; surface each one on
+    the integration surface via `io.ask(...)`, and resolve the gate with
+    the host's reply. Exits when the session reaches a terminal status.
+    """
     seen: set[str] = set()
-    loop = asyncio.get_event_loop()
     while True:
         session_row = await arb._storage.fetch_one(
             "session", {"session_id": str(session_id)}
@@ -178,7 +182,6 @@ async def _stdin_gate_answerer(arb, session_id, team_id):
             if gid in seen:
                 continue
             seen.add(gid)
-            # Find the most recent question message on this plan_node.
             messages = await arb.list_messages(session_id, team_id=team_id)
             body = ""
             for m in messages:
@@ -187,20 +190,12 @@ async def _stdin_gate_answerer(arb, session_id, team_id):
                     and m.plan_node_id == g.get("plan_node_id")
                 ):
                     body = m.body
-            options = json.loads(g.get("options_json") or "[]")
-            prompt = f"\n? {body}"
-            if options:
-                prompt += f"  (options: {'/'.join(options)})"
-            prompt += "\n> "
-            print(prompt, end="", flush=True)
-            # Read one line from stdin off the event loop.
-            answer = await loop.run_in_executor(
-                None, lambda: sys.stdin.readline().strip()
-            )
+            answer = await io.ask(gid, "user", body)
             if not answer:
+                options = json.loads(g.get("options_json") or "[]")
                 answer = options[0] if options else ""
             await arb.resolve_gate(gid, verdict=answer)
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.05)
 
 
 def _mock_scheduler_decide(prompt: str) -> dict:
@@ -234,17 +229,15 @@ def _mock_scheduler_decide(prompt: str) -> dict:
     }
 
 
-async def _run_team(
+async def _build_roadmap_and_realizer(
+    arb: Arbitrator,
     manifest: TeamManifest,
-    dispatcher_name: str,
-    db_path: Path,
     team_name: str,
-    interview: bool = False,
-) -> int:
-    backend = SqliteBackend(db_path)
-    arb = Arbitrator(backend)
-    await arb.start()
-
+    interview: bool,
+):
+    """Set up (roadmap_id, realizer, team_id, override) for a team. Uses
+    the hand-authored override when the team has one, otherwise builds a
+    generic one-node-per-specialty demo roadmap."""
     override = TEAM_OVERRIDES.get(team_name)
     if override is not None:
         roadmap_id = await override["build_roadmap"](arb)
@@ -253,72 +246,93 @@ async def _run_team(
         else:
             realizer = override["realize"]
         team_id = override["team_id"]
-    else:
-        # Generic fallback: one-node-per-specialty demo roadmap. Real
-        # planning roadmaps are produced by `atp plan` (follow-up).
-        roadmap = await arb.create_roadmap(f"{manifest.name}-demo")
-        roadmap_id = roadmap.roadmap_id
-        prev_node_id: str | None = None
-        for specialist in manifest.specialists.values():
-            for specialty in specialist.specialties.values():
-                node_id = f"{specialist.name}.{specialty.name}"
-                await arb.create_plan_node(
-                    roadmap_id=roadmap_id,
-                    title=f"{specialist.name} → {specialty.name}",
-                    node_kind=NodeKind.PRIMITIVE,
-                    node_id=node_id,
-                    specialist=specialist.name,
-                    speciality=specialty.name,
+        return roadmap_id, realizer, team_id, override
+
+    roadmap = await arb.create_roadmap(f"{manifest.name}-demo")
+    roadmap_id = roadmap.roadmap_id
+    prev_node_id: str | None = None
+    for specialist in manifest.specialists.values():
+        for specialty in specialist.specialties.values():
+            node_id = f"{specialist.name}.{specialty.name}"
+            await arb.create_plan_node(
+                roadmap_id=roadmap_id,
+                title=f"{specialist.name} → {specialty.name}",
+                node_kind=NodeKind.PRIMITIVE,
+                node_id=node_id,
+                specialist=specialist.name,
+                speciality=specialty.name,
+            )
+            if prev_node_id is not None:
+                await arb.add_dependency(node_id, prev_node_id)
+            prev_node_id = node_id
+    realizer = make_generic_realizer(manifest)
+    return roadmap_id, realizer, manifest.name, None
+
+
+def _make_conductor_runner(
+    manifest: TeamManifest,
+    dispatcher_name: str,
+    db_path: Path,
+    team_name: str,
+    interview: bool,
+):
+    """Return a TeamRunner that, when invoked, drives the conductor
+    end-to-end for one team and streams progress + final output back
+    through the integration surface as protocol events."""
+
+    async def runner(io, user_turn, ctx):
+        backend = SqliteBackend(db_path)
+        arb = Arbitrator(backend)
+        await arb.start()
+        try:
+            roadmap_id, realizer, team_id, override = (
+                await _build_roadmap_and_realizer(
+                    arb, manifest, team_name, interview
                 )
-                if prev_node_id is not None:
-                    await arb.add_dependency(node_id, prev_node_id)
-                prev_node_id = node_id
-        realizer = make_generic_realizer(manifest)
-        team_id = manifest.name
+            )
+            session_id = uuid4()
+            await arb.open_session(
+                session_id,
+                initial_team_id=team_id,
+                roadmap_id=roadmap_id,
+            )
 
-    session_id = uuid4()
-    await arb.open_session(
-        session_id,
-        initial_team_id=team_id,
-        roadmap_id=roadmap_id,
-    )
+            await io.emit(
+                "state",
+                {
+                    "phase": "starting",
+                    "team": manifest.name,
+                    "dispatcher": dispatcher_name,
+                    "session_id": str(session_id),
+                    "roadmap_id": roadmap_id,
+                },
+            )
 
-    dispatcher = _build_dispatcher(dispatcher_name, manifest, override)
-    conductor = Conductor(
-        arbitrator=arb,
-        dispatcher=dispatcher,
-        team_lead=None,
-        session_id=session_id,
-        max_steps=500,
-    )
-    # Run the conductor concurrently with a stdin-based gate answerer.
-    # Any question gate the realizer opens is rendered to stdout; the
-    # user's reply on stdin resolves the gate so the conductor resumes.
-    await asyncio.gather(
-        conductor.run_roadmap(
-            [WhatsNextSpecialty()], realize_primitive=realizer
-        ),
-        _stdin_gate_answerer(arb, session_id, team_id),
-    )
+            dispatcher = _build_dispatcher(dispatcher_name, manifest, override)
+            conductor = Conductor(
+                arbitrator=arb,
+                dispatcher=dispatcher,
+                team_lead=None,
+                session_id=session_id,
+                max_steps=500,
+            )
 
-    # Print a short summary including the final presented message, if any.
-    messages = await arb.list_messages(session_id, team_id=team_id)
-    final = messages[-1].body if messages else ""
-    print(
-        json.dumps(
-            {
-                "session_id": str(session_id),
-                "roadmap_id": roadmap_id,
-                "team": manifest.name,
-                "dispatcher": dispatcher_name,
-                "db": str(db_path),
-                "final_message": final,
-            },
-            indent=2,
-        )
-    )
-    await arb.close()
-    return 0
+            await asyncio.gather(
+                conductor.run_roadmap(
+                    [WhatsNextSpecialty()], realize_primitive=realizer
+                ),
+                _bridge_gate_questions(arb, session_id, team_id, io),
+            )
+
+            messages = await arb.list_messages(session_id, team_id=team_id)
+            final = messages[-1].body if messages else ""
+            if final:
+                await io.emit("text", {"text": final})
+            await io.emit("result", {"stop_reason": "end_turn"})
+        finally:
+            await arb.close()
+
+    return runner
 
 
 def cmd_run(
@@ -339,8 +353,12 @@ def cmd_run(
             file=sys.stderr,
         )
         return 2
+    runner = _make_conductor_runner(
+        manifest, dispatcher_name, db_path, team_name, interview
+    )
+    session = InProcessSession(runner)
     return asyncio.run(
-        _run_team(manifest, dispatcher_name, db_path, team_name, interview)
+        run_cli(session, team=team_name, prompt="run")
     )
 
 
@@ -348,23 +366,30 @@ def cmd_rollcall(
     teams_root: Path,
     team: str | None,
     output_format: str,
-    concurrency: int,
     timeout: float,
+    limit: int | None,
 ) -> int:
-    """Ping every role in one or all teams.
+    """Live roll-call: stream each role's real response through the
+    integration surface, one role at a time — as if the team were
+    standing in a group taking turns."""
+    import shutil
+    import time as _time
 
-    v1 uses a scripted in-process runner — proves discovery + integration
-    surface + formatting end to end without an LLM call. Real-LLM variant
-    is the functional smoke (see 2026-04-18-rollcall-design.md task 5).
-    """
     from services.integration_surface import InProcessSession
     from services.rollcall import (
+        ROLL_CALL_PROMPT,
+        RollCallError,
+        RollCallResult,
         discover_team,
         discover_teams,
         render_json,
         render_table,
-        roll_call,
     )
+
+    claude_bin = shutil.which("claude")
+    if claude_bin is None:
+        print("atp: `claude` CLI not found on PATH", file=sys.stderr)
+        return 2
 
     if team is not None:
         team_dir = teams_root / team
@@ -386,19 +411,153 @@ def cmd_rollcall(
         print("atp: no roles discovered", file=sys.stderr)
         return 2
 
-    async def scripted_runner(io, user_turn, ctx):
-        await io.emit("state", {"phase": "starting"})
-        await io.emit(
-            "text",
-            {"text": f"roll-call ack ({ctx.team})"},
+    total_roles = len(roles)
+    if limit is not None and limit < total_roles:
+        roles = roles[:limit]
+
+    def _build_role_prompt(role) -> str:
+        """Inject the role's own markdown as identity so the LLM answers
+        in character instead of as generic Claude."""
+        try:
+            definition = role.path.read_text(encoding="utf-8")
+        except OSError:
+            definition = "(definition file unreadable)"
+        persona_verb = {
+            "team-lead": "team lead",
+            "specialty-worker": "worker for the specialty",
+            "specialty-verifier": "verifier for the specialty",
+            "specialist": "specialist",
+        }.get(role.kind, role.kind)
+        header = (
+            f'You are the {persona_verb} "{role.name}" on the '
+            f'"{role.team}" team. Below is your role definition — '
+            f"treat its focus, guidelines, and references as your own "
+            f"knowledge and perspective.\n\n"
+            f"--- role definition ({role.path.name}) ---\n"
+            f"{definition}\n"
+            f"--- end role definition ---\n\n"
         )
-        await io.emit("result", {"stop_reason": "end_turn"})
+        return header + ROLL_CALL_PROMPT
 
-    session = InProcessSession(scripted_runner)
-    results = asyncio.run(roll_call(
-        session, roles, concurrency=concurrency, timeout=timeout,
-    ))
+    def _streaming_claude_runner(claude_bin: str):
+        """TeamRunner that shells to `claude --output-format stream-json`
+        and emits one `text` event per assistant-message delta. All
+        claude-specific parsing lives here; clients consume plain
+        protocol events."""
+        async def _runner(io, user_turn, ctx):
+            await io.emit("state", {"phase": "starting"})
+            proc = await asyncio.create_subprocess_exec(
+                claude_bin,
+                "--model", "haiku",
+                "--output-format", "stream-json",
+                "--verbose",
+                "-p", user_turn,
+                stdin=asyncio.subprocess.DEVNULL,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+            )
+            assert proc.stdout is not None
+            async for raw in proc.stdout:
+                try:
+                    msg = json.loads(raw.decode("utf-8"))
+                except json.JSONDecodeError:
+                    continue
+                if msg.get("type") == "assistant":
+                    for block in msg.get("message", {}).get("content", []):
+                        if block.get("type") == "text":
+                            delta = block.get("text", "")
+                            if delta:
+                                await io.emit("text", {"text": delta})
+            rc = await proc.wait()
+            if rc != 0:
+                assert proc.stderr is not None
+                err = (await proc.stderr.read()).decode(
+                    "utf-8", errors="replace"
+                )
+                await io.emit(
+                    "error",
+                    {"kind": "subprocess",
+                     "message": f"claude exit {rc}: {err[-200:]}",
+                     "retryable": False},
+                )
+                return
+            await io.emit("result", {"stop_reason": "end_turn"})
 
+        return _runner
+
+    runner = _streaming_claude_runner(claude_bin)
+
+    async def _run_one(role) -> RollCallResult:
+        """Start a session, stream deltas to stdout live, and collect a
+        RollCallResult for the final summary."""
+        session = InProcessSession(runner)
+        parts: list[str] = []
+        err: RollCallError | None = None
+        t0 = _time.monotonic()
+        handle = await session.start(
+            team=role.team, prompt=_build_role_prompt(role),
+        )
+        try:
+            async def _consume():
+                async for ev in session.events(handle.session_id):
+                    if ev.type == "text":
+                        delta = ev.payload.get("text", "")
+                        if delta:
+                            parts.append(delta)
+                            sys.stdout.write(delta)
+                            sys.stdout.flush()
+                    elif ev.type == "error":
+                        raise RuntimeError(
+                            ev.payload.get("message", "error event")
+                        )
+                    elif ev.type == "result":
+                        return
+
+            await asyncio.wait_for(_consume(), timeout=timeout)
+        except asyncio.TimeoutError:
+            err = RollCallError(kind="timeout", message=f">{timeout}s")
+        except Exception as exc:
+            err = RollCallError(kind="error", message=str(exc))
+        finally:
+            try:
+                await session.close(handle.session_id)
+            except Exception:
+                pass
+        return RollCallResult(
+            role=role,
+            response="".join(parts),
+            duration_ms=int((_time.monotonic() - t0) * 1000),
+            error=err,
+        )
+
+    def _speaker(role) -> str:
+        kind_short = role.kind.rsplit("-", 1)[-1]
+        return f"{role.name} ({kind_short})"
+
+    async def _run_all() -> list[RollCallResult]:
+        if limit is not None and limit < total_roles:
+            sys.stdout.write(
+                f"(showing first {len(roles)} of {total_roles} roles)\n"
+            )
+        sys.stdout.write(f"facilitator> {ROLL_CALL_PROMPT}\n\n")
+        sys.stdout.flush()
+        results: list[RollCallResult] = []
+        for role in roles:
+            sys.stdout.write(f"{_speaker(role)}> ")
+            sys.stdout.flush()
+            result = await _run_one(role)
+            if result.error is not None:
+                sys.stdout.write(
+                    f"[error {result.error.kind}] {result.error.message}"
+                )
+            sys.stdout.write("\n\n")
+            sys.stdout.flush()
+            results.append(result)
+        return results
+
+    results = asyncio.run(_run_all())
+
+    sys.stdout.write("\n")
     if output_format == "json":
         sys.stdout.write(render_json(results))
     else:
@@ -438,18 +597,26 @@ def main(argv: list[str] | None = None) -> int:
 
     p_roll = sub.add_parser(
         "rollcall",
-        help="Ping every role in one or all teams via the integration surface.",
+        help=(
+            "Live roll-call: stream each role's real response through "
+            "the integration surface, one role at a time."
+        ),
     )
     p_roll.add_argument("team", nargs="?", default=None)
     p_roll.add_argument(
         "--format", choices=["table", "json"], default="table"
     )
-    p_roll.add_argument("--concurrency", type=int, default=4)
     p_roll.add_argument(
         "--timeout",
         type=float,
-        default=30.0,
-        help="Per-role timeout in seconds (default 30).",
+        default=120.0,
+        help="Per-role timeout in seconds (default 120).",
+    )
+    p_roll.add_argument(
+        "--limit",
+        type=int,
+        default=None,
+        help="Cap the number of roles polled (e.g. --limit 12).",
     )
 
     args = parser.parse_args(argv)
@@ -466,8 +633,7 @@ def main(argv: list[str] | None = None) -> int:
         )
     if args.command == "rollcall":
         return cmd_rollcall(
-            teams_root, args.team, args.format,
-            args.concurrency, args.timeout,
+            teams_root, args.team, args.format, args.timeout, args.limit,
         )
 
     parser.print_help()
