@@ -1,0 +1,23 @@
+{"payload": {"name": "whats-next-worker", "status": "running", "tool_use_id": "<id>"}, "seq": 0, "session_id": "SESSION", "type": "tool_call"}
+{"payload": {"name": "whats-next-verifier", "status": "running", "tool_use_id": "<id>"}, "seq": 1, "session_id": "SESSION", "type": "tool_call"}
+{"payload": {"name": "breed-name-worker", "status": "running", "tool_use_id": "<id>"}, "seq": 2, "session_id": "SESSION", "type": "tool_call"}
+{"payload": {"name": "lifestyle-name-worker", "status": "running", "tool_use_id": "<id>"}, "seq": 3, "session_id": "SESSION", "type": "tool_call"}
+{"payload": {"name": "temperament-name-worker", "status": "running", "tool_use_id": "<id>"}, "seq": 4, "session_id": "SESSION", "type": "tool_call"}
+{"payload": {"name": "aggregator-worker", "status": "running", "tool_use_id": "<id>"}, "seq": 5, "session_id": "SESSION", "type": "tool_call"}
+{"payload": {"detail": {"action": "advance-to", "kind": "whats_next_decision", "node_id": "gather-traits", "plan_node_id": null, "reason": "only runnable primitive: Gather puppy traits", "team_id": "conductor"}, "phase": "running"}, "seq": 6, "session_id": "SESSION", "type": "state"}
+{"payload": {"detail": {"action": "advance-to", "kind": "whats_next_decision", "node_id": "breed-names", "plan_node_id": null, "reason": "batch", "team_id": "conductor"}, "phase": "running"}, "seq": 7, "session_id": "SESSION", "type": "state"}
+{"payload": {"detail": {"action": "advance-to", "kind": "whats_next_decision", "node_id": "aggregate", "plan_node_id": null, "reason": "only runnable primitive: Rank all candidate names", "team_id": "conductor"}, "phase": "running"}, "seq": 8, "session_id": "SESSION", "type": "state"}
+{"payload": {"detail": {"action": "advance-to", "kind": "whats_next_decision", "node_id": "present", "plan_node_id": null, "reason": "only runnable primitive: Present ranked list to user", "team_id": "conductor"}, "phase": "running"}, "seq": 9, "session_id": "SESSION", "type": "state"}
+{"payload": {"detail": {"action": "done", "kind": "whats_next_decision", "node_id": null, "plan_node_id": null, "reason": "all plan_nodes are done", "team_id": "conductor"}, "phase": "running"}, "seq": 10, "session_id": "SESSION", "type": "state"}
+{"payload": {"detail": {"actor": "conductor", "node_id": "gather-traits", "node_state": "running"}, "phase": "running"}, "seq": 11, "session_id": "SESSION", "type": "state"}
+{"payload": {"detail": {"actor": "conductor", "node_id": "gather-traits", "node_state": "done"}, "phase": "closed"}, "seq": 12, "session_id": "SESSION", "type": "state"}
+{"payload": {"detail": {"actor": "conductor", "node_id": "breed-names", "node_state": "running"}, "phase": "running"}, "seq": 13, "session_id": "SESSION", "type": "state"}
+{"payload": {"detail": {"actor": "conductor", "node_id": "lifestyle-names", "node_state": "running"}, "phase": "running"}, "seq": 14, "session_id": "SESSION", "type": "state"}
+{"payload": {"detail": {"actor": "conductor", "node_id": "temperament-names", "node_state": "running"}, "phase": "running"}, "seq": 15, "session_id": "SESSION", "type": "state"}
+{"payload": {"detail": {"actor": "conductor", "node_id": "breed-names", "node_state": "done"}, "phase": "closed"}, "seq": 16, "session_id": "SESSION", "type": "state"}
+{"payload": {"detail": {"actor": "conductor", "node_id": "lifestyle-names", "node_state": "done"}, "phase": "closed"}, "seq": 17, "session_id": "SESSION", "type": "state"}
+{"payload": {"detail": {"actor": "conductor", "node_id": "temperament-names", "node_state": "done"}, "phase": "closed"}, "seq": 18, "session_id": "SESSION", "type": "state"}
+{"payload": {"detail": {"actor": "conductor", "node_id": "aggregate", "node_state": "running"}, "phase": "running"}, "seq": 19, "session_id": "SESSION", "type": "state"}
+{"payload": {"detail": {"actor": "conductor", "node_id": "aggregate", "node_state": "done"}, "phase": "closed"}, "seq": 20, "session_id": "SESSION", "type": "state"}
+{"payload": {"detail": {"actor": "conductor", "node_id": "present", "node_state": "running"}, "phase": "running"}, "seq": 21, "session_id": "SESSION", "type": "state"}
+{"payload": {"detail": {"actor": "conductor", "node_id": "present", "node_state": "done"}, "phase": "closed"}, "seq": 22, "session_id": "SESSION", "type": "state"}
