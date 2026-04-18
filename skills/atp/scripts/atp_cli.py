@@ -43,8 +43,30 @@ from services.conductor.dispatcher import (  # noqa: E402
     MockDispatcher,
 )
 from services.conductor.generic_realizer import make_generic_realizer  # noqa: E402
+from services.conductor.playbooks import name_a_puppy_roadmap  # noqa: E402
 from services.conductor.specialty import WhatsNextSpecialty  # noqa: E402
 from services.conductor.team_loader import TeamManifest, load_team  # noqa: E402
+
+
+# ---------------------------------------------------------------------------
+# Per-team overrides — teams whose roadmap + realizer are hand-authored,
+# not derived from the generic one-node-per-specialty scaffold.
+# ---------------------------------------------------------------------------
+
+TEAM_OVERRIDES: dict[str, object] = {
+    "puppynamingteam": {
+        "module": name_a_puppy_roadmap,
+        "build_roadmap": name_a_puppy_roadmap.build_roadmap,
+        "realize": name_a_puppy_roadmap.realize,
+        "team_id": name_a_puppy_roadmap.TEAM_ID,
+        "worker_agents": [
+            "breed-name-worker",
+            "lifestyle-name-worker",
+            "temperament-name-worker",
+            "aggregator-worker",
+        ],
+    },
+}
 
 
 DEFAULT_TEAMS_ROOT = Path.cwd() / "teams"
@@ -92,68 +114,121 @@ def cmd_describe(teams_root: Path, team_name: str) -> int:
     return 0
 
 
-def _build_dispatcher(name: str, manifest: TeamManifest) -> Dispatcher:
+def _build_dispatcher(
+    name: str,
+    manifest: TeamManifest,
+    override: dict | None = None,
+) -> Dispatcher:
     if name == "claude-code":
         return ClaudeCodeDispatcher()
     if name == "mock":
-        # Autogenerate canned responses for every worker in the manifest
-        # plus the scheduler pair. Shape matches what the generic realizer
-        # and whats-next specialty expect.
+        # Scheduler mock: when called for a non-deterministic decision,
+        # delegate to _mock_scheduler_decide which picks the first
+        # runnable primitive by reading the prompt's plan-node list.
         responses: dict[str, object] = {
-            "whats-next-worker": {
-                "action": "done",
-                "node_id": None,
-                "reason": "mock end",
-                "deterministic": False,
-            },
+            "whats-next-worker": _mock_scheduler_decide,
             "whats-next-verifier": {"verdict": "pass", "reason": "mock"},
         }
-        for specialist in manifest.specialists.values():
-            for specialty in specialist.specialties.values():
-                agent = f"{specialist.name}-{specialty.name}-worker"
-                responses[agent] = {
-                    "result": {"mock": True, "specialty": specialty.name}
-                }
+        if override is not None:
+            for agent in override.get("worker_agents", []):
+                if "aggregator" in agent:
+                    responses[agent] = {
+                        "ranked_candidates": [
+                            "Luna", "Biscuit", "Scout", "Daisy", "Rex",
+                        ]
+                    }
+                else:
+                    responses[agent] = {
+                        "candidates": ["Mock", "Demo", "Placeholder"]
+                    }
+        else:
+            for specialist in manifest.specialists.values():
+                for specialty in specialist.specialties.values():
+                    agent = f"{specialist.name}-{specialty.name}-worker"
+                    responses[agent] = {
+                        "result": {"mock": True, "specialty": specialty.name}
+                    }
         return MockDispatcher(responses)
     raise SystemExit(f"atp: unknown dispatcher {name!r}")
+
+
+def _mock_scheduler_decide(prompt: str) -> dict:
+    """Parse the scheduler's prompt to find the plan-node list + latest
+    state, then return an advance-to for the first un-done node, or
+    `done` if everything is done."""
+    import re
+    # Prompt includes "Plan nodes: [...]" and "Latest state per node: {...}"
+    pn_match = re.search(r"Plan nodes:\s*(\[.*?\])", prompt, re.DOTALL)
+    st_match = re.search(r"Latest state per node:\s*(\{.*?\})", prompt, re.DOTALL)
+    try:
+        plan_nodes = json.loads(pn_match.group(1)) if pn_match else []
+        state_map = json.loads(st_match.group(1)) if st_match else {}
+    except Exception:
+        plan_nodes, state_map = [], {}
+
+    for n in plan_nodes:
+        nid = n.get("node_id")
+        if state_map.get(nid) not in ("done", "failed", "superseded"):
+            return {
+                "action": "advance-to",
+                "node_id": nid,
+                "reason": f"mock picks {nid}",
+                "deterministic": False,
+            }
+    return {
+        "action": "done",
+        "node_id": None,
+        "reason": "mock: nothing left",
+        "deterministic": False,
+    }
 
 
 async def _run_team(
     manifest: TeamManifest,
     dispatcher_name: str,
     db_path: Path,
+    team_name: str,
 ) -> int:
     backend = SqliteBackend(db_path)
     arb = Arbitrator(backend)
     await arb.start()
 
-    # Build a one-node-per-specialty demo roadmap. Real planning
-    # roadmaps will be produced by atp plan (follow-up).
-    roadmap = await arb.create_roadmap(f"{manifest.name}-demo")
-    prev_node_id: str | None = None
-    for specialist in manifest.specialists.values():
-        for specialty in specialist.specialties.values():
-            node_id = f"{specialist.name}.{specialty.name}"
-            await arb.create_plan_node(
-                roadmap_id=roadmap.roadmap_id,
-                title=f"{specialist.name} → {specialty.name}",
-                node_kind=NodeKind.PRIMITIVE,
-                node_id=node_id,
-                specialist=specialist.name,
-                speciality=specialty.name,
-            )
-            if prev_node_id is not None:
-                await arb.add_dependency(node_id, prev_node_id)
-            prev_node_id = node_id
+    override = TEAM_OVERRIDES.get(team_name)
+    if override is not None:
+        roadmap_id = await override["build_roadmap"](arb)
+        realizer = override["realize"]
+        team_id = override["team_id"]
+    else:
+        # Generic fallback: one-node-per-specialty demo roadmap. Real
+        # planning roadmaps are produced by `atp plan` (follow-up).
+        roadmap = await arb.create_roadmap(f"{manifest.name}-demo")
+        roadmap_id = roadmap.roadmap_id
+        prev_node_id: str | None = None
+        for specialist in manifest.specialists.values():
+            for specialty in specialist.specialties.values():
+                node_id = f"{specialist.name}.{specialty.name}"
+                await arb.create_plan_node(
+                    roadmap_id=roadmap_id,
+                    title=f"{specialist.name} → {specialty.name}",
+                    node_kind=NodeKind.PRIMITIVE,
+                    node_id=node_id,
+                    specialist=specialist.name,
+                    speciality=specialty.name,
+                )
+                if prev_node_id is not None:
+                    await arb.add_dependency(node_id, prev_node_id)
+                prev_node_id = node_id
+        realizer = make_generic_realizer(manifest)
+        team_id = manifest.name
 
     session_id = uuid4()
     await arb.open_session(
         session_id,
-        initial_team_id=manifest.name,
-        roadmap_id=roadmap.roadmap_id,
+        initial_team_id=team_id,
+        roadmap_id=roadmap_id,
     )
 
-    dispatcher = _build_dispatcher(dispatcher_name, manifest)
+    dispatcher = _build_dispatcher(dispatcher_name, manifest, override)
     conductor = Conductor(
         arbitrator=arb,
         dispatcher=dispatcher,
@@ -163,17 +238,21 @@ async def _run_team(
     )
     await conductor.run_roadmap(
         [WhatsNextSpecialty()],
-        realize_primitive=make_generic_realizer(manifest),
+        realize_primitive=realizer,
     )
 
+    # Print a short summary including the final presented message, if any.
+    messages = await arb.list_messages(session_id, team_id=team_id)
+    final = messages[-1].body if messages else ""
     print(
         json.dumps(
             {
                 "session_id": str(session_id),
-                "roadmap_id": roadmap.roadmap_id,
+                "roadmap_id": roadmap_id,
                 "team": manifest.name,
                 "dispatcher": dispatcher_name,
                 "db": str(db_path),
+                "final_message": final,
             },
             indent=2,
         )
@@ -199,7 +278,7 @@ def cmd_run(
             file=sys.stderr,
         )
         return 2
-    return asyncio.run(_run_team(manifest, dispatcher_name, db_path))
+    return asyncio.run(_run_team(manifest, dispatcher_name, db_path, team_name))
 
 
 def main(argv: list[str] | None = None) -> int:
