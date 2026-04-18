@@ -45,6 +45,10 @@ from .specialty import (
     ACTION_DONE,
     ConductorSpecialty,
 )
+from .specialty.whats_next import (
+    _runnable_nodes as _compute_runnable_nodes,
+    gather_context as _gather_roadmap_context,
+)
 from .team_lead import TeamLead
 
 
@@ -254,23 +258,25 @@ class Conductor:
                     raise RuntimeError(
                         "whats-next returned advance-to without node_id"
                     )
-                await self._arb.record_node_state_event(
-                    node_id=decision.node_id,
-                    event_type=NodeStateEventType.RUNNING,
-                    actor="conductor",
-                    session_id=self._session_id,
+                # Parallel batch: two runnable primitives with no
+                # inter-dependency (which by definition holds for any
+                # two concurrently-runnable primitives) can be realized
+                # concurrently. The scheduler's pick is always in the
+                # batch; any other runnable primitives join it.
+                ctx = await _gather_roadmap_context(
+                    self._arb, self._session_id
                 )
-                await realize_primitive(
-                    self._arb,
-                    self._dispatcher,
-                    self._session_id,
-                    decision.node_id,
-                )
-                await self._arb.record_node_state_event(
-                    node_id=decision.node_id,
-                    event_type=NodeStateEventType.DONE,
-                    actor="conductor",
-                    session_id=self._session_id,
+                runnable = [
+                    n
+                    for n in _compute_runnable_nodes(ctx)
+                    if n["node_kind"] == "primitive"
+                ]
+                batch_ids: list[str] = [decision.node_id]
+                for n in runnable:
+                    if n["node_id"] != decision.node_id:
+                        batch_ids.append(n["node_id"])
+                await self._advance_primitive_batch(
+                    batch_ids, realize_primitive
                 )
                 continue
 
@@ -282,6 +288,36 @@ class Conductor:
             raise NotImplementedError(
                 f"run_roadmap does not yet handle action {decision.action!r}"
             )
+
+    async def _advance_primitive_batch(
+        self,
+        node_ids: list[str],
+        realize_primitive: RealizePrimitive,
+    ) -> None:
+        """Run the realizer for each node_id in parallel, with each run
+        bracketed by running/done `node_state_event` rows."""
+
+        async def _advance_one(node_id: str) -> None:
+            await self._arb.record_node_state_event(
+                node_id=node_id,
+                event_type=NodeStateEventType.RUNNING,
+                actor="conductor",
+                session_id=self._session_id,
+            )
+            await realize_primitive(
+                self._arb,
+                self._dispatcher,
+                self._session_id,
+                node_id,
+            )
+            await self._arb.record_node_state_event(
+                node_id=node_id,
+                event_type=NodeStateEventType.DONE,
+                actor="conductor",
+                session_id=self._session_id,
+            )
+
+        await asyncio.gather(*(_advance_one(nid) for nid in node_ids))
 
     def _register_cross_team_handlers(self) -> None:
         """Register every aux team's declared request handlers on the arbitrator."""
