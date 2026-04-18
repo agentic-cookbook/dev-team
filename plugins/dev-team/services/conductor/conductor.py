@@ -65,7 +65,7 @@ DecomposeCompound = Callable[
     [Arbitrator, Dispatcher, UUID, str], Awaitable[None]
 ]
 
-PresentResults = Callable[
+PresentResultsFn = Callable[
     [Arbitrator, Dispatcher, UUID], Awaitable[None]
 ]
 
@@ -235,7 +235,7 @@ class Conductor:
         specialties: list[ConductorSpecialty],
         realize_primitive: RealizePrimitive | None = None,
         decompose_compound: DecomposeCompound | None = None,
-        present_results: PresentResults | None = None,
+        present_results: PresentResultsFn | None = None,
         await_poll_seconds: float = 0.05,
     ) -> None:
         """Drive a roadmap-backed session via conductor-owned specialties.

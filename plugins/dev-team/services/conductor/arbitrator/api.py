@@ -73,6 +73,7 @@ class Arbitrator:
         session_id: UUID,
         initial_team_id: str,
         metadata: dict[str, Any] | None = None,
+        roadmap_id: str | None = None,
     ) -> Session:
         existing = await self._storage.fetch_one(
             "session", {"session_id": str(session_id)}
@@ -90,11 +91,16 @@ class Arbitrator:
                 ),
                 metadata_json=json.loads(existing["metadata_json"]),
             )
+        # Accept roadmap_id from either the kwarg or metadata (legacy
+        # callers stashed it there). Column wins when both set.
+        effective_roadmap_id = roadmap_id or (metadata or {}).get("roadmap_id")
         now = _utcnow_iso()
         row = {
             "session_id": str(session_id),
             "initial_team_id": initial_team_id,
             "status": SessionStatus.OPEN.value,
+            "roadmap_id": effective_roadmap_id,
+            "last_decision_date": None,
             "creation_date": now,
             "completion_date": None,
             "metadata_json": json.dumps(metadata or {}),
@@ -106,6 +112,18 @@ class Arbitrator:
             status=SessionStatus.OPEN,
             creation_date=datetime.fromisoformat(now),
             metadata_json=metadata or {},
+        )
+
+    async def touch_session_decision_date(
+        self, session_id: UUID
+    ) -> None:
+        """Bump session.last_decision_date to now. Used by the conductor
+        after every scheduler decision so the whats-next short-circuit
+        can reason about "findings newer than the last decision"."""
+        await self._storage.update(
+            "session",
+            {"session_id": str(session_id)},
+            {"last_decision_date": _utcnow_iso()},
         )
 
     async def close_session(
