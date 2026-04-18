@@ -34,6 +34,7 @@ def _make_claude_runner(claude_bin: str):
         await io.emit("state", {"phase": "starting"})
         proc = await asyncio.create_subprocess_exec(
             claude_bin,
+            "--model", "haiku",
             "-p",
             user_turn,
             stdin=asyncio.subprocess.DEVNULL,
