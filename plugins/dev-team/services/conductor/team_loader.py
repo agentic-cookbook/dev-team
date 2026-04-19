@@ -29,6 +29,7 @@ Specialty file format:
 """
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -116,12 +117,17 @@ def _extract_section(markdown: str, heading: str) -> str:
 def load_team(team_root: Path) -> TeamManifest:
     """Build a TeamManifest from a team directory.
 
-    Uses directory names as authoritative identifiers when frontmatter
-    fields are absent. Specialties without a well-formed specialty.md
-    YAML frontmatter are skipped with a warning (via stderr is fine —
-    the caller can iterate on specialty authoring).
+    Accepts either the markdown-tree shape (teams/<name>/...) or the
+    bundle shape (<name>.agenticteam/ with team.json at the root). When
+    a team.json is present at the root, `_load_from_agenticteam` is used.
+
+    For markdown trees: directory names are authoritative identifiers
+    when frontmatter fields are absent. Specialties without a
+    well-formed specialty.md YAML frontmatter are skipped.
     """
     team_root = team_root.resolve()
+    if team_root.suffix == ".agenticteam" or (team_root / "team.json").is_file():
+        return _load_from_agenticteam(team_root)
     name = team_root.name
     team_md = team_root / "team.md"
     if team_md.is_file():
@@ -180,3 +186,31 @@ def _ingest_specialty(md_path: Path, specialist: SpecialistDef) -> None:
         verify=verify,
         logical_model=logical_model,
     )
+
+
+def _load_from_agenticteam(bundle_root: Path) -> TeamManifest:
+    """Build a TeamManifest from a <name>.agenticteam/ bundle (team.json)."""
+    team_json = bundle_root / "team.json"
+    doc = json.loads(team_json.read_text(encoding="utf-8"))
+    if doc.get("kind") != "agenticteam":
+        raise ValueError(
+            f"{team_json}: expected kind=agenticteam, got {doc.get('kind')!r}"
+        )
+    manifest = TeamManifest(name=doc["name"], team_root=bundle_root)
+    for sp in doc.get("specialists", []):
+        sd = SpecialistDef(name=sp["name"])
+        for st in sp.get("specialties", []):
+            fm = st.get("frontmatter") or {}
+            worker_focus = st.get("worker_focus", "")
+            if not worker_focus:
+                continue
+            sd.specialties[st["name"]] = SpecialtyDef(
+                name=st["name"],
+                description=fm.get("description", ""),
+                worker_focus=worker_focus,
+                verify=st.get("verify", ""),
+                logical_model=fm.get("logical_model", "balanced"),
+            )
+        if sd.specialties:
+            manifest.specialists[sp["name"]] = sd
+    return manifest
