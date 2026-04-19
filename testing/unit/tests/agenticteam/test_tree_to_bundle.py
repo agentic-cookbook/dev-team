@@ -13,10 +13,10 @@ def test_bundle_has_team_json_and_required_fields(
 
     data = json.loads((bundle / "team.json").read_text())
     assert data["kind"] == "agenticteam"
-    assert data["schema_version"] == 1
+    assert data["schema_version"] == 2
     assert data["name"] == "toyteam"
     assert len(data["specialists"]) == 1
-    assert data["specialists"][0]["specialties"][0]["artifact_kind"] == "reference"
+    assert data["specialists"][0]["specialties"][0]["artifact_kind"] == "reference_resolved"
 
 
 def test_bundle_copies_referenced_files_at_declared_paths(
