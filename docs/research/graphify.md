@@ -209,10 +209,10 @@ Arbitrator (agenticdevteam) — 50 edges, bridges 3 communities
 
 ### Where it lives
 
-`~/projects/active/my-projects-overview/` — already indexes all projects. Add:
+`~/projects/active/myprojectsoverview/` — already indexes all projects. Add:
 
 ```
-my-projects-overview/
+myprojectsoverview/
 ├── meta-graph/
 │   ├── build.py              the builder script
 │   ├── meta-graph.json       output
@@ -260,7 +260,7 @@ Portfolio analyst output feeds back into the project-manager specialist's todos,
 graphify (per project)
         │
         ▼
-meta-graph builder (my-projects-overview/)
+meta-graph builder (myprojectsoverview/)
         │
         ▼
 META_REPORT.md (artifact)

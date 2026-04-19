@@ -23,7 +23,7 @@ The pivot in one line: **the outer loop is a headless process, not a Claude Code
 
 ### Components
 
-**Conductor** — long-running Python process, one per session. Hosted either by a terminal invocation or by the `agentic-daemon` service (see "Host" below). Owns the asyncio event loop. Dispatches LLM work through a pluggable **dispatcher** abstraction (see "Dispatcher" below). Writes everything through the arbitrator. Can run indefinitely; checkpoints come for free because all state is durable in the DB. The conductor is not itself an LLM — it's a scheduler, dispatcher, and event hub.
+**Conductor** — long-running Python process, one per session. Hosted either by a terminal invocation or by the `agenticdaemon` service (see "Host" below). Owns the asyncio event loop. Dispatches LLM work through a pluggable **dispatcher** abstraction (see "Dispatcher" below). Writes everything through the arbitrator. Can run indefinitely; checkpoints come for free because all state is durable in the DB. The conductor is not itself an LLM — it's a scheduler, dispatcher, and event hub.
 
 **Arbitrator + shared DB** — the one contract. Python library plus an optional thin HTTP wrapper. Every component (conductor, team-leads, workers, user interface, observer) reads and writes through this API. There is exactly one logical arbitrator per session, regardless of how many teams are running. The arbitrator absorbs the former project-storage-provider: project items, schedules, todos, issues, decisions, dependencies all become arbitrator resources. Backend is swappable via `--storage markdown|sqlite|...`; the arbitrator is the only component that knows or cares about the backend.
 
@@ -222,14 +222,14 @@ The user runs `conductor start --playbook=... --ui=tui` from a terminal. Conduct
 
 ### Daemon-hosted (phase 2)
 
-The `agentic-daemon` project (user's existing Swift launchd daemon at `~/projects/active/agentic-daemon`) gains the ability to host conductor jobs:
+The `agenticdaemon` project (user's existing Swift launchd daemon at `~/projects/active/agenticdaemon`) gains the ability to host conductor jobs:
 
 - One conductor process per session, managed as a daemon job.
 - Job lifecycle decoupled from terminal lifecycle — a user can start a job, close the terminal, open another, and reattach.
 - External clients (web UI, another terminal, a remote tool) connect to the running job by reading the arbitrator state and event stream for that session. The conductor itself is not contacted directly; everyone talks through the arbitrator.
 - Status of a job is a property of the session — the daemon doesn't need a separate "job status" concept. If the session is in-flight, the job is running; if the session is complete, the job ends.
 
-Required additions to `agentic-daemon` for this role:
+Required additions to `agenticdaemon` for this role:
 - Support for non-Swift job types (currently Swift-only).
 - A service-mode job that runs until its session is complete, not on a recurring schedule.
 - A structured contract for client attach/detach (unix socket is a candidate; needs design).
@@ -278,7 +278,7 @@ All ten questions from the first research draft are resolved. Captured here so f
 3. **`claude -p` vs. Agent SDK.** `claude -p` is the primary dispatch mechanism. Agent SDK rejected due to billing model. `claude -p --agent <name>` remains as an escape hatch for full-CC specialists.
 4. **Team-lead authoring format.** Python team-playbooks with "declarations not programs" convention.
 5. **Migration of existing workflow prose.** Rewritten as team-playbooks when each team ports. No parallel maintenance of prose workflow files and Python playbooks.
-6. **Conductor lifecycle.** Phase 1: terminal-hosted. Phase 2: hosted by `agentic-daemon` as per-session jobs.
+6. **Conductor lifecycle.** Phase 1: terminal-hosted. Phase 2: hosted by `agenticdaemon` as per-session jobs.
 7. **Existing `agents/` markdown files.** Kept as the authoring surface. Conductor loads them and passes via `--agents '{...}'`.
 8. **Other reference teams.** Only `name-a-puppy` needs to move to start. Other teams migrate when their turn comes.
 9. **Hook interop for the observer.** Subsumed by the stream-json observer: one event path via the dispatcher, one `event` table. No second source to merge.
@@ -311,7 +311,7 @@ A small set of things this doc deliberately leaves open:
 - **Formal spec** in `docs/superpowers/specs/YYYY-MM-DD-conductor-design.md` once the remaining open questions are resolved.
 - **Implementation plan** in `docs/superpowers/plans/YYYY-MM-DD-conductor.md` referencing the spec.
 - **First migration.** `name-a-puppy` ported to the new model. Expanded with extra complexity (cross-team request, multi-specialist sessions) until we're satisfied the architecture holds. Then the PM team split. Then the dev-team port.
-- **`agentic-daemon` extensions.** Non-Swift job types + service-mode jobs + client attach contract, in support of phase-2 hosting.
+- **`agenticdaemon` extensions.** Non-Swift job types + service-mode jobs + client attach contract, in support of phase-2 hosting.
 - **Architecture doc update.** Once the new model ships, `docs/architecture.md` gets rewritten to describe it. Not before — `architecture.md` is the current-state doc, not aspirational.
 
 ## Visual references

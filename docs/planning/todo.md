@@ -34,8 +34,8 @@ _Last refreshed 2026-04-18 — see `docs/architecture.md` for current state._
 
 ### Tooling
 
-- **Session-start submodule staleness advisory.** Stop hook no longer enforces submodule freshness (per fix `cat-herding/main` `fae0faa`). Replace with informational surfacing at session start (e.g. via `cc-repo-state` or a session-start hook) so drift is visible without forcing random bumps.
-- **cc-* test harness.** Brainstormed shape: pytest in cat-herding repo, temp git repos as fixtures, fake `gh` for PR-touching scripts. Scope and gh strategy still open.
+- **Session-start submodule staleness advisory.** Stop hook no longer enforces submodule freshness (per fix `catherding/main` `fae0faa`). Replace with informational surfacing at session start (e.g. via `cc-repo-state` or a session-start hook) so drift is visible without forcing random bumps.
+- **cc-* test harness.** Brainstormed shape: pytest in catherding repo, temp git repos as fixtures, fake `gh` for PR-touching scripts. Scope and gh strategy still open.
 
 ### Documentation
 
@@ -50,4 +50,4 @@ _Last refreshed 2026-04-18 — see `docs/architecture.md` for current state._
 - **Conductor "what's next" specialty + run_roadmap mode** (PR #18, design #17).
 - **Roadmap graph + plan_node_id join key + body side-table** (PRs #11, #12, #13, #14, #15).
 - **atp roadmap design doc** (PR #10) — `docs/planning/2026-04-17-atp-roadmap-design.md`.
-- **Stop-hook fix: drop submodule freshness check** (cat-herding `fae0faa`, 2026-04-18).
+- **Stop-hook fix: drop submodule freshness check** (catherding `fae0faa`, 2026-04-18).
