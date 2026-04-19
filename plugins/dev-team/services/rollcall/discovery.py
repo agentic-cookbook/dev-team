@@ -26,7 +26,7 @@ class RoleRef:
     team: str
     kind: RoleKind
     name: str
-    path: Path
+    definition_text: str
 
 
 def _discover_team_leads(team_root: Path, team: str) -> list[RoleRef]:
@@ -37,9 +37,10 @@ def _discover_team_leads(team_root: Path, team: str) -> list[RoleRef]:
     for md in sorted(leads_dir.iterdir()):
         if md.suffix != ".md" or md.name == "index.md":
             continue
-        out.append(
-            RoleRef(team=team, kind="team-lead", name=md.stem, path=md)
-        )
+        out.append(RoleRef(
+            team=team, kind="team-lead", name=md.stem,
+            definition_text=md.read_text(encoding="utf-8"),
+        ))
     return out
 
 
@@ -59,13 +60,14 @@ def _discover_specialty_roles(team_root: Path, team: str) -> list[RoleRef]:
                 if md.suffix != ".md" or md.name == "index.md":
                     continue
                 role_name = f"{sp_dir.name}.{md.stem}"
+                text = md.read_text(encoding="utf-8")
                 out.append(RoleRef(
                     team=team, kind="specialty-worker",
-                    name=role_name, path=md,
+                    name=role_name, definition_text=text,
                 ))
                 out.append(RoleRef(
                     team=team, kind="specialty-verifier",
-                    name=role_name, path=md,
+                    name=role_name, definition_text=text,
                 ))
             break
     return out

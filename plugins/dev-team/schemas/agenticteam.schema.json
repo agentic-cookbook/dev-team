@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agenticdevteam/schemas/agenticteam.json",
+  "title": "AgenticTeam",
+  "type": "object",
+  "required": ["kind", "schema_version", "name", "specialists"],
+  "properties": {
+    "kind": { "const": "agenticteam" },
+    "schema_version": { "const": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "identity": { "type": "string" },
+    "index": { "type": "string" },
+    "team_leads": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string" },
+          "frontmatter": { "type": "object" },
+          "body": { "type": "string" }
+        }
+      }
+    },
+    "specialists": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "specialties"],
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "frontmatter": { "type": "object" },
+          "index": { "type": "string" },
+          "specialties": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name"],
+              "properties": {
+                "name": { "type": "string" },
+                "frontmatter": { "type": "object" },
+                "worker_focus": { "type": "string" },
+                "verify": { "type": "string" },
+                "body": { "type": "string" },
+                "artifact_kind": {
+                  "enum": ["reference", "reference_unresolved", "output_location"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "consulting": { "type": "array" }
+  }
+}
