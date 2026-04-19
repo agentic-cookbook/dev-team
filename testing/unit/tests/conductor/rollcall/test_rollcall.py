@@ -53,7 +53,7 @@ def test_discovery_finds_all_eight_roles(fixture_team_root):
     assert len(roles) == 8
     assert {(r.kind, r.name) for r in roles} == EXPECTED_ROLES
     assert all(r.team == "rollcall_team" for r in roles)
-    assert all(r.path.is_file() for r in roles)
+    assert all(r.definition_text for r in roles)
 
 
 def test_discover_teams_walks_multiple_teams(tmp_path, fixture_team_root):

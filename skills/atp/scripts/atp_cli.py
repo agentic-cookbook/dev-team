@@ -418,10 +418,7 @@ def cmd_rollcall(
     def _build_role_prompt(role) -> str:
         """Inject the role's own markdown as identity so the LLM answers
         in character instead of as generic Claude."""
-        try:
-            definition = role.path.read_text(encoding="utf-8")
-        except OSError:
-            definition = "(definition file unreadable)"
+        definition = role.definition_text or "(definition unavailable)"
         persona_verb = {
             "team-lead": "team lead",
             "specialty-worker": "worker for the specialty",
@@ -433,7 +430,7 @@ def cmd_rollcall(
             f'"{role.team}" team. Below is your role definition — '
             f"treat its focus, guidelines, and references as your own "
             f"knowledge and perspective.\n\n"
-            f"--- role definition ({role.path.name}) ---\n"
+            f"--- role definition ({role.name}) ---\n"
             f"{definition}\n"
             f"--- end role definition ---\n\n"
         )
