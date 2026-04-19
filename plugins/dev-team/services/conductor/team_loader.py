@@ -196,6 +196,10 @@ def _load_from_agenticteam(bundle_root: Path) -> TeamManifest:
         raise ValueError(
             f"{team_json}: expected kind=agenticteam, got {doc.get('kind')!r}"
         )
+    if doc.get("schema_version") != 2:
+        raise ValueError(
+            f"{team_json}: expected schema_version=2, got {doc.get('schema_version')!r}"
+        )
     manifest = TeamManifest(name=doc["name"], team_root=bundle_root)
     for sp in doc.get("specialists", []):
         sd = SpecialistDef(name=sp["name"])
