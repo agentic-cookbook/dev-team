@@ -15,10 +15,6 @@ _Last refreshed 2026-04-20 — see `docs/architecture.md` for current state._
 - **Session scope options.** Schema supports one-session-per-run, one-per-primitive, and batching. Decide once executor team-lead behavior is being authored.
 - **Event-table retention.** Long-running projects will balloon `event`. Pick a pruning / archival policy.
 
-### atp planning surface
-
-- **`atp plan <team>` command.** Drives the planner specialty against a team to produce a roadmap. Was the next item before the contract-tests pivot — needs a fresh plan doc.
-
 ### Team roles
 
 - **Persona support for team-lead and specialists.** Give each role a persona surface (voice, perspective, priors) so prompts aren't anonymous. Decide where it lives — team.md front-matter vs. per-role file — and how it feeds into specialist invocations.
@@ -39,6 +35,7 @@ _Last refreshed 2026-04-20 — see `docs/architecture.md` for current state._
 
 ## Recently Done
 
+- **`atp plan <team> --goal TEXT`** (2026-04-20) — planner team-lead drives one planner dispatch per speciality via `make_plan_realizer`; writes `plan_node` rows + `node_dependency` edges into a new roadmap; prints the `roadmap_id`. Mock path fabricates one stub node per speciality so tests run without real LLMs. Unlocks `/devteam <goal>` skill wrapper.
 - **Specialist-as-parent execution pipeline** (PR #32, 2026-04-19) — specialist is a `claude -p` subprocess per plan_node; worker+verifier are Task-tool subagents. Live `dispatch`/`attempt` tables with `parent_dispatch_id` self-FK, stream parser, `SpecialistDispatcher`, generic realizer rewrite.
 - **Rollcall real-LLM smoke + integration-surface transports** (PR #28, 2026-04-18) — `AGENTIC_REAL_LLM_SMOKE=1` gate spawns `claude -p` per discovered role; stdio NDJSON transport for the integration surface.
 - **`atp rollcall` Tasks 1-4** (PR #27, 2026-04-18) — discovery, orchestrator, table/JSON renderers, `atp rollcall` subcommand, 10 unit tests.
