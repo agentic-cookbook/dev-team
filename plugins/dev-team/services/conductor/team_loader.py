@@ -41,6 +41,7 @@ class SpecialtyDef:
     worker_focus: str
     verify: str
     logical_model: str = "balanced"
+    planner_focus: str = ""
 
 
 @dataclass
@@ -176,6 +177,7 @@ def _ingest_specialty(md_path: Path, specialist: SpecialistDef) -> None:
     logical_model = meta.get("logical_model", "balanced")
     worker_focus = _extract_section(body, "Worker Focus")
     verify = _extract_section(body, "Verify")
+    planner_focus = _extract_section(body, "Planner Focus") or worker_focus
     if not worker_focus:
         # Not machine-readable; skip rather than build a junk manifest.
         return
@@ -185,6 +187,7 @@ def _ingest_specialty(md_path: Path, specialist: SpecialistDef) -> None:
         worker_focus=worker_focus,
         verify=verify,
         logical_model=logical_model,
+        planner_focus=planner_focus,
     )
 
 
@@ -214,6 +217,7 @@ def _load_from_agenticteam(bundle_root: Path) -> TeamManifest:
                 worker_focus=worker_focus,
                 verify=st.get("verify", ""),
                 logical_model=fm.get("logical_model", "balanced"),
+                planner_focus=st.get("planner_focus") or worker_focus,
             )
         if sd.specialties:
             manifest.specialists[sp["name"]] = sd
